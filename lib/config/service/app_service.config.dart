@@ -18,8 +18,8 @@ import '../../data/repository/account/iaccount_repository.dart' as _i630;
 import '../../data/repository/upload/iupload_repository.dart' as _i134;
 import '../../data/repository/upload/upload_repository.dart' as _i655;
 import 'account_service.dart' as _i997;
+import 'auth_service.dart' as _i184;
 import 'language_service.dart' as _i313;
-import 'manage_app_service.dart' as _i479;
 import 'network_service.dart' as _i39;
 import 'provider/dio_provider.dart' as _i7;
 
@@ -35,7 +35,7 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final networkService = _$NetworkService();
-    gh.factory<_i479.ManageAppService>(() => _i479.ManageAppService());
+    gh.factory<_i184.AuthService>(() => _i184.AuthService());
     gh.lazySingleton<_i7.DioProvider>(() => _i7.DioProvider());
     gh.factory<_i134.IUploadRepository>(() => _i655.UploadRepository());
     await gh.singletonAsync<_i845.LocalStorage>(
@@ -45,13 +45,13 @@ extension GetItInjectableX on _i174.GetIt {
       },
       preResolve: true,
     );
+    gh.factory<_i997.AccountService>(
+        () => _i997.AccountService(storageService: gh<_i845.LocalStorage>()));
+    gh.singleton<_i313.LanguageService>(
+        () => _i313.LanguageService(localStorage: gh<_i845.LocalStorage>()));
     gh.lazySingleton<_i665.AuthenticationAPI>(
         () => networkService.authenticationApiProvider(gh<_i7.DioProvider>()));
     gh.factory<_i630.IAccountRepository>(() => _i710.AccountRepository());
-    gh.singleton<_i313.LanguageService>(
-        () => _i313.LanguageService(localStorage: gh<_i845.LocalStorage>()));
-    gh.factory<_i997.AccountService>(
-        () => _i997.AccountService(storageService: gh<_i845.LocalStorage>()));
     return this;
   }
 }

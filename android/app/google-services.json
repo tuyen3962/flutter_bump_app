@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "834324141628",
+    "project_id": "bump-project-471612",
+    "storage_bucket": "bump-project-471612.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:834324141628:android:2fb370acfc80617d3ed539",
+        "android_client_info": {
+          "package_name": "com.admin.bump_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "834324141628-v771d60kfl4v8vd4an5lo8p73tctn9lf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTD5cbP7UZ7-bCy9dzSGQHHekizaIRNno"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "834324141628-bevober9v5rlp1b9opp55okb4jtl4g5d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "834324141628-189n7114rua1glpd87v5bbe1ulho5lmq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.admin.bump-app.ios"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,4 +1,4 @@
-# source_base
+# Pickle clipper
 
 # Config source
 Run the following command in your terminal of this source

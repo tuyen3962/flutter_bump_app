@@ -11,15 +11,14 @@ import 'cubit/base_bloc_provider.dart';
 import 'cubit/base_cubit.dart';
 import 'cubit/base_state.dart';
 
-abstract class BaseBlocPageState<S extends StatefulWidget, P extends BaseState,
-    C extends BaseCubit<P>> extends BaseBlocViewState<S, P, C> {
+abstract class BaseBlocPageState<S extends StatefulWidget, P extends BaseState, C extends BaseCubit<P>>
+    extends BaseBlocViewState<S, P, C> {
   bool get isResizeToAvoidBottomInset => true;
 
   bool get scaleByKeyboard => true;
 
   final _keyboardDismissPaddingNotifier = ValueNotifier<double>(0.0);
-  ValueNotifier<double> get keyboardHeightNotifier =>
-      _keyboardDismissPaddingNotifier;
+  ValueNotifier<double> get keyboardHeightNotifier => _keyboardDismissPaddingNotifier;
 
   Color get backgroundColor => appTheme.background;
 
@@ -66,8 +65,7 @@ abstract class BaseBlocPageState<S extends StatefulWidget, P extends BaseState,
         Future.delayed(const Duration(milliseconds: 150)).then((value) {
           if (!mounted) return;
           final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-          _keyboardDismissPaddingNotifier.value =
-              keyboardHeight + _bottomButtonHeight;
+          _keyboardDismissPaddingNotifier.value = keyboardHeight + _bottomButtonHeight;
         });
       } else {
         if (!mounted) return;
@@ -122,13 +120,10 @@ abstract class BaseBlocPageState<S extends StatefulWidget, P extends BaseState,
                       child: Column(
                         crossAxisAlignment: crossAxisAlignment,
                         children: [
-                          GestureDetector(
-                              onTap: FocusScope.of(context).unfocus,
-                              child: buildAppBar(context, cubit)),
+                          GestureDetector(onTap: FocusScope.of(context).unfocus, child: buildAppBar(context, cubit)),
                           Expanded(
                               child: hasBackgroundBody
-                                  ? buildBackgroundBody(
-                                      buildBody(context, cubit))
+                                  ? buildBackgroundBody(buildBody(context, cubit))
                                   : buildBody(context, cubit)),
                           buildBottomView(context, cubit),
                         ],
@@ -143,16 +138,14 @@ abstract class BaseBlocPageState<S extends StatefulWidget, P extends BaseState,
     );
   }
 
-  Widget buildBlocView(
-      {required Widget Function(BuildContext context, P state) viewBuilder}) {
+  Widget buildBlocView({required Widget Function(BuildContext context, P state) viewBuilder}) {
     return BlocBuilder<C, P>(bloc: cubit, builder: viewBuilder);
   }
 
   Widget buildBlocConsumerView(
       {required Widget Function(BuildContext context, P state) viewBuilder,
       required void Function(BuildContext context, P state) listener}) {
-    return BlocConsumer<C, P>(
-        bloc: cubit, builder: viewBuilder, listener: listener);
+    return BlocConsumer<C, P>(bloc: cubit, builder: viewBuilder, listener: listener);
   }
 
   void onPopInvoke() {}
@@ -182,11 +175,11 @@ abstract class BaseBlocPageState<S extends StatefulWidget, P extends BaseState,
   List<Widget>? appBarActions(C cubit) => [];
 
   Widget? appBarBacKIcon(C cubit) => CircleItem(
-      onTap: onBack,
-      padding: padding(all: 6),
-      backgroundColor: appTheme.gray50.withOpacity(.16),
-      child: Icon(Icons.arrow_back_ios_new_rounded,
-          color: appTheme.gray50, size: 20));
+        onTap: onBack,
+        padding: padding(all: 6),
+        backgroundColor: appTheme.gray50.withOpacity(.16),
+        child: Icon(Icons.arrow_back_ios_new_rounded, color: appTheme.gray50, size: 20),
+      );
 
   Widget? appBarTitle(C cubit) => null;
 
@@ -218,24 +211,20 @@ abstract class BaseBlocPageState<S extends StatefulWidget, P extends BaseState,
   Widget buildBottomView(BuildContext context, C cubit) => const SizedBox();
 }
 
-abstract class BaseBlocNoAppBarPageState<
-    S extends StatefulWidget,
-    P extends BaseState,
-    C extends BaseCubit<P>> extends BaseBlocPageState<S, P, C> {
+abstract class BaseBlocNoAppBarPageState<S extends StatefulWidget, P extends BaseState, C extends BaseCubit<P>>
+    extends BaseBlocPageState<S, P, C> {
   @override
   Widget buildAppBar(BuildContext context, C cubit) => const SizedBox();
 }
 
-abstract class BaseBlocPrimaryAppBarPageState<
-    S extends StatefulWidget,
-    P extends BaseState,
-    C extends BaseCubit<P>> extends BaseBlocPageState<S, P, C> {
+abstract class BaseBlocPrimaryAppBarPageState<S extends StatefulWidget, P extends BaseState, C extends BaseCubit<P>>
+    extends BaseBlocPageState<S, P, C> {
   @override
   Color? get titleAppBarColor => appTheme.gray50;
   @override
   Color get backgroundColor => appTheme.gray50;
   @override
-  Color? get backgroundAppBarColor => appTheme.primaryColor;
+  Color? get backgroundAppBarColor => appTheme.whiteText;
   @override
   bool? get isTopSafeArea => false;
 
@@ -245,7 +234,6 @@ abstract class BaseBlocPrimaryAppBarPageState<
         onTap: onBack,
         padding: padding(all: 6),
         backgroundColor: appTheme.gray50.withOpacity(.16),
-        child: Icon(Icons.arrow_back_ios_new_rounded,
-            color: appTheme.gray50, size: 20));
+        child: Icon(Icons.arrow_back_ios_new_rounded, color: appTheme.gray50, size: 20));
   }
 }

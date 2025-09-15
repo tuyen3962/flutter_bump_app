@@ -15,6 +15,7 @@ class PrimaryButton extends StatelessWidget {
     this.weight,
     this.isActive = false,
     this.icon,
+    this.radius,
   });
 
   final String text;
@@ -27,6 +28,7 @@ class PrimaryButton extends StatelessWidget {
   final Widget? icon;
   final bool isFullWidth;
   final bool isActive;
+  final double? radius;
 
   @override
   Widget build(BuildContext context) {
@@ -37,14 +39,12 @@ class PrimaryButton extends StatelessWidget {
         padding: buttonPadding,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isActive
-              ? backgroundColor ?? appTheme.fadeBackgroundColor
-              : backgroundColor ?? appTheme.primaryColor,
-          border: Border.all(
-              color: isActive
-                  ? appTheme.fadeBackgroundColor
-                  : appTheme.primaryColor),
-          borderRadius: BorderRadius.circular(1000),
+          color: isActive ? backgroundColor ?? appTheme.fadeBackgroundColor : backgroundColor ?? appTheme.primaryColor,
+          // border: Border.all(
+          //     color: isActive
+          //         ? appTheme.fadeBackgroundColor
+          //         : appTheme.primaryColor),
+          borderRadius: BorderRadius.circular(radius ?? 1000),
         ),
         child: icon != null
             ? Row(
@@ -56,8 +56,7 @@ class PrimaryButton extends StatelessWidget {
                     text,
                     style: TextStyle(
                       fontSize: fontSize ?? 14.fontSize,
-                      color:
-                          textColor ?? themeUtil.getAppTheme().primaryTextColor,
+                      color: textColor ?? themeUtil.getAppTheme().primaryTextColor,
                       fontWeight: weight ?? FontWeight.w700,
                     ),
                   ),

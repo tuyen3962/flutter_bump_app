@@ -1,4 +1,4 @@
-package com.example.source_base
+package com.admin.bump_app
 
 import io.flutter.embedding.android.FlutterActivity
 

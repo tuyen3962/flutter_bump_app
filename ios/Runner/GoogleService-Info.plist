@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>834324141628-189n7114rua1glpd87v5bbe1ulho5lmq.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.834324141628-189n7114rua1glpd87v5bbe1ulho5lmq</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBy8LXn3GuV9UMHrSzKoYn_1nSrdlsUg90</string>
+	<key>GCM_SENDER_ID</key>
+	<string>834324141628</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.admin.bump-app.ios</string>
+	<key>PROJECT_ID</key>
+	<string>bump-project-471612</string>
+	<key>STORAGE_BUCKET</key>
+	<string>bump-project-471612.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:834324141628:ios:57e5a00141e9079c3ed539</string>
+</dict>
+</plist>
