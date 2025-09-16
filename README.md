@@ -4,3 +4,9 @@
 Run the following command in your terminal of this source
 flutter pub run easy_localization:generate -O lib/config/lang -f keys -o locale_keys.g.dart --source-dir ./assets/lang
 flutter pub run build_runner build
+
+dart generate_screen.dart {name} base 
+
+dart generate_screen.dart {name} no_appbar
+
+dart generate_screen.dart {name} primary_appbar
