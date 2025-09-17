@@ -5,7 +5,7 @@ abstract class BaseThemeData {
   Color get dividerColor => blue500;
   Color get hintColor => blue500;
   Color get backgroundContainer => blue500;
-  Color get background => blue500;
+  Color get background => alpha;
   Color get fadeTextColor => blue500;
   Color get fadeBackgroundColor => blue500;
   Color get primaryTextColor => Colors.white;

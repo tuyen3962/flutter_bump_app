@@ -35,7 +35,14 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final networkService = _$NetworkService();
-    gh.factory<_i184.AuthService>(() => _i184.AuthService());
+    await gh.singletonAsync<_i184.AuthService>(
+      () {
+        final i = _i184.AuthService();
+        return i.init().then((_) => i);
+      },
+      preResolve: true,
+      dispose: (i) => i.dispose(),
+    );
     gh.lazySingleton<_i7.DioProvider>(() => _i7.DioProvider());
     gh.factory<_i134.IUploadRepository>(() => _i655.UploadRepository());
     await gh.singletonAsync<_i845.LocalStorage>(

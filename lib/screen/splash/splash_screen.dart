@@ -30,10 +30,12 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => SplashScreenState();
 }
 
-class SplashScreenState extends BaseBlocPageState<SplashScreen, SplashState, SplashCubit> {
+class SplashScreenState
+    extends BaseBlocPageState<SplashScreen, SplashState, SplashCubit> {
   @override
   void initState() {
-    Future.delayed(const Duration(milliseconds: 500)).then((value) => context.replaceRoute(const SigninRoute()));
+    Future.delayed(const Duration(milliseconds: 500))
+        .then((value) => context.replaceRoute(const DashboardRoute()));
     super.initState();
   }
 
