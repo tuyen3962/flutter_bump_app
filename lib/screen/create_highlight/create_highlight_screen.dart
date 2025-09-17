@@ -1,15 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bump_app/base/widget/base_page.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_bloc_provider.dart';
 import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
+import 'package:flutter_bump_app/extension.dart';
+import 'package:flutter_bump_app/extension/color_extension.dart';
+import 'package:flutter_bump_app/main.dart';
 import 'package:flutter_bump_app/screen/create_highlight/create_highlight_cubit.dart';
-
-import 'create_highlight_state.dart';
+import 'package:flutter_bump_app/screen/create_highlight/create_highlight_state.dart';
 
 @RoutePage()
-class CreateHighlightPage
-    extends BaseBlocProvider<CreateHighlightState, CreateHighlightCubit> {
+class CreateHighlightPage extends BaseBlocProvider<CreateHighlightState, CreateHighlightCubit> {
   const CreateHighlightPage({super.key});
 
   @override
@@ -30,12 +32,14 @@ class CreateHighlightScreen extends StatefulWidget {
   State<CreateHighlightScreen> createState() => CreateHighlightScreenState();
 }
 
-class CreateHighlightScreenState extends BaseBlocPageState<
-    CreateHighlightScreen, CreateHighlightState, CreateHighlightCubit> {
+class CreateHighlightScreenState
+    extends BaseBlocNoAppBarPageState<CreateHighlightScreen, CreateHighlightState, CreateHighlightCubit> {
   @override
   void initState() {
     super.initState();
-    // Add your initialization logic here
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      cubit.initializeLibrary();
+    });
   }
 
   @override
@@ -43,570 +47,598 @@ class CreateHighlightScreenState extends BaseBlocPageState<
 
   @override
   Widget buildBody(BuildContext context, CreateHighlightCubit cubit) {
-    return RefreshIndicator(
-      onRefresh: () async {},
-      child: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return BlocBuilder<CreateHighlightCubit, CreateHighlightState>(
+      builder: (context, state) {
+        return Stack(
           children: [
-            _buildInfoSection(context, cubit.state),
-            _buildActionButtons(context, cubit.state),
-            // _buildVideoLibrarySection(context, cubit.state),
+            Scaffold(
+              backgroundColor: appTheme.alpha,
+              body: Column(
+                children: [
+                  // Header
+                  _buildHeader(),
+
+                  // File Format Info
+                  _buildFileFormatInfo(),
+
+                  // Record/Upload Toggle
+                  _buildModeToggle(state),
+
+                  // Library Header
+                  _buildLibraryHeader(state),
+
+                  // Video Grid
+                  Expanded(
+                    child: _buildVideoGrid(state),
+                  ),
+
+                  // Create Highlight Button
+                  if (state.hasSelectedVideos) _buildCreateButton(state),
+                ],
+              ),
+            ),
+
+            // Name Dialog Overlay
+            if (state.showNameDialog) _buildNameDialog(state),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: padding(all: 16),
+      decoration: BoxDecoration(
+        color: appTheme.alpha,
+        border: Border(
+          bottom: BorderSide(color: appTheme.gray200, width: 1),
+        ),
+      ),
+      child: SafeArea(
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () => context.back(),
+              child: Container(
+                width: 32.w,
+                height: 32.h,
+                decoration: BoxDecoration(
+                  color: appTheme.transparentColor,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  Icons.arrow_back,
+                  size: 20,
+                  color: appTheme.gray600,
+                ),
+              ),
+            ),
+            Expanded(
+              child: Text(
+                'Create Highlight',
+                style: AppStyle.bold18(),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SizedBox(width: 32.w),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildInfoSection(BuildContext context, CreateHighlightState state) {
+  Widget _buildFileFormatInfo() {
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(20),
+      width: double.infinity,
+      padding: padding(all: 16),
+      decoration: BoxDecoration(
+        color: appTheme.blue50,
+        border: Border(
+          bottom: BorderSide(color: appTheme.gray200, width: 1),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           RichText(
             text: TextSpan(
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
               children: [
-                const TextSpan(
+                TextSpan(
                   text: 'Supported formats: ',
-                  style: TextStyle(fontWeight: FontWeight.w500),
+                  style: AppStyle.bold14(color: appTheme.blue800),
                 ),
-                // TextSpan(
-                //   text: state.uploadConfig.supportedFormats.map((format) => format.name)
-                //       .map((format) => format.name)
-                //       .join(', '),
-                //   style: TextStyle(color: Colors.blue[600]),
-                // ),
+                TextSpan(
+                  text: 'MP4, MOV, AVI',
+                  style: AppStyle.regular14(color: appTheme.blue800),
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 8),
-          RichText(
-            text: TextSpan(
-              style: const TextStyle(fontSize: 16, color: Colors.black87),
-              children: [
-                const TextSpan(
-                  text: 'Maximum file size: ',
-                  style: TextStyle(fontWeight: FontWeight.w500),
-                ),
-                // TextSpan(
-                //   text: state.uploadConfig.maxFileSizeFormatted,
-                //   style: TextStyle(color: Colors.blue[600]),
-                // ),
-              ],
-            ),
+          SizedBox(height: 4.h),
+          Text(
+            'Maximum file size: 1GB',
+            style: AppStyle.regular14(color: appTheme.blue600),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, CreateHighlightState state) {
-    // if (state is CreateHighlightRecording) {
-    //   return _buildRecordingSection(context, state);
-    // }
-
-    // if (state is CreateHighlightUploading) {
-    //   return _buildUploadingSection(context, state);
-    // }
-
-    // if (state is CreateHighlightVideoSelected) {
-    //   return _buildSelectedVideoSection(context, state);
-    // }
-
+  Widget _buildModeToggle(CreateHighlightState state) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: padding(all: 16),
+      decoration: BoxDecoration(
+        color: appTheme.gray50,
+        border: Border(
+          bottom: BorderSide(color: appTheme.gray200, width: 1),
+        ),
+      ),
       child: Row(
         children: [
           Expanded(
-            child: _buildActionButton(
-              context,
-              'Record',
-              Icons.videocam,
-              Colors.blue[600]!,
-              () {},
-              // () => context.read<CreateHighlightCubit>().startRecording(),
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: _buildActionButton(
-              context,
-              'Upload',
-              Icons.upload,
-              Colors.green[600]!,
-              // () => context.read<CreateHighlightCubit>().uploadFile(),
-              () {},
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton(
-    BuildContext context,
-    String label,
-    IconData icon,
-    Color color,
-    VoidCallback onPressed,
-  ) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, color: Colors.white),
-      label: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 2,
-      ),
-    );
-  }
-
-  Widget _buildRecordingSection(
-      BuildContext context, CreateHighlightState state) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.red[50],
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.red[200]!),
-            ),
-            child: Column(
-              children: [
-                Icon(Icons.fiber_manual_record,
-                    size: 48, color: Colors.red[600]),
-                const SizedBox(height: 16),
-                const Text(
-                  'Recording...',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+            child: GestureDetector(
+              onTap: () => cubit.setActiveMode(CreateMode.record),
+              child: Container(
+                padding: padding(all: 12),
+                margin: padding(right: 8.w),
+                decoration: BoxDecoration(
+                  color: state.activeMode == CreateMode.record ? appTheme.blue500 : appTheme.alpha,
+                  border: Border.all(
+                    color: state.activeMode == CreateMode.record ? appTheme.blue500 : appTheme.gray200,
+                    width: 2,
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _formatDuration(Duration(seconds: 10)),
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red[600],
-                    fontFeatures: const [FontFeature.tabularFigures()],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: () {},
-              // onPressed: () =>
-              //     context.read<CreateHighlightCubit>().stopRecording(),
-              icon: const Icon(Icons.stop, color: Colors.white),
-              label: const Text(
-                'Stop Recording',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red[600],
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildUploadingSection(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.blue[200]!),
-            ),
-            child: Column(
-              children: [
-                Icon(Icons.cloud_upload, size: 48, color: Colors.blue[600]),
-                const SizedBox(height: 16),
-                const Text(
-                  'Uploading...',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'fileName',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey[600],
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 16),
-                ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: LinearProgressIndicator(
-                    value: 0.5,
-                    backgroundColor: Colors.grey[200],
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Colors.blue[600]!),
-                    minHeight: 8,
-                  ),
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  '${(0.5 * 100).round()}%',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.blue[600],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () {},
-              // onPressed: () =>
-              // context.read<CreateHighlightCubit>().cancelUpload(),
-              icon: Icon(Icons.cancel, color: Colors.red[600]),
-              label: Text(
-                'Cancel Upload',
-                style: TextStyle(
-                  color: Colors.red[600],
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                side: BorderSide(color: Colors.red[600]!),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Widget _buildSelectedVideoSection(
-  //     BuildContext context, CreateHighlightVideoSelected state) {
-  //   final selectedVideo = state.videoLibrary
-  //       .firstWhere((video) => video.id == state.selectedVideoId);
-
-  //   return Container(
-  //     padding: const EdgeInsets.all(20),
-  //     child: Column(
-  //       children: [
-  //         Container(
-  //           padding: const EdgeInsets.all(16),
-  //           decoration: BoxDecoration(
-  //             color: Colors.green[50],
-  //             borderRadius: BorderRadius.circular(16),
-  //             border: Border.all(color: Colors.green[200]!),
-  //           ),
-  //           child: Row(
-  //             children: [
-  //               Container(
-  //                 width: 60,
-  //                 height: 60,
-  //                 decoration: BoxDecoration(
-  //                   color: Colors.grey[300],
-  //                   borderRadius: BorderRadius.circular(8),
-  //                 ),
-  //                 child: const Icon(Icons.play_arrow, size: 24),
-  //               ),
-  //               const SizedBox(width: 16),
-  //               Expanded(
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                     Text(
-  //                       selectedVideo.title,
-  //                       style: const TextStyle(
-  //                         fontSize: 16,
-  //                         fontWeight: FontWeight.w600,
-  //                       ),
-  //                       maxLines: 2,
-  //                       overflow: TextOverflow.ellipsis,
-  //                     ),
-  //                     const SizedBox(height: 4),
-  //                     Text(
-  //                       '${selectedVideo.duration} • ${selectedVideo.fileSizeFormatted}',
-  //                       style: TextStyle(
-  //                         fontSize: 14,
-  //                         color: Colors.grey[600],
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //               Icon(Icons.check_circle, color: Colors.green[600], size: 24),
-  //             ],
-  //           ),
-  //         ),
-  //         const SizedBox(height: 20),
-  //         Row(
-  //           children: [
-  //             Expanded(
-  //               child: OutlinedButton(
-  //                 onPressed: () {},
-  //                 // onPressed: () =>
-  //                     // context.read<CreateHighlightCubit>().deselectVideo(),
-  //                 child: const Text('Cancel'),
-  //                 style: OutlinedButton.styleFrom(
-  //                   padding: const EdgeInsets.symmetric(vertical: 16),
-  //                   shape: RoundedRectangleBorder(
-  //                     borderRadius: BorderRadius.circular(12),
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //             const SizedBox(width: 16),
-  //             Expanded(
-  //               child: ElevatedButton(
-  //                 onPressed: () => context
-  //                     // .read<CreateHighlightCubit>()
-  //                     // .createHighlightFromSelected(),
-  //                 child: const Text(
-  //                   'Create Highlight',
-  //                   style: TextStyle(
-  //                     color: Colors.white,
-  //                     fontWeight: FontWeight.w600,
-  //                   ),
-  //                 ),
-  //                 style: ElevatedButton.styleFrom(
-  //                   backgroundColor: Colors.green[600],
-  //                   padding: const EdgeInsets.symmetric(vertical: 16),
-  //                   shape: RoundedRectangleBorder(
-  //                     borderRadius: BorderRadius.circular(12),
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildVideoLibrarySection(
-  //     BuildContext context, CreateHighlightLoaded state) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       const Padding(
-  //         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-  //         child: Text(
-  //           'Your Video Library',
-  //           style: TextStyle(
-  //             fontSize: 20,
-  //             fontWeight: FontWeight.w600,
-  //             color: Colors.black87,
-  //           ),
-  //         ),
-  //       ),
-  //       if (state.videoLibrary.isEmpty)
-  //         Padding(
-  //           padding: const EdgeInsets.all(40),
-  //           child: Center(
-  //             child: Column(
-  //               children: [
-  //                 Icon(Icons.video_library_outlined,
-  //                     size: 64, color: Colors.grey[400]),
-  //                 const SizedBox(height: 16),
-  //                 Text(
-  //                   'No videos in library',
-  //                   style: TextStyle(
-  //                     fontSize: 18,
-  //                     fontWeight: FontWeight.w500,
-  //                     color: Colors.grey[600],
-  //                   ),
-  //                 ),
-  //                 const SizedBox(height: 8),
-  //                 Text(
-  //                   'Record or upload your first video!',
-  //                   style: TextStyle(
-  //                     fontSize: 14,
-  //                     color: Colors.grey[500],
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         )
-  //       else
-  //         Padding(
-  //           padding: const EdgeInsets.symmetric(horizontal: 20),
-  //           child: GridView.builder(
-  //             shrinkWrap: true,
-  //             physics: const NeverScrollableScrollPhysics(),
-  //             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-  //               crossAxisCount: 2,
-  //               crossAxisSpacing: 16,
-  //               mainAxisSpacing: 16,
-  //               childAspectRatio: 16 / 12,
-  //             ),
-  //             itemCount: 10,
-  //             itemBuilder: (context, index) {
-  //               // final video = state.videoLibrary[index];
-  //               // final isSelected = state is CreateHighlightVideoSelected &&
-  //               //     state.selectedVideoId == video.id;
-
-  //               return _buildVideoLibraryItem(context, false);
-  //             },
-  //           ),
-  //         ),
-  //       const SizedBox(height: 20),
-  //     ],
-  //   );
-  // }
-
-  Widget _buildVideoLibraryItem(
-    BuildContext context,
-    // VideoLibraryItem video,
-    bool isSelected,
-  ) {
-    return GestureDetector(
-      // onTap: () =>
-      //     context.read<CreateHighlightCubit>().selectVideoFromLibrary(video.id),
-      // onLongPress: () => _showVideoOptions(context, video),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: isSelected
-              ? Border.all(color: Colors.green[600]!, width: 2)
-              : null,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Stack(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        // image: DecorationImage(
-                        //   image: NetworkImage(video.thumbnailUrl),
-                        //   fit: BoxFit.cover,
-                        //   onError: (_, __) {},
-                        // ),
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.play_arrow,
-                          size: 32,
-                          color: Colors.white,
-                        ),
+                    Icon(
+                      Icons.videocam,
+                      size: 18,
+                      color: state.activeMode == CreateMode.record ? appTheme.alpha : appTheme.gray700,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'Record',
+                      style: AppStyle.medium16(
+                        color: state.activeMode == CreateMode.record ? appTheme.alpha : appTheme.gray700,
                       ),
                     ),
-                    Positioned(
-                      bottom: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.7),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          'duration',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (isSelected)
-                      Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: Colors.green[600],
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.check,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),
-              Container(
-                color: Colors.white,
-                padding: const EdgeInsets.all(12),
-                child: Text(
-                  'title',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+            ),
+          ),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => cubit.setActiveMode(CreateMode.upload),
+              child: Container(
+                padding: padding(all: 12),
+                margin: padding(left: 8.w),
+                decoration: BoxDecoration(
+                  color: state.activeMode == CreateMode.upload ? appTheme.blue500 : appTheme.alpha,
+                  border: Border.all(
+                    color: state.activeMode == CreateMode.upload ? appTheme.blue500 : appTheme.gray200,
+                    width: 2,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                  borderRadius: BorderRadius.circular(8),
                 ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.upload,
+                      size: 18,
+                      color: state.activeMode == CreateMode.upload ? appTheme.alpha : appTheme.gray700,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      'Upload',
+                      style: AppStyle.medium16(
+                        color: state.activeMode == CreateMode.upload ? appTheme.alpha : appTheme.gray700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLibraryHeader(CreateHighlightState state) {
+    return Container(
+      padding: padding(all: 16),
+      decoration: BoxDecoration(
+        color: appTheme.alpha,
+        border: Border(
+          bottom: BorderSide(color: appTheme.gray200, width: 1),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            'Your Video Library',
+            style: AppStyle.medium16(),
+          ),
+          if (state.hasSelectedVideos)
+            Text(
+              '${state.selectedCount} selected',
+              style: AppStyle.regular14(color: appTheme.blue600),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildVideoGrid(CreateHighlightState state) {
+    if (state.isLoading) {
+      return Center(
+        child: CircularProgressIndicator(
+          color: appTheme.blue500,
+        ),
+      );
+    }
+
+    if (state.libraryItems.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    return RefreshIndicator(
+      onRefresh: cubit.refreshLibrary,
+      color: appTheme.blue500,
+      child: GridView.builder(
+        padding: padding(all: 16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 0.8,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+        ),
+        itemCount: state.libraryItems.length,
+        itemBuilder: (context, index) {
+          final item = state.libraryItems[index];
+          return _buildVideoItem(item, state);
+        },
+      ),
+    );
+  }
+
+  Widget _buildVideoItem(LibraryItem item, CreateHighlightState state) {
+    final isSelected = state.isVideoSelected(item.id);
+    final selectionNumber = state.getSelectionNumber(item.id);
+
+    return GestureDetector(
+      onTap: () => cubit.toggleVideoSelection(item.id),
+      child: Container(
+        decoration: BoxDecoration(
+          color: appTheme.alpha,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? appTheme.blue500 : appTheme.gray200,
+            width: isSelected ? 2 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: appTheme.blue200.withSafeOpacity(0.5),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : [
+                  BoxShadow(
+                    color: appTheme.gray200.withSafeOpacity(0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Thumbnail with selection indicator
+            Expanded(
+              child: Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: _getColorFromHex(item.thumbnail),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                    ),
+                    child: Center(
+                      child: Container(
+                        width: 32.w,
+                        height: 32.h,
+                        decoration: BoxDecoration(
+                          color: appTheme.alpha.withSafeOpacity(0.8),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Icon(
+                          Icons.play_arrow,
+                          color: appTheme.gray600,
+                          size: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Selection indicator
+                  Positioned(
+                    top: 8.h,
+                    left: 8.w,
+                    child: Container(
+                      width: 20.w,
+                      height: 20.h,
+                      decoration: BoxDecoration(
+                        color: isSelected ? appTheme.blue500 : appTheme.alpha,
+                        border: Border.all(
+                          color: isSelected ? appTheme.blue500 : appTheme.gray300,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: isSelected
+                          ? Center(
+                              child: Text(
+                                '$selectionNumber',
+                                style: AppStyle.regular12(color: appTheme.alpha),
+                              ),
+                            )
+                          : null,
+                    ),
+                  ),
+
+                  // Duration
+                  Positioned(
+                    bottom: 4.h,
+                    right: 4.w,
+                    child: Container(
+                      padding: padding(horizontal: 6.w, vertical: 2.h),
+                      decoration: BoxDecoration(
+                        color: appTheme.blackColor.withSafeOpacity(0.7),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        item.duration,
+                        style: AppStyle.regular12(color: appTheme.alpha),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Title
+            Padding(
+              padding: padding(all: 8),
+              child: Text(
+                item.title,
+                style: AppStyle.medium14(),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCreateButton(CreateHighlightState state) {
+    return Container(
+      padding: padding(all: 16),
+      decoration: BoxDecoration(
+        color: appTheme.alpha,
+        border: Border(
+          top: BorderSide(color: appTheme.gray200, width: 1),
+        ),
+      ),
+      child: SizedBox(
+        width: double.infinity,
+        height: 48.h,
+        child: ElevatedButton(
+          onPressed: cubit.showNameDialog,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: appTheme.blue500,
+            foregroundColor: appTheme.alpha,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            elevation: 0,
+          ),
+          child: Text(
+            'Create Highlight (${state.selectedCount} video${state.selectedCount > 1 ? 's' : ''})',
+            style: AppStyle.medium16(color: appTheme.alpha),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: padding(all: 64),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 64.w,
+              height: 64.h,
+              decoration: BoxDecoration(
+                color: appTheme.gray200,
+                borderRadius: BorderRadius.circular(32),
+              ),
+              child: Icon(
+                Icons.videocam,
+                size: 24,
+                color: appTheme.gray400,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'No videos yet',
+              style: AppStyle.bold18(),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              'Record or upload your first pickleball video to create highlights',
+              style: AppStyle.regular14(color: appTheme.gray500),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNameDialog(CreateHighlightState state) {
+    return Container(
+      color: appTheme.blackColor.withSafeOpacity(0.5),
+      child: Center(
+        child: Container(
+          margin: padding(all: 16),
+          padding: padding(all: 24),
+          decoration: BoxDecoration(
+            color: appTheme.alpha,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Name Your Highlight',
+                    style: AppStyle.bold18(),
+                  ),
+                  GestureDetector(
+                    onTap: cubit.hideNameDialog,
+                    child: Container(
+                      padding: padding(all: 4),
+                      child: Icon(
+                        Icons.close,
+                        size: 20,
+                        color: appTheme.gray400,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 16.h),
+
+              // Input field
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Highlight Name',
+                    style: AppStyle.medium14(color: appTheme.gray700),
+                  ),
+                  SizedBox(height: 8.h),
+                  TextFormField(
+                    initialValue: state.highlightName,
+                    onChanged: cubit.updateHighlightName,
+                    autofocus: true,
+                    style: AppStyle.regular16(),
+                    decoration: InputDecoration(
+                      hintText: 'Enter highlight name...',
+                      hintStyle: AppStyle.regular16(color: appTheme.gray400),
+                      filled: true,
+                      fillColor: appTheme.alpha,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: appTheme.gray300),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: appTheme.gray300),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: appTheme.blue500, width: 2),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 24.h),
+
+              // Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 48.h,
+                      child: OutlinedButton(
+                        onPressed: cubit.hideNameDialog,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: appTheme.gray700,
+                          side: BorderSide(color: appTheme.gray300),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: AppStyle.medium16(color: appTheme.gray700),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: SizedBox(
+                      height: 48.h,
+                      child: ElevatedButton(
+                        onPressed: state.highlightName.trim().isNotEmpty
+                            ? () async {
+                                final success = await cubit.createHighlight();
+                                if (success && mounted) {
+                                  // context.router.pushNamed('/activity');
+                                }
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: appTheme.blue500,
+                          foregroundColor: appTheme.alpha,
+                          disabledBackgroundColor: appTheme.gray300,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: state.isLoading
+                            ? SizedBox(
+                                width: 16.w,
+                                height: 16.h,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(appTheme.alpha),
+                                ),
+                              )
+                            : Text(
+                                'Create',
+                                style: AppStyle.medium16(color: appTheme.alpha),
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -615,95 +647,11 @@ class CreateHighlightScreenState extends BaseBlocPageState<
     );
   }
 
-  // void _showVideoOptions(BuildContext context, VideoLibraryItem video) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     builder: (context) => Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: [
-  //         ListTile(
-  //           leading: const Icon(Icons.info),
-  //           title: const Text('Video Info'),
-  //           onTap: () {
-  //             Navigator.pop(context);
-  //             _showVideoInfo(context, video);
-  //           },
-  //         ),
-  //         ListTile(
-  //           leading: Icon(Icons.delete, color: Colors.red[600]),
-  //           title: Text('Delete', style: TextStyle(color: Colors.red[600])),
-  //           onTap: () {
-  //             Navigator.pop(context);
-  //             _showDeleteConfirmation(context, video);
-  //           },
-  //         ),
-  //         const SizedBox(height: 16),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // void _showVideoInfo(BuildContext context, VideoLibraryItem video) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: const Text('Video Information'),
-  //       content: Column(
-  //         crossAxisSize: MainAxisSize.min,
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Text('Title: ${video.title}'),
-  //           const SizedBox(height: 8),
-  //           Text('Duration: ${video.duration}'),
-  //           const SizedBox(height: 8),
-  //           Text('Size: ${video.fileSizeFormatted}'),
-  //           const SizedBox(height: 8),
-  //           Text('Created: ${_formatDate(video.createdAt)}'),
-  //         ],
-  //       ),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () => Navigator.pop(context),
-  //           child: const Text('Close'),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // void _showDeleteConfirmation(BuildContext context, VideoLibraryItem video) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: const Text('Delete Video'),
-  //       content: Text(
-  //           'Are you sure you want to delete "${video.title}"? This action cannot be undone.'),
-  //       actions: [
-  //         TextButton(
-  //           onPressed: () => Navigator.pop(context),
-  //           child: const Text('Cancel'),
-  //         ),
-  //         TextButton(
-  //           onPressed: () {
-  //             Navigator.pop(context);
-  //             // context
-  //             //     .read<CreateHighlightCubit>()
-  //             //     .deleteVideoFromLibrary(video.id);
-  //           },
-  //           child: const Text('Delete', style: TextStyle(color: Colors.red)),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  String _formatDuration(Duration duration) {
-    final minutes = duration.inMinutes;
-    final seconds = duration.inSeconds % 60;
-    return '$minutes:${seconds.toString().padLeft(2, '0')}';
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
+  Color _getColorFromHex(String hex) {
+    // Convert hex color string to Color
+    if (hex.startsWith('#')) {
+      hex = hex.substring(1);
+    }
+    return Color(int.parse('FF$hex', radix: 16));
   }
 }

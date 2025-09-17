@@ -1,6 +1,9 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
 import 'package:flutter_bump_app/config/service/app_service.dart';
+import 'package:flutter_bump_app/main.dart';
+import 'package:flutter_bump_app/router/app_route.dart';
 
 import 'dashboard_state.dart';
 
@@ -9,28 +12,14 @@ class DashboardCubit extends BaseCubit<DashboardState> {
 
   DashboardCubit() : super(DashboardState());
 
-  @override
-  void onInit() {
-    super.onInit();
-    // Add your initialization logic here
-  }
+  late TabsRouter tabRouter;
 
-  @override
-  void onReady() {
-    super.onReady();
-    // Add your ready logic here
-  }
-
-  // Add your business logic methods here
-  void doSomething() {
-    // Example method
-    emit(state.copyWith(isLoading: true));
-
-    // Simulate async operation
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!isClose) {
-        emit(state.copyWith(isLoading: false));
-      }
-    });
+  void onChangeTab(int tab) {
+    if (tab == 4) {
+      navigatorKey.currentContext!.pushRoute(const CreateHighlightRoute());
+      return;
+    }
+    tabRouter.setActiveIndex(tab);
+    emit(state.copyWith(currentIndex: tab));
   }
 }

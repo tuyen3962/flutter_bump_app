@@ -3,17 +3,17 @@ import 'dart:io';
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionHandler {
-  static late final _permissionTitleString = {
-    Permission.camera: 'Camera',
-    Permission.storage: 'Storage',
-    Permission.photos: 'Storage'
-  };
+  // static late final _permissionTitleString = {
+  //   Permission.camera: 'Camera',
+  //   Permission.storage: 'Storage',
+  //   Permission.photos: 'Storage'
+  // };
 
-  static late final _permissionTypeString = {
-    Permission.camera: 'camera',
-    Permission.storage: 'gallery',
-    Permission.photos: 'gallery',
-  };
+  // static late final _permissionTypeString = {
+  //   Permission.camera: 'camera',
+  //   Permission.storage: 'gallery',
+  //   Permission.photos: 'gallery',
+  // };
 
   static Future<bool> systemRequestPermission(Permission permission) async {
     try {

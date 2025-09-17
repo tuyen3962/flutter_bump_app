@@ -2,12 +2,12 @@ import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
 import 'package:flutter_bump_app/config/service/app_service.dart';
 
-import 'recent_activity_state.dart';
+import 'profile_state.dart';
 
-class RecentActivityCubit extends BaseCubit<RecentActivityState> {
+class ProfileCubit extends BaseCubit<ProfileState> {
   late final AccountService accountService = locator.get();
 
-  RecentActivityCubit() : super(RecentActivityState());
+  ProfileCubit() : super(ProfileState());
 
   @override
   void onInit() {

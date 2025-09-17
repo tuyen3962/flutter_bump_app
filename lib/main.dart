@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bump_app/base/stream/base_stream_builder.dart';
 import 'package:flutter_bump_app/config/service/app_service.dart';
@@ -30,8 +29,7 @@ Future<void> main() async {
   bootstrap(() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        SizeConfig.instance.init(
-            constraints: constraints, screenHeight: 812, screenWidth: 375);
+        SizeConfig.instance.init(constraints: constraints, screenHeight: 812, screenWidth: 375);
 
         return EasyLocalization(
           supportedLocales: supportedLocales,
@@ -90,10 +88,7 @@ class MainAppPageState extends State<MainAppPage> {
             debugShowCheckedModeBanner: false,
             theme: themeUtil.theme.getThemeData(type),
             routerConfig: appRouter.config(
-                navigatorObservers: () => [
-                      routeObserver,
-                      ...AutoRouterDelegate.defaultNavigatorObserversBuilder()
-                    ]),
+                navigatorObservers: () => [routeObserver, ...AutoRouterDelegate.defaultNavigatorObserversBuilder()]),
             builder: EasyLoading.init(
               builder: (context, child) => child!,
             ),

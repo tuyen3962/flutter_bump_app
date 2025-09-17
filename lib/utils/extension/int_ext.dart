@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter_bump_app/config/constant/app_constant.dart';
 
 extension IntExtension on int? {
   String get currency {

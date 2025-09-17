@@ -1,21 +1,21 @@
 import 'package:flutter_bump_app/base/widget/cubit/base_state.dart';
 
-class RecentActivityState extends BaseState {
+class ProfileState extends BaseState {
   final String? errorMessage;
   final dynamic data; // Replace with your specific data type
 
-  const RecentActivityState({
+  const ProfileState({
     this.errorMessage,
     this.data,
     super.isLoading = false,
   });
 
-  RecentActivityState copyWith({
+  ProfileState copyWith({
     bool? isLoading,
     String? errorMessage,
     dynamic data, // Replace with your specific data type
   }) {
-    return RecentActivityState(
+    return ProfileState(
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage ?? this.errorMessage,
       data: data ?? this.data,

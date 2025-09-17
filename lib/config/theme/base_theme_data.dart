@@ -17,6 +17,9 @@ abstract class BaseThemeData {
   Color get whiteText => Colors.white;
   Color get blackColor => Colors.black;
 
+  Color get appColor => Color(0xFF2979FF);
+  Color get transparentColor => Colors.transparent;
+
   Color alpha = const Color(0xFFFFFFFF);
   Color get alpha4 => alpha.withValues(alpha: 0.04);
   Color get alpha8 => alpha.withValues(alpha: 0.08);

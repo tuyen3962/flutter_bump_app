@@ -1,4 +1,6 @@
 // import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:developer';
+
 import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
 import 'package:flutter_bump_app/config/service/auth_service.dart';
 import 'package:flutter_bump_app/screen/signin/signin_state.dart';
@@ -15,6 +17,7 @@ class SigninCubit extends BaseCubit<SigninState> {
 
       await authService.signInWithGoogle();
     } on Exception catch (e) {
+      log('Error during Google sign-in: ${e.toString()}');
       String errorMessage = 'Đã xảy ra lỗi';
 
       // switch (e.code) {
