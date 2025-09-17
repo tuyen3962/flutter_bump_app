@@ -13,8 +13,6 @@ const String keyFirstUserApp = '_firstUseApp';
 const String keyVerificationId = '_verificationId';
 const String keyResendToken = '_resendToken';
 const String keyUID = '_uid';
-const String keyRefCode = '_refCode';
-const String keyPassword = '_password';
 
 abstract class LocalStorage {
   Future<void> cacheAccessToken(String token);
@@ -26,20 +24,16 @@ abstract class LocalStorage {
   Future<void> cacheVerificationId(String verificationId);
   Future<void> cacheResendToken(int? resendToken);
   Future<void> cacheUID(String uid);
-  Future<void> cacheRefCode(String refCode);
-  Future<void> cachePassword(String password);
 
   Future<String?> accessToken();
   Future<String?> refreshToken();
   Future<String?> userId();
 
-  Future<String> getPassword();
   List<String> get permission;
   String get languageCode;
   String get userRole;
   String get verificationId;
   int? get resendToken;
-  String get refCode;
   String get uid;
   Future<void> clear();
 }
@@ -158,21 +152,5 @@ class LocalStorageImpl extends LocalStorage {
   }
 
   @override
-  Future<void> cacheRefCode(String refCode) async {
-    await sharedPreferences.setString(keyRefCode, refCode);
-  }
-
-  @override
-  String get refCode => sharedPreferences.getString(keyRefCode) ?? '';
-
-  @override
   String get uid => sharedPreferences.getString(keyUID) ?? '';
-
-  @override
-  Future<void> cachePassword(String password) =>
-      _flutterSecureStorage.write(key: keyPassword, value: password);
-
-  @override
-  Future<String> getPassword() async =>
-      (await _flutterSecureStorage.read(key: keyPassword) ?? '');
 }

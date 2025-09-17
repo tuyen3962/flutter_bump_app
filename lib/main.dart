@@ -25,12 +25,13 @@ GlobalKey<NavigatorState> get navigatorKey => appRouter.navigatorKey;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
   await configureDependencies();
   bootstrap(() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        SizeConfig.instance.init(constraints: constraints, screenHeight: 812, screenWidth: 375);
+        SizeConfig.instance.init(
+            constraints: constraints, screenHeight: 812, screenWidth: 375);
 
         return EasyLocalization(
           supportedLocales: supportedLocales,
@@ -89,7 +90,10 @@ class MainAppPageState extends State<MainAppPage> {
             debugShowCheckedModeBanner: false,
             theme: themeUtil.theme.getThemeData(type),
             routerConfig: appRouter.config(
-                navigatorObservers: () => [routeObserver, ...AutoRouterDelegate.defaultNavigatorObserversBuilder()]),
+                navigatorObservers: () => [
+                      routeObserver,
+                      ...AutoRouterDelegate.defaultNavigatorObserversBuilder()
+                    ]),
             builder: EasyLoading.init(
               builder: (context, child) => child!,
             ),

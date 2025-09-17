@@ -7,6 +7,4 @@ part 'authentication_api.g.dart';
 @RestApi()
 abstract class AuthenticationAPI {
   factory AuthenticationAPI(Dio dio, {String? baseUrl}) = _AuthenticationAPI;
-
- 
 }

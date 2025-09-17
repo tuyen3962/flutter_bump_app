@@ -35,7 +35,11 @@ class SigninScreen extends StatefulWidget {
   State<SigninScreen> createState() => SigninScreenState();
 }
 
-class SigninScreenState extends BaseBlocNoAppBarPageState<SigninScreen, SigninState, SigninCubit> {
+class SigninScreenState
+    extends BaseBlocNoAppBarPageState<SigninScreen, SigninState, SigninCubit> {
+  @override
+  bool get isSafeArea => false;
+
   @override
   Widget buildBody(BuildContext context, SigninCubit cubit) {
     return Container(
@@ -58,7 +62,8 @@ class SigninScreenState extends BaseBlocNoAppBarPageState<SigninScreen, SigninSt
           SizedBox(height: 24.h),
           PrimaryButton(
             text: 'Sign in with Google',
-            onTap: cubit.state.isLoading ? null : () => cubit.signInWithGoogle(),
+            onTap:
+                cubit.state.isLoading ? null : () => cubit.signInWithGoogle(),
             fontSize: 16.fontSize,
             weight: FontWeight.w600,
             buttonPadding: padding(all: 16),

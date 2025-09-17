@@ -7,9 +7,5 @@ import 'package:flutter_bump_app/data/local/local_storage.dart';
 class AccountService {
   final LocalStorage storageService;
 
-  AccountService({
-    required this.storageService,
-  });
-
-  bool isLogin() => false;
+  AccountService({required this.storageService});
 }
