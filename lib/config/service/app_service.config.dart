@@ -12,6 +12,7 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
 import '../../data/local/local_storage.dart' as _i845;
+import '../../data/remote/auth/auth_ds.dart' as _i217;
 import '../../data/remote/authentication_api.dart' as _i665;
 import '../../data/repository/account/account_repository.dart' as _i710;
 import '../../data/repository/account/iaccount_repository.dart' as _i630;
@@ -58,6 +59,7 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i313.LanguageService(localStorage: gh<_i845.LocalStorage>()));
     gh.lazySingleton<_i665.AuthenticationAPI>(
         () => networkService.authenticationApiProvider(gh<_i7.DioProvider>()));
+    gh.lazySingleton<_i217.AuthDS>(() => _i217.AuthDS(gh<_i7.DioProvider>()));
     gh.factory<_i630.IAccountRepository>(() => _i710.AccountRepository());
     return this;
   }
