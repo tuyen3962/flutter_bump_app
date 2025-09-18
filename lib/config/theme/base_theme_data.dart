@@ -43,6 +43,7 @@ abstract class BaseThemeData {
   Color yellow900 = const Color(0xFFF57F17);
 
   // Extended Color Palette - Amber Series
+  Color amber50 = const Color(0xFFFFF8E1);
   Color amber100 = const Color(0xFFFFECB3);
   Color amber200 = const Color(0xFFFFE082);
   Color amber300 = const Color(0xFFFFD54F);

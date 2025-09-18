@@ -147,7 +147,7 @@ class SubscriptionScreenState
 
   Widget _buildCurrentStatus(SubscriptionState state) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      margin: padding(horizontal: 16.w),
       padding: padding(all: 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -172,10 +172,7 @@ class SubscriptionScreenState
                 style: AppStyle.bold18(),
               ),
               Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 12.w,
-                  vertical: 6.h,
-                ),
+                padding: padding(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
                   color: Color(0xFFF3E8FF),
                   borderRadius: BorderRadius.circular(16),
@@ -276,7 +273,7 @@ class SubscriptionScreenState
 
   Widget _buildBillingCycleToggle(SubscriptionState state) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      margin: padding(horizontal: 16.w),
       padding: padding(all: 4),
       decoration: BoxDecoration(
         color: appTheme.gray100,
@@ -361,7 +358,7 @@ class SubscriptionScreenState
         final isSelected = planInfo.plan == state.selectedPlan;
 
         return Container(
-          margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          margin: padding(horizontal: 16.w, vertical: 8.h),
           decoration: BoxDecoration(
             color: appTheme.alpha,
             borderRadius: BorderRadius.circular(16),
@@ -388,7 +385,7 @@ class SubscriptionScreenState
                   left: 0,
                   right: 0,
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 8.h),
+                    padding: padding(vertical: 8.h),
                     decoration: BoxDecoration(
                       color: appTheme.blue500,
                       borderRadius: const BorderRadius.vertical(
@@ -406,7 +403,7 @@ class SubscriptionScreenState
               // Plan content
               Padding(
                 padding: padding(all: 20).add(
-                  EdgeInsets.only(top: planInfo.isPopular ? 32.h : 0),
+                  padding(top: planInfo.isPopular ? 32.h : 0),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,10 +423,7 @@ class SubscriptionScreenState
                                 if (isCurrentPlan) ...[
                                   SizedBox(width: 8.w),
                                   Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 8.w,
-                                      vertical: 4.h,
-                                    ),
+                                    padding: padding(horizontal: 8.w, vertical: 4.h),
                                     decoration: BoxDecoration(
                                       color: appTheme.green100,
                                       borderRadius: BorderRadius.circular(12),
@@ -477,7 +471,7 @@ class SubscriptionScreenState
                     // Features list
                     ...planInfo.features.take(3).map((feature) {
                       return Padding(
-                        padding: EdgeInsets.only(bottom: 8.h),
+                        padding: padding(bottom: 8.h),
                         child: Row(
                           children: [
                             Icon(
@@ -561,7 +555,7 @@ class SubscriptionScreenState
     if (state.currentPlan == SubscriptionPlan.free) return SizedBox.shrink();
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      margin: padding(horizontal: 16.w),
       padding: padding(all: 20),
       decoration: BoxDecoration(
         color: appTheme.alpha,
@@ -606,64 +600,120 @@ class SubscriptionScreenState
   void _showAllFeatures(SubscriptionPlanInfo planInfo) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: appTheme.alpha,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (context) {
         return Container(
-          padding: padding(all: 24),
+          height: MediaQuery.of(context).size.height * 0.8,
+          decoration: BoxDecoration(
+            color: appTheme.alpha,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                child: Container(
-                  width: 40.w,
-                  height: 4.h,
-                  decoration: BoxDecoration(
-                    color: appTheme.gray300,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                  margin: EdgeInsets.only(bottom: 16.h),
+              // Handle and header
+              Container(
+                padding: padding(all: 24),
+                child: Column(
+                  children: [
+                    // Handle bar
+                    Container(
+                      width: 40.w,
+                      height: 4.h,
+                      decoration: BoxDecoration(
+                        color: appTheme.gray300,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+
+                    // Header with icon
+                    Row(
+                      children: [
+                        Container(
+                          width: 48.w,
+                          height: 48.h,
+                          decoration: BoxDecoration(
+                            color: appTheme.blue100,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.stars,
+                            color: appTheme.blue600,
+                            size: 24,
+                          ),
+                        ),
+                        SizedBox(width: 16.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${planInfo.name} Features',
+                                style: AppStyle.bold20(),
+                              ),
+                              Text(
+                                'Everything included in this plan',
+                                style: AppStyle.regular14(color: appTheme.gray500),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              Text(
-                '${planInfo.name} Features',
-                style: AppStyle.bold18(),
-              ),
-              SizedBox(height: 16.h),
-              Flexible(
+
+              // Features list
+              Expanded(
                 child: ListView.builder(
-                  shrinkWrap: true,
+                  padding: padding(horizontal: 24.w),
                   itemCount: planInfo.features.length,
                   itemBuilder: (context, index) {
                     final feature = planInfo.features[index];
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: 12.h),
+                    return Container(
+                      margin: padding(bottom: 16.h),
+                      padding: padding(all: 16),
+                      decoration: BoxDecoration(
+                        color: feature.isIncluded ? appTheme.green50 : appTheme.gray50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: feature.isIncluded ? appTheme.green200 : appTheme.gray200,
+                        ),
+                      ),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(
-                            feature.isIncluded ? Icons.check_circle : Icons.cancel,
-                            size: 20,
-                            color: feature.isIncluded ? appTheme.green500 : appTheme.gray300,
+                          Container(
+                            width: 40.w,
+                            height: 40.h,
+                            decoration: BoxDecoration(
+                              color: feature.isIncluded ? appTheme.green500 : appTheme.gray300,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              feature.isIncluded ? Icons.check : Icons.close,
+                              color: appTheme.alpha,
+                              size: 20,
+                            ),
                           ),
-                          SizedBox(width: 12.w),
+                          SizedBox(width: 16.w),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   feature.title,
-                                  style: AppStyle.medium14(
+                                  style: AppStyle.medium16(
                                     color: feature.isIncluded ? appTheme.gray900 : appTheme.gray400,
                                   ),
                                 ),
-                                SizedBox(height: 2.h),
+                                SizedBox(height: 4.h),
                                 Text(
                                   feature.description,
-                                  style: AppStyle.regular12(color: appTheme.gray500),
+                                  style: AppStyle.regular14(
+                                    color: feature.isIncluded ? appTheme.gray600 : appTheme.gray400,
+                                  ),
                                 ),
                               ],
                             ),
@@ -672,6 +722,29 @@ class SubscriptionScreenState
                       ),
                     );
                   },
+                ),
+              ),
+
+              // Close button
+              Container(
+                padding: padding(all: 24),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 52.h,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: appTheme.blue500,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      'Got it',
+                      style: AppStyle.medium16(color: appTheme.alpha),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -688,63 +761,147 @@ class SubscriptionScreenState
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('$actionText to ${planInfo.name}', style: AppStyle.bold18()),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'You will be charged ${planInfo.getPriceText(state.selectedBillingCycle)} and your plan will change immediately.',
-              style: AppStyle.regular16(),
-            ),
-            if (state.selectedBillingCycle == BillingCycle.yearly && state.yearlySavingsPercentage > 0) ...[
-              SizedBox(height: 8.h),
+      barrierColor: appTheme.blackColor.withSafeOpacity(0.6),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: padding(all: 24),
+          decoration: BoxDecoration(
+            color: appTheme.alpha,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Icon
+              Container(
+                width: 64.w,
+                height: 64.h,
+                decoration: BoxDecoration(
+                  color: isUpgrade ? appTheme.green100 : appTheme.blue100,
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Icon(
+                  isUpgrade ? Icons.trending_up : Icons.swap_horiz,
+                  color: isUpgrade ? appTheme.green600 : appTheme.blue600,
+                  size: 32,
+                ),
+              ),
+
+              SizedBox(height: 20.h),
+
+              // Title
               Text(
-                'Save ${state.yearlySavingsPercentage.round()}% with yearly billing!',
-                style: AppStyle.medium14(color: appTheme.green600),
+                '$actionText to ${planInfo.name}',
+                style: AppStyle.bold24(),
+                textAlign: TextAlign.center,
+              ),
+
+              SizedBox(height: 12.h),
+
+              // Price highlight
+              Container(
+                padding: padding(all: 16),
+                decoration: BoxDecoration(
+                  color: appTheme.blue50,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      planInfo.getPriceText(state.selectedBillingCycle),
+                      style: AppStyle.bold20(color: appTheme.blue600),
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      'Your plan will change immediately',
+                      style: AppStyle.regular14(color: appTheme.gray600),
+                    ),
+                  ],
+                ),
+              ),
+
+              if (state.selectedBillingCycle == BillingCycle.yearly && state.yearlySavingsPercentage > 0) ...[
+                SizedBox(height: 12.h),
+                Container(
+                  padding: padding(all: 12),
+                  decoration: BoxDecoration(
+                    color: appTheme.green50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.savings, color: appTheme.green600, size: 16),
+                      SizedBox(width: 6.w),
+                      Text(
+                        'Save ${state.yearlySavingsPercentage.round()}% with yearly billing!',
+                        style: AppStyle.medium14(color: appTheme.green600),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+
+              SizedBox(height: 24.h),
+
+              // Action buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 48.h,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: appTheme.gray300),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: AppStyle.medium16(color: appTheme.gray700),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: SizedBox(
+                      height: 48.h,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          _showProcessingDialog(actionText, planInfo);
+                          final success = await cubit.subscribeToPlan();
+                          Navigator.pop(context); // Close processing dialog
+
+                          if (success && mounted) {
+                            _showSuccessDialog('Successfully ${actionText.toLowerCase()}d to ${planInfo.name}!');
+                          } else if (!success && mounted) {
+                            _showErrorDialog('Failed to ${actionText.toLowerCase()}. Please try again.');
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: appTheme.blue500,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          actionText,
+                          style: AppStyle.medium16(color: appTheme.alpha),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
-          ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: AppStyle.medium14(color: appTheme.gray600)),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              final success = await cubit.subscribeToPlan();
-              if (success && mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Successfully ${actionText.toLowerCase()}d to ${planInfo.name}!'),
-                    backgroundColor: appTheme.green500,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    margin: EdgeInsets.all(16),
-                  ),
-                );
-              } else if (!success && mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Failed to ${actionText.toLowerCase()}. Please try again.'),
-                    backgroundColor: appTheme.red500,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    margin: EdgeInsets.all(16),
-                  ),
-                );
-              }
-            },
-            child: Text(actionText, style: AppStyle.medium14(color: appTheme.blue500)),
-          ),
-        ],
       ),
     );
   }
@@ -770,50 +927,319 @@ class SubscriptionScreenState
   void _showCancelDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Cancel Subscription', style: AppStyle.bold18()),
-        content: Text(
-          'Your subscription will remain active until the end of the current billing period. You can reactivate anytime.',
-          style: AppStyle.regular16(),
+      barrierColor: appTheme.blackColor.withSafeOpacity(0.6),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: padding(all: 24),
+          decoration: BoxDecoration(
+            color: appTheme.alpha,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Warning icon
+              Container(
+                width: 64.w,
+                height: 64.h,
+                decoration: BoxDecoration(
+                  color: appTheme.amber100,
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Icon(
+                  Icons.pause_circle_outline,
+                  color: appTheme.amber600,
+                  size: 32,
+                ),
+              ),
+
+              SizedBox(height: 20.h),
+
+              Text(
+                'Cancel Subscription?',
+                style: AppStyle.bold24(),
+                textAlign: TextAlign.center,
+              ),
+
+              SizedBox(height: 12.h),
+
+              Container(
+                padding: padding(all: 16),
+                decoration: BoxDecoration(
+                  color: appTheme.amber50,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    Icon(Icons.info_outline, color: appTheme.amber600, size: 20),
+                    SizedBox(height: 8.h),
+                    Text(
+                      'Your subscription will remain active until the end of the current billing period. You can reactivate anytime.',
+                      style: AppStyle.regular14(color: appTheme.gray700),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: 24.h),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 48.h,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: appTheme.gray300),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Keep Subscription',
+                          style: AppStyle.medium16(color: appTheme.gray700),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: SizedBox(
+                      height: 48.h,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          _showProcessingDialog('Cancelling', null);
+                          final success = await cubit.cancelSubscription();
+                          Navigator.pop(context); // Close processing dialog
+
+                          if (success && mounted) {
+                            _showSuccessDialog('Subscription cancelled successfully');
+                          } else if (!success && mounted) {
+                            _showErrorDialog('Failed to cancel subscription. Please try again.');
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: appTheme.amber500,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: AppStyle.medium16(color: appTheme.alpha),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Keep Subscription', style: AppStyle.medium14(color: appTheme.gray600)),
+      ),
+    );
+  }
+
+// New processing dialog
+  void _showProcessingDialog(String action, SubscriptionPlanInfo? planInfo) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: appTheme.blackColor.withSafeOpacity(0.8),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: padding(all: 32),
+          decoration: BoxDecoration(
+            color: appTheme.alpha,
+            borderRadius: BorderRadius.circular(24),
           ),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              final success = await cubit.cancelSubscription();
-              if (success && mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Subscription cancelled successfully'),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Animated loading indicator
+              SizedBox(
+                width: 64.w,
+                height: 64.h,
+                child: CircularProgressIndicator(
+                  strokeWidth: 4,
+                  valueColor: AlwaysStoppedAnimation<Color>(appTheme.blue500),
+                ),
+              ),
+
+              SizedBox(height: 24.h),
+
+              Text(
+                '$action${planInfo != null ? ' to ${planInfo.name}' : ''}...',
+                style: AppStyle.bold18(),
+                textAlign: TextAlign.center,
+              ),
+
+              SizedBox(height: 8.h),
+
+              Text(
+                'Please wait while we process your request',
+                style: AppStyle.regular14(color: appTheme.gray600),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+// New success dialog
+  void _showSuccessDialog(String message) {
+    showDialog(
+      context: context,
+      barrierColor: appTheme.blackColor.withSafeOpacity(0.6),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: padding(all: 24),
+          decoration: BoxDecoration(
+            color: appTheme.alpha,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Success icon with animation
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.0, end: 1.0),
+                duration: Duration(milliseconds: 600),
+                builder: (context, value, child) {
+                  return Transform.scale(
+                    scale: 0.5 + (0.5 * value),
+                    child: Container(
+                      width: 64.w,
+                      height: 64.h,
+                      decoration: BoxDecoration(
+                        color: appTheme.green500,
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                      child: Icon(
+                        Icons.check,
+                        color: appTheme.alpha,
+                        size: 32,
+                      ),
+                    ),
+                  );
+                },
+              ),
+
+              SizedBox(height: 20.h),
+
+              Text(
+                'Success!',
+                style: AppStyle.bold24(color: appTheme.green600),
+                textAlign: TextAlign.center,
+              ),
+
+              SizedBox(height: 12.h),
+
+              Text(
+                message,
+                style: AppStyle.regular16(color: appTheme.gray700),
+                textAlign: TextAlign.center,
+              ),
+
+              SizedBox(height: 24.h),
+
+              SizedBox(
+                width: double.infinity,
+                height: 48.h,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
                     backgroundColor: appTheme.green500,
-                    behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    margin: EdgeInsets.all(16),
+                    elevation: 0,
                   ),
-                );
-              } else if (!success && mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Failed to cancel subscription. Please try again.'),
-                    backgroundColor: appTheme.red500,
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    margin: EdgeInsets.all(16),
+                  child: Text(
+                    'Great!',
+                    style: AppStyle.medium16(color: appTheme.alpha),
                   ),
-                );
-              }
-            },
-            child: Text('Cancel', style: AppStyle.medium14(color: appTheme.red500)),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
+      ),
+    );
+  }
+
+// New error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      barrierColor: appTheme.blackColor.withSafeOpacity(0.6),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: padding(all: 24),
+          decoration: BoxDecoration(
+            color: appTheme.alpha,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64.w,
+                height: 64.h,
+                decoration: BoxDecoration(
+                  color: appTheme.red100,
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                child: Icon(
+                  Icons.error_outline,
+                  color: appTheme.red500,
+                  size: 32,
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Text(
+                'Something went wrong',
+                style: AppStyle.bold20(color: appTheme.red600),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 12.h),
+              Text(
+                message,
+                style: AppStyle.regular16(color: appTheme.gray700),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 24.h),
+              SizedBox(
+                width: double.infinity,
+                height: 48.h,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: appTheme.red500,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Try Again',
+                    style: AppStyle.medium16(color: appTheme.alpha),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -846,7 +1272,7 @@ class SubscriptionScreenState
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    margin: EdgeInsets.all(16),
+                    margin: padding(all: 16),
                   ),
                 );
               } else if (!success && mounted) {
@@ -858,7 +1284,7 @@ class SubscriptionScreenState
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    margin: EdgeInsets.all(16),
+                    margin: padding(all: 16),
                   ),
                 );
               }
@@ -894,7 +1320,7 @@ class SubscriptionScreenState
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
-        margin: EdgeInsets.all(16),
+        margin: padding(all: 16),
         duration: Duration(seconds: 10),
       ),
     );
@@ -913,7 +1339,7 @@ class SubscriptionScreenState
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
-          margin: EdgeInsets.all(16),
+          margin: padding(all: 16),
         ),
       );
     }
