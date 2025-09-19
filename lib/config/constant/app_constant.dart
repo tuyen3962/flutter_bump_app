@@ -6,6 +6,8 @@ const LIMIT = 20;
 
 RegExp spaceRegExp = RegExp(' +');
 
+enum PreSignUrlType { image, video, raw }
+
 enum Provider { GOOGLE, YOUTUBE, TIKTOK }
 
 enum UserGender { MALE, FEMALE, OTHER }

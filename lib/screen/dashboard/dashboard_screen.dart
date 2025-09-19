@@ -33,7 +33,11 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => DashboardScreenState();
 }
 
-class DashboardScreenState extends BaseBlocNoAppBarPageState<DashboardScreen, DashboardState, DashboardCubit> {
+class DashboardScreenState extends BaseBlocNoAppBarPageState<DashboardScreen,
+    DashboardState, DashboardCubit> {
+  @override
+  bool? get isBottomSafeArea => false;
+
   @override
   Widget buildBody(BuildContext context, DashboardCubit cubit) {
     return AutoTabsScaffold(
@@ -48,7 +52,8 @@ class DashboardScreenState extends BaseBlocNoAppBarPageState<DashboardScreen, Da
         padding: padding(all: 5),
         decoration: BoxDecoration(
           boxShadow: [
-            BoxShadow(color: Color(0x26000000), blurRadius: 24, offset: Offset(0, 3)),
+            BoxShadow(
+                color: Color(0x26000000), blurRadius: 24, offset: Offset(0, 3)),
           ],
         ),
         child: InkWell(
@@ -72,7 +77,10 @@ class DashboardScreenState extends BaseBlocNoAppBarPageState<DashboardScreen, Da
           decoration: BoxDecoration(
             color: appTheme.transparentColor,
             boxShadow: [
-              BoxShadow(color: Color(0x26000000), blurRadius: 24, offset: Offset(0, 4)),
+              BoxShadow(
+                  color: Color(0x26000000),
+                  blurRadius: 24,
+                  offset: Offset(0, 4)),
             ],
           ),
           child: AnimatedBottomNavigationBar.builder(
@@ -82,19 +90,27 @@ class DashboardScreenState extends BaseBlocNoAppBarPageState<DashboardScreen, Da
               String label;
               switch (index) {
                 case 0:
-                  icon = cubit.state.currentIndex == 0 ? Icon(Icons.home_filled) : Icon(Icons.home_outlined);
+                  icon = cubit.state.currentIndex == 0
+                      ? Icon(Icons.home_filled)
+                      : Icon(Icons.home_outlined);
                   label = 'Home';
                   break;
                 case 1:
-                  icon = cubit.state.currentIndex == 1 ? Icon(Icons.star) : Icon(Icons.star_border);
+                  icon = cubit.state.currentIndex == 1
+                      ? Icon(Icons.star)
+                      : Icon(Icons.star_border);
                   label = 'Highlights';
                   break;
                 case 2:
-                  icon = cubit.state.currentIndex == 2 ? Icon(Icons.local_post_office) : Icon(Icons.mail_outline);
+                  icon = cubit.state.currentIndex == 2
+                      ? Icon(Icons.local_post_office)
+                      : Icon(Icons.mail_outline);
                   label = 'Activity';
                   break;
                 case 3:
-                  icon = cubit.state.currentIndex == 3 ? Icon(Icons.person) : Icon(Icons.person_outline);
+                  icon = cubit.state.currentIndex == 3
+                      ? Icon(Icons.person)
+                      : Icon(Icons.person_outline);
                   label = 'Profile';
                   break;
                 default:
@@ -118,7 +134,8 @@ class DashboardScreenState extends BaseBlocNoAppBarPageState<DashboardScreen, Da
     );
   }
 
-  Widget _buildNavItem({required Widget icon, required String label, required bool isActive}) {
+  Widget _buildNavItem(
+      {required Widget icon, required String label, required bool isActive}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -127,7 +144,9 @@ class DashboardScreenState extends BaseBlocNoAppBarPageState<DashboardScreen, Da
         SizedBox(height: 6.h),
         Text(
           label,
-          style: isActive ? AppStyle.medium10(color: appTheme.appColor) : AppStyle.regular10(color: appTheme.gray600),
+          style: isActive
+              ? AppStyle.medium10(color: appTheme.appColor)
+              : AppStyle.regular10(color: appTheme.gray600),
         ),
       ],
     );

@@ -12,7 +12,8 @@ abstract class VideoApi {
   factory VideoApi(Dio dio, {String? baseUrl}) = _VideoApi;
 
   @GET('/api/videos')
-  Future<ListVideosResponse> getVideos(@Queries() Map<String, dynamic> queries);
+  Future<PaginatedResponse<Video>> getVideos(
+      @Queries() Map<String, dynamic> queries);
 
   @POST('/api/videos/status')
   Future<BaseResponse<Video>> updateVideoStatus(
@@ -23,6 +24,6 @@ abstract class VideoApi {
       @Query('batchId') String batchId);
 
   @POST('/api/videos/batch')
-  Future<BaseResponse<List<Video>>> createVideoBatch(
+  Future<BaseResponse<Video>> createVideoBatch(
       @Body() Map<String, dynamic> request);
 }

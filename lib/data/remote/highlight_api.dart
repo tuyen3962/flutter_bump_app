@@ -11,7 +11,7 @@ abstract class HighlightApi {
   factory HighlightApi(Dio dio, {String? baseUrl}) = _HighlightApi;
 
   @GET('/api/highlights')
-  Future<ListHighlightsResponse> getHighlights(
+  Future<PaginatedResponse<Highlight>> getHighlights(
       @Queries() Map<String, dynamic> queries);
 
   @POST('/api/highlights')

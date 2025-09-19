@@ -33,7 +33,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => HomeScreenState();
 }
 
-class HomeScreenState extends BaseBlocNoAppBarPageState<HomeScreen, HomeState, HomeCubit> {
+class HomeScreenState
+    extends BaseBlocNoAppBarPageState<HomeScreen, HomeState, HomeCubit> {
   @override
   String get title => 'Home';
 

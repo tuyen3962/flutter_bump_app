@@ -7,4 +7,3 @@ export 'highlight_api.dart';
 
 // Legacy API (keeping for backward compatibility)
 export 'authentication_api.dart';
-export 'auth/auth_ds.dart';

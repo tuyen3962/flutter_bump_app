@@ -44,23 +44,6 @@ class Highlight {
 }
 
 @JsonSerializable()
-class ListHighlightsResponse {
-  final List<Highlight> data;
-  @JsonKey(name: 'paginate')
-  final PaginationMeta pagination;
-
-  ListHighlightsResponse({
-    required this.data,
-    required this.pagination,
-  });
-
-  factory ListHighlightsResponse.fromJson(Map<String, dynamic> json) =>
-      _$ListHighlightsResponseFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ListHighlightsResponseToJson(this);
-}
-
-@JsonSerializable()
 class HighlightAnalytics {
   final String highlightId;
   final int totalViews;

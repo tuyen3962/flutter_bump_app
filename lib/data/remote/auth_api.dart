@@ -7,7 +7,6 @@ import 'package:flutter_bump_app/data/remote/request/auth/change_password_reques
 import 'package:flutter_bump_app/data/remote/request/auth/google_web_login_request.dart';
 import 'package:flutter_bump_app/data/remote/request/auth/google_mobile_login_request.dart';
 import 'package:flutter_bump_app/data/remote/request/auth/refresh_token_request.dart';
-import 'package:flutter_bump_app/data/remote/response/auth/login_response.dart';
 import 'package:flutter_bump_app/data/remote/response/auth/google_callback_response.dart';
 import 'package:flutter_bump_app/data/remote/response/base_response.dart';
 
@@ -18,7 +17,7 @@ abstract class AuthApi {
   factory AuthApi(Dio dio, {String? baseUrl}) = _AuthApi;
 
   @POST('/api/auth/login')
-  Future<LoginResponse> login(@Body() LoginRequest request);
+  Future<BaseResponse> login(@Body() LoginRequest request);
 
   @POST('/api/auth/register')
   Future<BaseResponse<dynamic>> register(@Body() RegisterRequest request);
@@ -41,7 +40,7 @@ abstract class AuthApi {
   Future<BaseResponse<dynamic>> getProfile();
 
   @PUT('/api/auth/profile')
-  Future<BaseResponse<dynamic>> updateProfile(
+  Future<BaseResponse<BaseResponse>> updateProfile(
       @Body() Map<String, dynamic> request);
 
   @POST('/api/auth/google/web')

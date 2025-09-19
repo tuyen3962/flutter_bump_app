@@ -6,7 +6,7 @@ part 'update_video_status_request.g.dart';
 @JsonSerializable()
 class UpdateVideoStatusRequest {
   final String videoId;
-  final UploadStatus uploadStatus;
+  final UploadStatus? uploadStatus;
   final String? fileUrl;
   final String? thumbnail;
   final double? duration;
@@ -15,7 +15,7 @@ class UpdateVideoStatusRequest {
 
   UpdateVideoStatusRequest({
     required this.videoId,
-    required this.uploadStatus,
+    this.uploadStatus,
     this.fileUrl,
     this.thumbnail,
     this.duration,
@@ -26,5 +26,9 @@ class UpdateVideoStatusRequest {
   factory UpdateVideoStatusRequest.fromJson(Map<String, dynamic> json) =>
       _$UpdateVideoStatusRequestFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UpdateVideoStatusRequestToJson(this);
+  Map<String, dynamic> toJson() {
+    final json = _$UpdateVideoStatusRequestToJson(this);
+    json.removeWhere((key, value) => value == null || value == '');
+    return json;
+  }
 }

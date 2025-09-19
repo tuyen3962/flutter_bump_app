@@ -2,7 +2,6 @@
 export 'base_response.dart';
 
 // Auth responses
-export 'auth/login_response.dart';
 export 'auth/google_callback_response.dart';
 
 // User responses

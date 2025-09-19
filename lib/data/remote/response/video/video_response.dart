@@ -73,20 +73,3 @@ class Video {
 
   Map<String, dynamic> toJson() => _$VideoToJson(this);
 }
-
-@JsonSerializable()
-class ListVideosResponse {
-  final List<Video> data;
-  @JsonKey(name: 'paginate')
-  final PaginationMeta pagination;
-
-  ListVideosResponse({
-    required this.data,
-    required this.pagination,
-  });
-
-  factory ListVideosResponse.fromJson(Map<String, dynamic> json) =>
-      _$ListVideosResponseFromJson(json);
-
-  Map<String, dynamic> toJson() => _$ListVideosResponseToJson(this);
-}
