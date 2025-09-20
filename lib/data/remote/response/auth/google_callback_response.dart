@@ -1,45 +1,41 @@
+import 'package:flutter_bump_app/data/model/user.dart';
+import 'package:flutter_bump_app/data/remote/response/base_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'google_callback_response.g.dart';
 
 @JsonSerializable()
-class GoogleCallbackUser {
-  final String id;
-  final String email;
-  final String? name;
-  final String? gender;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-
-  GoogleCallbackUser({
-    required this.id,
-    required this.email,
-    this.name,
-    this.gender,
-    required this.createdAt,
-    required this.updatedAt,
-  });
-
-  factory GoogleCallbackUser.fromJson(Map<String, dynamic> json) =>
-      _$GoogleCallbackUserFromJson(json);
-
-  Map<String, dynamic> toJson() => _$GoogleCallbackUserToJson(this);
-}
-
-@JsonSerializable()
-class GoogleCallbackResponse {
-  final String accessToken;
-  final String refreshToken;
-  final GoogleCallbackUser user;
+class GoogleCallbackResponse extends BaseResponse {
+  final GoogleCallbackToken? tokens;
+  final User? user;
 
   GoogleCallbackResponse({
-    required this.accessToken,
-    required this.refreshToken,
-    required this.user,
+    this.tokens,
+    this.user,
   });
 
   factory GoogleCallbackResponse.fromJson(Map<String, dynamic> json) =>
       _$GoogleCallbackResponseFromJson(json);
 
-  Map<String, dynamic> toJson() => _$GoogleCallbackResponseToJson(this);
+  // Map<String, dynamic> toJson() => _$GoogleCallbackResponseToJson(this);
+}
+
+@JsonSerializable()
+class GoogleCallbackToken {
+  final String accessToken;
+  final String refreshToken;
+  final int expiresIn;
+  final String tokenType;
+
+  GoogleCallbackToken({
+    required this.accessToken,
+    required this.refreshToken,
+    required this.expiresIn,
+    required this.tokenType,
+  });
+
+  factory GoogleCallbackToken.fromJson(Map<String, dynamic> json) =>
+      _$GoogleCallbackTokenFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GoogleCallbackTokenToJson(this);
 }

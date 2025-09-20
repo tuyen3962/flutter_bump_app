@@ -2,14 +2,21 @@ import 'dart:async';
 
 import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
-import 'package:flutter_bump_app/config/service/app_service.dart';
+import 'package:flutter_bump_app/data/local/local_storage.dart';
+import 'package:flutter_bump_app/data/repository/account/iaccount_repository.dart';
 
 import 'splash_state.dart';
 
 class SplashCubit extends BaseCubit<SplashState> {
-  late final AccountService accountService = locator.get();
+  final AccountService accountService;
+  final LocalStorage localStorage;
+  final IAccountRepository accountRepository;
 
-  SplashCubit() : super(const SplashState());
+  SplashCubit(
+      {required this.accountService,
+      required this.localStorage,
+      required this.accountRepository})
+      : super(const SplashState());
 
   void initializeSplash() {
     _startSplashSequence();
@@ -49,8 +56,6 @@ class SplashCubit extends BaseCubit<SplashState> {
         status: SplashStatus.navigating,
         loadingText: 'Launching app...',
       ));
-
-      await Future.delayed(const Duration(milliseconds: 300));
     } catch (e) {
       emit(state.copyWith(
         status: SplashStatus.error,
@@ -81,13 +86,17 @@ class SplashCubit extends BaseCubit<SplashState> {
   Future<bool> _checkAuthentication() async {
     try {
       // Simulate auth check - in real app, check stored tokens
-      await Future.delayed(const Duration(milliseconds: 800));
-
-      // Mock logic: return true if user has valid session
-      // In real app: return await accountService.isLoggedIn();
-
-      // For demo, randomly return true/false or check stored preferences
-      return true; // Change this to false to test onboarding flow
+      // await Future.delayed(const Duration(milliseconds: 800));
+      final token = await localStorage.accessToken();
+      if (token != null) {
+        final user = await accountRepository.getUserProfile();
+        if (user == null) {
+          return false;
+        }
+        accountService.setAccount(user);
+        return true;
+      }
+      return false;
     } catch (e) {
       return false;
     }

@@ -13,6 +13,7 @@ const String keyFirstUserApp = '_firstUseApp';
 const String keyVerificationId = '_verificationId';
 const String keyResendToken = '_resendToken';
 const String keyUID = '_uid';
+const String keyTokenType = '_tokenType';
 
 abstract class LocalStorage {
   Future<void> cacheAccessToken(String token);
@@ -36,6 +37,14 @@ abstract class LocalStorage {
   int? get resendToken;
   String get uid;
   Future<void> clear();
+
+  Future<void> saveValue<T>(T value, String key);
+  T getValue<T>(String key, {T? defaultValue});
+  int getValueInt(String key, {int? defaultValue});
+  String getValueString(String key, {String defaultValue = ''});
+  List<String> getValueListString(String key,
+      {List<String> defaultValue = const []});
+  bool getValueBool(String key, {bool defaultValue = false});
 }
 
 @Singleton(as: LocalStorage)
@@ -153,4 +162,56 @@ class LocalStorageImpl extends LocalStorage {
 
   @override
   String get uid => sharedPreferences.getString(keyUID) ?? '';
+
+  @override
+  T getValue<T>(String key, {T? defaultValue}) {
+    if (T as bool) {
+      return getValueBool(key, defaultValue: defaultValue as bool) as T;
+    } else if (T is int) {
+      return getValueInt(key, defaultValue: defaultValue as int) as T;
+    } else if (T is String) {
+      return getValueString(key, defaultValue: defaultValue as String) as T;
+    } else if (T is List<String>) {
+      return getValueListString(key, defaultValue: defaultValue as List<String>)
+          as T;
+    } else {
+      return defaultValue as T;
+    }
+  }
+
+  @override
+  Future<void> saveValue<T>(T value, String key) {
+    if (value is bool) {
+      return sharedPreferences.setBool(key, value);
+    } else if (value is int) {
+      return sharedPreferences.setInt(key, value);
+    } else if (value is String) {
+      return sharedPreferences.setString(key, value);
+    } else if (value is List<String>) {
+      return sharedPreferences.setStringList(key, value);
+    } else {
+      // throw Exception('Type not support');
+      return Future.value();
+    }
+  }
+
+  @override
+  bool getValueBool(String key, {bool defaultValue = false}) =>
+      sharedPreferences.getBool(key) ?? defaultValue;
+
+  @override
+  int getValueInt(String key, {int? defaultValue}) {
+    return sharedPreferences.getInt(key) ?? defaultValue ?? 0;
+  }
+
+  @override
+  List<String> getValueListString(String key,
+      {List<String> defaultValue = const []}) {
+    return sharedPreferences.getStringList(key) ?? defaultValue;
+  }
+
+  @override
+  String getValueString(String key, {String defaultValue = ''}) {
+    return sharedPreferences.getString(key) ?? defaultValue;
+  }
 }

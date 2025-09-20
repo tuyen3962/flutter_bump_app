@@ -10,6 +10,7 @@ import 'package:flutter_bump_app/config/theme/app_theme_util.dart';
 import 'package:flutter_bump_app/config/theme/base_theme_data.dart';
 import 'package:flutter_bump_app/router/app_route.dart';
 import 'package:flutter_bump_app/utils/reponsive/size_config.dart';
+import 'package:flutter_config/flutter_config.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'bootstrap.dart';
@@ -24,12 +25,14 @@ GlobalKey<NavigatorState> get navigatorKey => appRouter.navigatorKey;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterConfig.loadEnvVariables();
   // await Firebase.initializeApp();
   await configureDependencies();
   bootstrap(() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        SizeConfig.instance.init(constraints: constraints, screenHeight: 812, screenWidth: 375);
+        SizeConfig.instance.init(
+            constraints: constraints, screenHeight: 812, screenWidth: 375);
 
         return EasyLocalization(
           supportedLocales: supportedLocales,
@@ -88,7 +91,10 @@ class MainAppPageState extends State<MainAppPage> {
             debugShowCheckedModeBanner: false,
             theme: themeUtil.theme.getThemeData(type),
             routerConfig: appRouter.config(
-                navigatorObservers: () => [routeObserver, ...AutoRouterDelegate.defaultNavigatorObserversBuilder()]),
+                navigatorObservers: () => [
+                      routeObserver,
+                      ...AutoRouterDelegate.defaultNavigatorObserversBuilder()
+                    ]),
             builder: EasyLoading.init(
               builder: (context, child) => child!,
             ),

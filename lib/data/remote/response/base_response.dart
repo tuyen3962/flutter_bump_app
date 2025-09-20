@@ -6,7 +6,7 @@ part 'base_response.g.dart';
 @JsonSerializable(genericArgumentFactories: true)
 class BaseResponse<T> {
   final bool? success;
-  final String? message;
+  final dynamic message;
   final T? data;
   final String? deviceId;
 

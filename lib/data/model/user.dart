@@ -1,3 +1,4 @@
+import 'package:flutter_bump_app/config/constant/app_constant.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user.g.dart';
@@ -7,21 +8,20 @@ class User {
   String? id;
   String? email;
   String? name;
-  String? gender;
+  UserGender? gender;
   String? avatar;
   String? bio;
-  String? createdAt;
-  String? updatedAt;
+  bool? emailVerified;
 
-  User(
-      {this.id,
-      this.email,
-      this.name,
-      this.gender,
-      this.avatar,
-      this.bio,
-      this.createdAt,
-      this.updatedAt});
+  User({
+    this.id,
+    this.email,
+    this.name,
+    this.gender,
+    this.avatar,
+    this.bio,
+    this.emailVerified,
+  });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 

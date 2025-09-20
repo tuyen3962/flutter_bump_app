@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bump_app/base/widget/base_page.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_bloc_provider.dart';
+import 'package:flutter_bump_app/config/service/app_service.dart';
 import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
 import 'package:flutter_bump_app/extension.dart';
 import 'package:flutter_bump_app/main.dart';
@@ -22,7 +23,11 @@ class SplashPage extends BaseBlocProvider<SplashState, SplashCubit> {
 
   @override
   SplashCubit createCubit() {
-    return SplashCubit();
+    return SplashCubit(
+      accountService: locator.get(),
+      localStorage: locator.get(),
+      accountRepository: locator.get(),
+    );
   }
 }
 
@@ -33,7 +38,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => SplashScreenState();
 }
 
-class SplashScreenState extends BaseBlocNoAppBarPageState<SplashScreen, SplashState, SplashCubit> {
+class SplashScreenState
+    extends BaseBlocNoAppBarPageState<SplashScreen, SplashState, SplashCubit> {
   @override
   void initState() {
     super.initState();
@@ -46,14 +52,23 @@ class SplashScreenState extends BaseBlocNoAppBarPageState<SplashScreen, SplashSt
   String get title => 'Splash';
 
   @override
+  bool get isSafeArea => false;
+
+  @override
   Widget buildBody(BuildContext context, SplashCubit cubit) {
     return BlocListener<SplashCubit, SplashState>(
       listener: (context, state) {
         if (state.isNavigating) {
-          // if (state.isLoggedIn) {
+          if (cubit.accountService.isLoggedIn) {
             context.replaceRoute(const DashboardRoute());
+          } else {
+            context.replaceRoute(const SigninRoute());
+          }
+          // context.replaceRoute(const SigninRoute());
+          // if (state.isLoggedIn) {
+          // context.replaceRoute(const DashboardRoute());
           // } else {
-            // context.router.pushAndClearStack('/onboarding');
+          // context.router.pushAndClearStack('/onboarding');
           // }
         }
       },
@@ -103,7 +118,8 @@ class SplashScreenState extends BaseBlocNoAppBarPageState<SplashScreen, SplashSt
                           // App Tagline
                           Text(
                             'AI-Powered Video Highlights',
-                            style: AppStyle.regular16(color: appTheme.alpha.withOpacity(0.8)),
+                            style: AppStyle.regular16(
+                                color: appTheme.alpha.withOpacity(0.8)),
                             textAlign: TextAlign.center,
                           ),
 

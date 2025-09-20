@@ -1,14 +1,13 @@
 import 'package:dio/dio.dart';
-import 'package:retrofit/http.dart';
-import 'package:retrofit/retrofit.dart';
-import 'package:flutter_bump_app/data/remote/request/auth/login_request.dart';
-import 'package:flutter_bump_app/data/remote/request/auth/register_request.dart';
 import 'package:flutter_bump_app/data/remote/request/auth/change_password_request.dart';
-import 'package:flutter_bump_app/data/remote/request/auth/google_web_login_request.dart';
 import 'package:flutter_bump_app/data/remote/request/auth/google_mobile_login_request.dart';
+import 'package:flutter_bump_app/data/remote/request/auth/login_request.dart';
 import 'package:flutter_bump_app/data/remote/request/auth/refresh_token_request.dart';
+import 'package:flutter_bump_app/data/remote/request/auth/register_request.dart';
 import 'package:flutter_bump_app/data/remote/response/auth/google_callback_response.dart';
 import 'package:flutter_bump_app/data/remote/response/base_response.dart';
+import 'package:retrofit/http.dart';
+import 'package:retrofit/retrofit.dart';
 
 part 'auth_api.g.dart';
 
@@ -42,10 +41,6 @@ abstract class AuthApi {
   @PUT('/api/auth/profile')
   Future<BaseResponse<BaseResponse>> updateProfile(
       @Body() Map<String, dynamic> request);
-
-  @POST('/api/auth/google/web')
-  Future<GoogleCallbackResponse> googleWebLogin(
-      @Body() GoogleWebLoginRequest request);
 
   @POST('/api/auth/google/mobile')
   Future<GoogleCallbackResponse> googleMobileLogin(

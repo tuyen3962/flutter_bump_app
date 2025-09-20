@@ -29,7 +29,6 @@ dependencies:
   flutter_easyloading: ^3.0.5
   device_info_plus: ^9.0.2
   jiffy: ^6.2.1
-  flutter_dotenv: ^5.1.0
   image_picker: ^1.0.5
   url_launcher: ^6.1.14
   loadmore: ^2.1.0
@@ -46,8 +45,7 @@ dependencies:
   # firebase_auth: ^5.2.0
   google_sign_in: ^7.1.1
   animated_bottom_navigation_bar: ^1.4.0
-  # hive: ^4.0.0
-  # isar_flutter_libs: ^4.0.0-dev.13
+  flutter_config: ^2.0.2
 
 dev_dependencies:
   flutter_test:

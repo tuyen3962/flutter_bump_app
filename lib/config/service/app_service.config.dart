@@ -12,11 +12,18 @@ import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
 import '../../data/local/local_storage.dart' as _i845;
+import '../../data/remote/auth_api.dart' as _i227;
 import '../../data/remote/authentication_api.dart' as _i665;
 import '../../data/remote/highlight_api.dart' as _i217;
+import '../../data/remote/remote_service.dart' as _i960;
 import '../../data/remote/upload_ds.dart' as _i818;
+import '../../data/remote/user_api.dart' as _i925;
+import '../../data/remote/video_api.dart' as _i765;
+import '../../data/remote/youtube_api.dart' as _i334;
 import '../../data/repository/account/account_repository.dart' as _i710;
 import '../../data/repository/account/iaccount_repository.dart' as _i630;
+import '../../data/repository/auth/auth_repository.dart' as _i214;
+import '../../data/repository/auth/iauth_repository.dart' as _i649;
 import '../../data/repository/highlight/hightlight_repository.dart' as _i631;
 import '../../data/repository/highlight/ihightlight_repository.dart' as _i913;
 import '../../data/repository/upload/iupload_repository.dart' as _i134;
@@ -42,14 +49,7 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final networkService = _$NetworkService();
-    await gh.singletonAsync<_i184.AuthService>(
-      () {
-        final i = _i184.AuthService();
-        return i.init().then((_) => i);
-      },
-      preResolve: true,
-      dispose: (i) => i.dispose(),
-    );
+    final remoteService = _$RemoteService();
     gh.lazySingleton<_i7.DioProvider>(() => _i7.DioProvider());
     await gh.singletonAsync<_i845.LocalStorage>(
       () {
@@ -66,17 +66,45 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i655.UploadRepository(gh<_i818.UploadDS>())..init());
     gh.lazySingleton<_i665.AuthenticationAPI>(
         () => networkService.authenticationApiProvider(gh<_i7.DioProvider>()));
-    gh.factory<_i630.IAccountRepository>(() => _i710.AccountRepository());
+    gh.lazySingleton<_i227.AuthApi>(
+        () => remoteService.authApi(gh<_i7.DioProvider>()));
+    gh.lazySingleton<_i925.UserApi>(
+        () => remoteService.userApi(gh<_i7.DioProvider>()));
+    gh.lazySingleton<_i765.VideoApi>(
+        () => remoteService.videoApi(gh<_i7.DioProvider>()));
+    gh.lazySingleton<_i334.YouTubeApi>(
+        () => remoteService.youTubeApi(gh<_i7.DioProvider>()));
+    gh.lazySingleton<_i217.HighlightApi>(
+        () => remoteService.highlightApi(gh<_i7.DioProvider>()));
+    gh.factory<_i649.IAuthRepository>(() => _i214.AuthRepository(
+          gh<_i227.AuthApi>(),
+          gh<_i845.LocalStorage>(),
+        ));
     gh.factory<_i913.IHighlightRepository>(
         () => _i631.HighlightRepository(gh<_i217.HighlightApi>()));
     gh.lazySingleton<_i640.UploadVideoUseCase>(() => _i640.UploadVideoUseCase(
           gh<_i71.IVideoRepository>(),
           gh<_i134.IUploadRepository>(),
         ));
+    await gh.singletonAsync<_i184.AuthService>(
+      () {
+        final i = _i184.AuthService(
+          authRepository: gh<_i649.IAuthRepository>(),
+          accountService: gh<_i997.AccountService>(),
+        );
+        return i.init().then((_) => i);
+      },
+      preResolve: true,
+      dispose: (i) => i.dispose(),
+    );
     gh.lazySingleton<_i938.UploadUseCaseMixin>(
         () => _i938.UploadUseCaseMixin(gh<_i134.IUploadRepository>()));
+    gh.factory<_i630.IAccountRepository>(
+        () => _i710.AccountRepository(gh<_i925.UserApi>()));
     return this;
   }
 }
 
 class _$NetworkService extends _i39.NetworkService {}
+
+class _$RemoteService extends _i960.RemoteService {}

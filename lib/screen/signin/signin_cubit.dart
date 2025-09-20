@@ -1,6 +1,4 @@
 // import 'package:firebase_auth/firebase_auth.dart';
-import 'dart:developer';
-
 import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
 import 'package:flutter_bump_app/config/service/auth_service.dart';
 import 'package:flutter_bump_app/screen/signin/signin_state.dart';
@@ -15,43 +13,45 @@ class SigninCubit extends BaseCubit<SigninState> {
     try {
       emit(state.copyWith(isLoading: true, errorMessage: null));
 
-      await authService.signInWithGoogle();
-    } on Exception catch (e) {
-      log('Error during Google sign-in: ${e.toString()}');
-      String errorMessage = 'Đã xảy ra lỗi';
+      final result = await authService.signInWithGoogle();
+      if (result) {
+        emit(state.copyWith(
+            isLoading: false, errorMessage: null, isSuccess: true));
+      } else {
+        emit(state.copyWith(isLoading: false, errorMessage: 'Đã xảy ra lỗi'));
+      }
+    }
+    //  on Exception catch (e) {
+    // log('Error during Google sign-in: ${e.toString()}');
+    // String errorMessage = 'Đã xảy ra lỗi';
 
-      // switch (e.code) {
-      //   case 'account-exists-with-different-credential':
-      //     errorMessage = 'Tài khoản đã tồn tại với thông tin đăng nhập khác';
-      //     break;
-      //   case 'invalid-credential':
-      //     errorMessage = 'Thông tin đăng nhập không hợp lệ';
-      //     break;
-      //   case 'operation-not-allowed':
-      //     errorMessage = 'Phương thức đăng nhập chưa được kích hoạt';
-      //     break;
-      //   case 'user-disabled':
-      //     errorMessage = 'Tài khoản đã bị vô hiệu hóa';
-      //     break;
-      //   case 'user-not-found':
-      //     errorMessage = 'Không tìm thấy tài khoản';
-      //     break;
-      //   case 'wrong-password':
-      //     errorMessage = 'Mật khẩu không đúng';
-      //     break;
-      //   default:
-      //     errorMessage = e.message ?? 'Đã xảy ra lỗi không xác định';
-      // }
+    // switch (e.code) {
+    //   case 'account-exists-with-different-credential':
+    //     errorMessage = 'Tài khoản đã tồn tại với thông tin đăng nhập khác';
+    //     break;
+    //   case 'invalid-credential':
+    //     errorMessage = 'Thông tin đăng nhập không hợp lệ';
+    //     break;
+    //   case 'operation-not-allowed':
+    //     errorMessage = 'Phương thức đăng nhập chưa được kích hoạt';
+    //     break;
+    //   case 'user-disabled':
+    //     errorMessage = 'Tài khoản đã bị vô hiệu hóa';
+    //     break;
+    //   case 'user-not-found':
+    //     errorMessage = 'Không tìm thấy tài khoản';
+    //     break;
+    //   case 'wrong-password':
+    //     errorMessage = 'Mật khẩu không đúng';
+    //     break;
+    //   default:
+    //     errorMessage = e.message ?? 'Đã xảy ra lỗi không xác định';
+    // }
 
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: errorMessage,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Đã xảy ra lỗi: ${e.toString()}',
-      ));
+    // emit(state.copyWith(isLoading: false));
+    // }
+    catch (e) {
+      emit(state.copyWith(isLoading: false));
     }
     dismissLoading();
   }

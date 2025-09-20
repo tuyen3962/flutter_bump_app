@@ -1,0 +1,60 @@
+{
+  "git.ignoreLimitWarning": true,
+  // "dart.flutterSdkPath": ".fvm/flutter_sdk",
+  // Remove .fvm files from search
+  "search.exclude": {
+    "**/.fvm": true
+  },
+  // Remove from file watching
+  "files.watcherExclude": {
+    "**/.fvm": true
+  },
+  "dart.lineLength": 80,
+  "[dart]": {
+    "editor.defaultFormatter": "Dart-Code.dart-code",
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [
+      80
+    ],
+    "editor.selectionHighlight": true,
+    // "editor.suggest.snippetsPreventQuickSuggestions": true,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "matchingDocuments"
+  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.addMissingImports": "explicit",
+    "source.organizeImports": "explicit",
+    "source.fixAll.eslint": "explicit"
+  },
+  "editor.tabCompletion": "on",
+  "diffEditor.codeLens": true,
+  "cSpell.words": [
+    "anouncement",
+    "authen",
+    "Cupertino",
+    "Ecommerce",
+    "Favourited",
+    "geocode",
+    "iapp",
+    "iauthentication",
+    "ichat",
+    "ievent",
+    "iglobal",
+    "ilocal",
+    "imap",
+    "iotp",
+    "isearch",
+    "mapbox",
+    "reponsive",
+    "Skeletonizer",
+    "Unfished",
+    "unmatch",
+    "Unsync",
+    "upsert",
+    "usecase",
+    "vnconnections"
+  ]
+}

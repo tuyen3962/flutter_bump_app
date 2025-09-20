@@ -2,24 +2,24 @@
 import 'package:flutter_bump_app/base/widget/cubit/base_state.dart';
 
 class SigninState extends BaseState {
-  // final User? user;
   final String? errorMessage;
+  final bool? isSuccess;
 
   const SigninState({
-    // this.user,
     this.errorMessage,
     super.isLoading = false,
+    this.isSuccess = false,
   });
 
   SigninState copyWith({
     bool? isLoading,
-    // User? user,
     String? errorMessage,
+    bool? isSuccess,
   }) {
     return SigninState(
       isLoading: isLoading ?? this.isLoading,
-      // user: user ?? this.user,
       errorMessage: errorMessage ?? this.errorMessage,
+      isSuccess: isSuccess ?? this.isSuccess,
     );
   }
 }

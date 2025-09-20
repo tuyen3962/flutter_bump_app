@@ -24,6 +24,14 @@ if (flutterVersionName == null) {
 
 apply plugin: 'com.google.gms.google-services'
 
+project.ext.envConfigFiles = [
+        staging: ".env.staging",
+        production: ".env.production",
+        anothercustombuild: ".env.staging"
+]
+
+apply from: project(':flutter_config').projectDir.getPath() + "/dotenv.gradle"
+
 android {
     namespace "com.admin.bump_app"
     compileSdk flutter.compileSdkVersion
