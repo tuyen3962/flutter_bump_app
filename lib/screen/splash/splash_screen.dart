@@ -62,7 +62,7 @@ class SplashScreenState
           if (cubit.accountService.isLoggedIn) {
             context.replaceRoute(const DashboardRoute());
           } else {
-            context.replaceRoute(const SigninRoute());
+            context.replaceRoute(const SignInRoute());
           }
           // context.replaceRoute(const SigninRoute());
           // if (state.isLoggedIn) {

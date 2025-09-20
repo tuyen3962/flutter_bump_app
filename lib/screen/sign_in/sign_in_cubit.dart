@@ -1,13 +1,13 @@
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
 import 'package:flutter_bump_app/config/service/auth_service.dart';
-import 'package:flutter_bump_app/screen/signin/signin_state.dart';
+import 'package:flutter_bump_app/screen/sign_in/sign_in_state.dart';
 import 'package:flutter_bump_app/utils/loading.dart';
 
-class SigninCubit extends BaseCubit<SigninState> {
+class SignInCubit extends BaseCubit<SignInState> {
   final AuthService authService;
 
-  SigninCubit({required this.authService}) : super(SigninState());
+  SignInCubit({required this.authService}) : super(SignInState());
 
   Future<void> signInWithGoogle() async {
     try {

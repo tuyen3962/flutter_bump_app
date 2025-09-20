@@ -8,7 +8,7 @@ import 'package:flutter_bump_app/screen/highlights/highlights_screen.dart';
 import 'package:flutter_bump_app/screen/home/home_screen.dart';
 import 'package:flutter_bump_app/screen/profile/profile_screen.dart';
 import 'package:flutter_bump_app/screen/settings/settings_screen.dart';
-import 'package:flutter_bump_app/screen/signin/signin_screen.dart';
+import 'package:flutter_bump_app/screen/sign_in/sign_in_screen.dart';
 import 'package:flutter_bump_app/screen/splash/splash_screen.dart';
 import 'package:flutter_bump_app/screen/subscription/subscription_screen.dart';
 import 'package:flutter_bump_app/screen/update_profile/update_profile_screen.dart';
@@ -23,7 +23,7 @@ class AppRouter extends _$AppRouter {
   @override
   List<AutoRoute> get routes => [
         AutoRoute(page: SplashRoute.page, initial: true),
-        AutoRoute(page: SigninRoute.page),
+        AutoRoute(page: SignInRoute.page),
         AutoRoute(
           page: DashboardRoute.page,
           children: [

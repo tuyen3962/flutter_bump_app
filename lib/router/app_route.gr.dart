@@ -63,10 +63,10 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const SettingsPage(),
       );
     },
-    SigninRoute.name: (routeData) {
+    SignInRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const SigninPage(),
+        child: const SignInPage(),
       );
     },
     SplashRoute.name: (routeData) {
@@ -219,15 +219,15 @@ class SettingsRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [SigninPage]
-class SigninRoute extends PageRouteInfo<void> {
-  const SigninRoute({List<PageRouteInfo>? children})
+/// [SignInPage]
+class SignInRoute extends PageRouteInfo<void> {
+  const SignInRoute({List<PageRouteInfo>? children})
       : super(
-          SigninRoute.name,
+          SignInRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'SigninRoute';
+  static const String name = 'SignInRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

@@ -9,43 +9,43 @@ import 'package:flutter_bump_app/extension.dart';
 import 'package:flutter_bump_app/gen/assets.gen.dart';
 import 'package:flutter_bump_app/main.dart';
 import 'package:flutter_bump_app/router/app_route.dart';
-import 'package:flutter_bump_app/screen/signin/signin_cubit.dart';
-import 'package:flutter_bump_app/screen/signin/signin_state.dart';
+import 'package:flutter_bump_app/screen/sign_in/sign_in_cubit.dart';
+import 'package:flutter_bump_app/screen/sign_in/sign_in_state.dart';
 import 'package:flutter_bump_app/utils/flash/toast.dart';
 import 'package:flutter_bump_app/widget/primary_button.dart';
 
 @RoutePage()
-class SigninPage extends BaseBlocProvider<SigninState, SigninCubit> {
-  const SigninPage({super.key});
+class SignInPage extends BaseBlocProvider<SignInState, SignInCubit> {
+  const SignInPage({super.key});
 
   @override
   Widget buildPage() {
-    return const SigninScreen();
+    return const SignInScreen();
   }
 
   @override
-  SigninCubit createCubit() {
-    return SigninCubit(
+  SignInCubit createCubit() {
+    return SignInCubit(
       authService: locator.get(),
     );
   }
 }
 
-class SigninScreen extends StatefulWidget {
-  const SigninScreen({super.key});
+class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
 
   @override
-  State<SigninScreen> createState() => SigninScreenState();
+  State<SignInScreen> createState() => SignInScreenState();
 }
 
-class SigninScreenState
-    extends BaseBlocNoAppBarPageState<SigninScreen, SigninState, SigninCubit> {
+class SignInScreenState
+    extends BaseBlocNoAppBarPageState<SignInScreen, SignInState, SignInCubit> {
   @override
   bool get isSafeArea => false;
 
   @override
-  Widget buildBody(BuildContext context, SigninCubit cubit) {
-    return BlocConsumer<SigninCubit, SigninState>(
+  Widget buildBody(BuildContext context, SignInCubit cubit) {
+    return BlocConsumer<SignInCubit, SignInState>(
         bloc: cubit,
         buildWhen: (previous, current) => false,
         listener: (context, state) {
