@@ -5,16 +5,20 @@ part 'base_response.g.dart';
 /// Base response class for all API responses
 @JsonSerializable(genericArgumentFactories: true)
 class BaseResponse<T> {
-  final bool? success;
+  // final bool? success;
   final dynamic message;
   final T? data;
   final String? deviceId;
+  final int? statusCode;
+
+  bool get isSuccess => statusCode == 200;
 
   BaseResponse({
-    this.success,
+    // this.success,
     this.message,
     this.data,
     this.deviceId,
+    this.statusCode,
   });
 
   factory BaseResponse.fromJson(

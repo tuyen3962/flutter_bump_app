@@ -12,7 +12,7 @@ class AccountRepository extends IAccountRepository {
   @override
   Future<User?> getUserProfile() async {
     final response = await userApi.getUserProfile();
-    if (response.success != null && response.success == true) {
+    if (response.isSuccess) {
       return response.data!;
     }
     return null;

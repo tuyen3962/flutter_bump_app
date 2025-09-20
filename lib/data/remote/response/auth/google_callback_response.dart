@@ -24,14 +24,14 @@ class GoogleCallbackResponse extends BaseResponse {
 class GoogleCallbackToken {
   final String accessToken;
   final String refreshToken;
-  final int expiresIn;
-  final String tokenType;
+  // final int duration;
+  // final String tokenType;
 
   GoogleCallbackToken({
     required this.accessToken,
     required this.refreshToken,
-    required this.expiresIn,
-    required this.tokenType,
+    // required this.duration,
+    // required this.tokenType,
   });
 
   factory GoogleCallbackToken.fromJson(Map<String, dynamic> json) =>

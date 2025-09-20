@@ -43,7 +43,7 @@ abstract class AuthApi {
       @Body() Map<String, dynamic> request);
 
   @POST('/api/auth/google/mobile')
-  Future<GoogleCallbackResponse> googleMobileLogin(
+  Future<BaseResponse<GoogleCallbackToken>> googleMobileLogin(
       @Body() GoogleMobileLoginRequest request);
 
   // @GET('/api/auth/google/url')

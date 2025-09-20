@@ -13,7 +13,6 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import '../../data/local/local_storage.dart' as _i845;
 import '../../data/remote/auth_api.dart' as _i227;
-import '../../data/remote/authentication_api.dart' as _i665;
 import '../../data/remote/highlight_api.dart' as _i217;
 import '../../data/remote/remote_service.dart' as _i960;
 import '../../data/remote/upload_ds.dart' as _i818;
@@ -34,7 +33,6 @@ import '../../data/usecase/upload_video_usecase.dart' as _i640;
 import 'account_service.dart' as _i997;
 import 'auth_service.dart' as _i184;
 import 'language_service.dart' as _i313;
-import 'network_service.dart' as _i39;
 import 'provider/dio_provider.dart' as _i7;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -48,7 +46,6 @@ extension GetItInjectableX on _i174.GetIt {
       environment,
       environmentFilter,
     );
-    final networkService = _$NetworkService();
     final remoteService = _$RemoteService();
     gh.lazySingleton<_i7.DioProvider>(() => _i7.DioProvider());
     await gh.singletonAsync<_i845.LocalStorage>(
@@ -64,8 +61,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i313.LanguageService(localStorage: gh<_i845.LocalStorage>()));
     gh.factory<_i134.IUploadRepository>(
         () => _i655.UploadRepository(gh<_i818.UploadDS>())..init());
-    gh.lazySingleton<_i665.AuthenticationAPI>(
-        () => networkService.authenticationApiProvider(gh<_i7.DioProvider>()));
     gh.lazySingleton<_i227.AuthApi>(
         () => remoteService.authApi(gh<_i7.DioProvider>()));
     gh.lazySingleton<_i925.UserApi>(
@@ -86,25 +81,24 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i71.IVideoRepository>(),
           gh<_i134.IUploadRepository>(),
         ));
+    gh.lazySingleton<_i938.UploadUseCaseMixin>(
+        () => _i938.UploadUseCaseMixin(gh<_i134.IUploadRepository>()));
+    gh.factory<_i630.IAccountRepository>(
+        () => _i710.AccountRepository(gh<_i925.UserApi>()));
     await gh.singletonAsync<_i184.AuthService>(
       () {
         final i = _i184.AuthService(
           authRepository: gh<_i649.IAuthRepository>(),
           accountService: gh<_i997.AccountService>(),
+          accountRepository: gh<_i630.IAccountRepository>(),
         );
         return i.init().then((_) => i);
       },
       preResolve: true,
       dispose: (i) => i.dispose(),
     );
-    gh.lazySingleton<_i938.UploadUseCaseMixin>(
-        () => _i938.UploadUseCaseMixin(gh<_i134.IUploadRepository>()));
-    gh.factory<_i630.IAccountRepository>(
-        () => _i710.AccountRepository(gh<_i925.UserApi>()));
     return this;
   }
 }
-
-class _$NetworkService extends _i39.NetworkService {}
 
 class _$RemoteService extends _i960.RemoteService {}

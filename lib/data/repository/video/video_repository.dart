@@ -15,7 +15,7 @@ class VideoRepository extends IVideoRepository {
   Future<Video> createVideo(CreateVideoRequest request) async {
     try {
       final response = await videoApi.createVideoBatch(request.toJson());
-      if (response.success == true && response.data != null) {
+      if (response.isSuccess) {
         return response.data!;
       }
       throw Exception(response.message);
@@ -58,7 +58,7 @@ class VideoRepository extends IVideoRepository {
   Future<Video> updateVideo(UpdateVideoStatusRequest request) async {
     try {
       final response = await videoApi.updateVideoStatus(request);
-      if (response.success == true && response.data != null) {
+      if (response.isSuccess) {
         return response.data!;
       }
       throw Exception(response.message);

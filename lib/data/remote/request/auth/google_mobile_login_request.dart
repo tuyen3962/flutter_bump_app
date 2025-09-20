@@ -6,6 +6,7 @@ part 'google_mobile_login_request.g.dart';
 @JsonSerializable()
 class GoogleMobileLoginRequest {
   final String idToken;
+  @JsonKey(name: 'device_info')
   final DeviceModel device;
 
   GoogleMobileLoginRequest({required this.idToken, required this.device});

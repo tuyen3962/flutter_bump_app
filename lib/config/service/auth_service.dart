@@ -6,6 +6,7 @@ import 'package:flutter_bump_app/config/constant/app_config.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
 import 'package:flutter_bump_app/data/remote/exception/error_exception.dart';
 import 'package:flutter_bump_app/data/remote/request/auth/google_mobile_login_request.dart';
+import 'package:flutter_bump_app/data/repository/account/iaccount_repository.dart';
 import 'package:flutter_bump_app/data/repository/auth/iauth_repository.dart';
 import 'package:flutter_bump_app/utils/device_info_util.dart';
 import 'package:flutter_bump_app/utils/flash/toast.dart';
@@ -17,8 +18,12 @@ class AuthService {
   static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   final IAuthRepository authRepository;
   final AccountService accountService;
+  final IAccountRepository accountRepository;
 
-  AuthService({required this.authRepository, required this.accountService});
+  AuthService(
+      {required this.authRepository,
+      required this.accountService,
+      required this.accountRepository});
 
   final googleAccount = BaseStreamController<GoogleSignInAccount?>(null);
 
@@ -42,12 +47,16 @@ class AuthService {
   Future<bool> signInWithGoogle() async {
     try {
       final result = await _googleSignIn.authenticate();
-      final userInfo = await authRepository.googleMobileLogin(
+      final isSuccess = await authRepository.googleMobileLogin(
           GoogleMobileLoginRequest(
               idToken: result.authentication.idToken ?? '',
               device: await DeviceInfoUtil.getDeviceInfo()));
-      accountService.setAccount(userInfo);
-      return true;
+      if (isSuccess) {
+        final userInfo = await accountRepository.getUserProfile();
+        accountService.setAccount(userInfo);
+        return true;
+      }
+      return false;
     } catch (e) {
       log('Error signing in with Google: $e');
       if (e is ErrorException && (e.error ?? '').isNotEmpty) {

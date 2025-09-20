@@ -14,7 +14,7 @@ class DeviceModel {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'deviceInfo': deviceId,
+      'device': deviceId,
       'platform': platform,
       'version': version,
     };
@@ -24,7 +24,7 @@ class DeviceModel {
     return DeviceModel(
       // brand: map['brand'] as String,
       // deviceModel: map['deviceModel'] as String,
-      deviceId: map['deviceInfo'] as String,
+      deviceId: map['device'] as String,
       platform: map['platform'] as String,
       version: map['version'] as String,
       // deviceName: map['deviceName'] as String,

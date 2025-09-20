@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bump_app/base/stream/base_stream_builder.dart';
 import 'package:flutter_bump_app/config/service/app_service.dart';
@@ -25,8 +26,8 @@ GlobalKey<NavigatorState> get navigatorKey => appRouter.navigatorKey;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   await FlutterConfig.loadEnvVariables();
-  // await Firebase.initializeApp();
   await configureDependencies();
   bootstrap(() {
     return LayoutBuilder(

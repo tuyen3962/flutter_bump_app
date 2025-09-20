@@ -14,9 +14,9 @@ class DefaultInterceptor extends Interceptor {
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     final token = await _localStorage.accessToken();
-    final tokenType = _localStorage.getValueString(keyTokenType);
+    // final tokenType = _localStorage.getValueString(keyTokenType);
     if (token != null) {
-      options.headers.putIfAbsent("Authorization", () => "$tokenType $token");
+      options.headers.putIfAbsent("Cookie", () => "accessToken=$token");
     }
     super.onRequest(options, handler);
   }
