@@ -11,7 +11,7 @@ abstract class IVideoRepository extends IBaseRepository {
 
   Future<Video> createVideo(CreateVideoRequest request);
 
-  Future<Video> updateVideo(UpdateVideoStatusRequest request);
+  Future<Video?> updateVideo(UpdateVideoStatusRequest request);
 
   Future<void> deleteVideo(String id);
 }

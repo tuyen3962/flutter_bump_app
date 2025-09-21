@@ -41,8 +41,13 @@ class UploadRepository extends IUploadRepository {
               'Content-Type':
                   type == PreSignUrlType.video ? 'video/mp4' : 'image/png',
             },
-          ),
-          onReceiveProgress: onProgress);
+          ), onSendProgress: (progress, total) {
+        // loggerHelper.logCyan('onSendProgress: $progress/$total');
+        onProgress?.call(progress, total);
+      }, onReceiveProgress: (progress, total) {
+        // loggerHelper.logCyan('onReceiveProgress: $progress/$total');
+        onProgress?.call(progress, total);
+      });
       if (response.statusCode == 200) {
         print('Uploaded successfully');
       } else {

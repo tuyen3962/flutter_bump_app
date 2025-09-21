@@ -9,9 +9,13 @@ import 'package:flutter_bump_app/extension/color_extension.dart';
 import 'package:flutter_bump_app/main.dart';
 import 'package:flutter_bump_app/screen/create_highlight/create_highlight_cubit.dart';
 import 'package:flutter_bump_app/screen/create_highlight/create_highlight_state.dart';
+import 'package:flutter_bump_app/utils/image_picker_handler.dart';
+
+import 'widget/uploading_video_loading.dart';
 
 @RoutePage()
-class CreateHighlightPage extends BaseBlocProvider<CreateHighlightState, CreateHighlightCubit> {
+class CreateHighlightPage
+    extends BaseBlocProvider<CreateHighlightState, CreateHighlightCubit> {
   const CreateHighlightPage({super.key});
 
   @override
@@ -32,8 +36,8 @@ class CreateHighlightScreen extends StatefulWidget {
   State<CreateHighlightScreen> createState() => CreateHighlightScreenState();
 }
 
-class CreateHighlightScreenState
-    extends BaseBlocNoAppBarPageState<CreateHighlightScreen, CreateHighlightState, CreateHighlightCubit> {
+class CreateHighlightScreenState extends BaseBlocNoAppBarPageState<
+    CreateHighlightScreen, CreateHighlightState, CreateHighlightCubit> {
   @override
   void initState() {
     super.initState();
@@ -183,9 +187,13 @@ class CreateHighlightScreenState
                 padding: padding(all: 12),
                 margin: padding(right: 8.w),
                 decoration: BoxDecoration(
-                  color: state.activeMode == CreateMode.record ? appTheme.blue500 : appTheme.alpha,
+                  color: state.activeMode == CreateMode.record
+                      ? appTheme.blue500
+                      : appTheme.alpha,
                   border: Border.all(
-                    color: state.activeMode == CreateMode.record ? appTheme.blue500 : appTheme.gray200,
+                    color: state.activeMode == CreateMode.record
+                        ? appTheme.blue500
+                        : appTheme.gray200,
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -196,13 +204,17 @@ class CreateHighlightScreenState
                     Icon(
                       Icons.videocam,
                       size: 18,
-                      color: state.activeMode == CreateMode.record ? appTheme.alpha : appTheme.gray700,
+                      color: state.activeMode == CreateMode.record
+                          ? appTheme.alpha
+                          : appTheme.gray700,
                     ),
                     SizedBox(width: 8.w),
                     Text(
                       'Record',
                       style: AppStyle.medium16(
-                        color: state.activeMode == CreateMode.record ? appTheme.alpha : appTheme.gray700,
+                        color: state.activeMode == CreateMode.record
+                            ? appTheme.alpha
+                            : appTheme.gray700,
                       ),
                     ),
                   ],
@@ -212,14 +224,29 @@ class CreateHighlightScreenState
           ),
           Expanded(
             child: GestureDetector(
-              onTap: () => cubit.setActiveMode(CreateMode.upload),
+              // onTap: () => cubit.setActiveMode(CreateMode.upload),
+              onTap: () async {
+                final image = await ImagePickerHandler.onGetVideo();
+                // print(image);
+                if (image != null) {
+                  UploadingVideoLoading.showUploadingDialog(context,
+                      uploadProgress: cubit.uploadProgress);
+                  await cubit.uploadVideo(image);
+
+                  // cubit.uploadVideo(image, context);
+                }
+              },
               child: Container(
                 padding: padding(all: 12),
                 margin: padding(left: 8.w),
                 decoration: BoxDecoration(
-                  color: state.activeMode == CreateMode.upload ? appTheme.blue500 : appTheme.alpha,
+                  color: state.activeMode == CreateMode.upload
+                      ? appTheme.blue500
+                      : appTheme.alpha,
                   border: Border.all(
-                    color: state.activeMode == CreateMode.upload ? appTheme.blue500 : appTheme.gray200,
+                    color: state.activeMode == CreateMode.upload
+                        ? appTheme.blue500
+                        : appTheme.gray200,
                     width: 2,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -230,13 +257,17 @@ class CreateHighlightScreenState
                     Icon(
                       Icons.upload,
                       size: 18,
-                      color: state.activeMode == CreateMode.upload ? appTheme.alpha : appTheme.gray700,
+                      color: state.activeMode == CreateMode.upload
+                          ? appTheme.alpha
+                          : appTheme.gray700,
                     ),
                     SizedBox(width: 8.w),
                     Text(
                       'Upload',
                       style: AppStyle.medium16(
-                        color: state.activeMode == CreateMode.upload ? appTheme.alpha : appTheme.gray700,
+                        color: state.activeMode == CreateMode.upload
+                            ? appTheme.alpha
+                            : appTheme.gray700,
                       ),
                     ),
                   ],
@@ -349,7 +380,8 @@ class CreateHighlightScreenState
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: _getColorFromHex(item.thumbnail),
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(8)),
                     ),
                     child: Center(
                       child: Container(
@@ -378,7 +410,8 @@ class CreateHighlightScreenState
                       decoration: BoxDecoration(
                         color: isSelected ? appTheme.blue500 : appTheme.alpha,
                         border: Border.all(
-                          color: isSelected ? appTheme.blue500 : appTheme.gray300,
+                          color:
+                              isSelected ? appTheme.blue500 : appTheme.gray300,
                           width: 2,
                         ),
                         borderRadius: BorderRadius.circular(10),
@@ -387,7 +420,8 @@ class CreateHighlightScreenState
                           ? Center(
                               child: Text(
                                 '$selectionNumber',
-                                style: AppStyle.regular12(color: appTheme.alpha),
+                                style:
+                                    AppStyle.regular12(color: appTheme.alpha),
                               ),
                             )
                           : null,
@@ -565,7 +599,8 @@ class CreateHighlightScreenState
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: appTheme.blue500, width: 2),
+                        borderSide:
+                            BorderSide(color: appTheme.blue500, width: 2),
                       ),
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: 12.w,
@@ -628,7 +663,8 @@ class CreateHighlightScreenState
                                 height: 16.h,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(appTheme.alpha),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      appTheme.alpha),
                                 ),
                               )
                             : Text(

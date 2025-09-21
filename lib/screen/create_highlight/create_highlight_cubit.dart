@@ -1,12 +1,27 @@
+import 'dart:io';
+
+import 'package:flutter_bump_app/base/stream/base_stream_controller.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
+import 'package:flutter_bump_app/config/constant/app_constant.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
 import 'package:flutter_bump_app/config/service/app_service.dart';
+import 'package:flutter_bump_app/data/usecase/upload_usecase_mixin.dart';
+import 'package:flutter_bump_app/data/usecase/upload_video_usecase.dart';
 import 'package:flutter_bump_app/screen/create_highlight/create_highlight_state.dart';
 
 class CreateHighlightCubit extends BaseCubit<CreateHighlightState> {
-  late final AccountService accountService = locator.get();
+  final AccountService accountService = locator.get();
+  final UploadVideoUseCase uploadVideoUsecase = locator.get();
 
   CreateHighlightCubit() : super(const CreateHighlightState());
+
+  final uploadProgress = BaseStreamController<double>(0.0);
+
+  @override
+  Future<void> close() {
+    uploadProgress.dispose();
+    return super.close();
+  }
 
   void initializeLibrary() {
     emit(state.copyWith(isLoading: true));
@@ -134,16 +149,28 @@ class CreateHighlightCubit extends BaseCubit<CreateHighlightState> {
     emit(state.copyWith(isLoading: false));
   }
 
-  Future<void> uploadVideo() async {
-    // Handle video upload
-    // This would typically open file picker
-    emit(state.copyWith(isLoading: true));
-
-    // Simulate upload process
-    await Future.delayed(const Duration(seconds: 1));
-
-    emit(state.copyWith(isLoading: false));
+  Future<void> uploadVideo(File file) async {
+    uploadProgress.value = 0.0;
+    await uploadVideoUsecase.call(UploadVideoUseCaseParam(
+        uploadUseCaseParam: UploadUseCaseParam(
+          file: file,
+          type: PreSignUrlType.video,
+        ),
+        onProgress: (progress, total) {
+          uploadProgress.value = (progress / total) * 100;
+        }));
   }
+
+  // Future<void> uploadVideo() async {
+  //   // Handle video upload
+  //   // This would typically open file picker
+  //   emit(state.copyWith(isLoading: true));
+
+  //   // Simulate upload process
+  //   await Future.delayed(const Duration(seconds: 1));
+
+  //   emit(state.copyWith(isLoading: false));
+  // }
 
   Future<void> refreshLibrary() async {
     emit(state.copyWith(isLoading: true));

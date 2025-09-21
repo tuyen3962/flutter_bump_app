@@ -10,7 +10,7 @@ part 'upload_ds.g.dart';
 abstract class UploadDS {
   factory UploadDS(Dio dio, {String? baseUrl}) = _UploadDS;
 
-  @POST('/api/uploads/presign/{resourceType}')
+  @GET('/api/uploads/presign/{resourceType}')
   Future<BaseResponse<String>> getPreSignUrl(
       @Path('resourceType') PreSignUrlType type);
 }

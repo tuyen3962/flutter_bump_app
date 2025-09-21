@@ -41,6 +41,10 @@
 	<true/>
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.834324141628-189n7114rua1glpd87v5bbe1ulho5lmq</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Our app uses your photos to allow you to upload images to your profile and share them with your friends.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Our app uses your photos to allow you to upload images to your profile and share them with your friends.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

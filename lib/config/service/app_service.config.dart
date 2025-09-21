@@ -28,6 +28,7 @@ import '../../data/repository/highlight/ihightlight_repository.dart' as _i913;
 import '../../data/repository/upload/iupload_repository.dart' as _i134;
 import '../../data/repository/upload/upload_repository.dart' as _i655;
 import '../../data/repository/video/ivideo_repository.dart' as _i71;
+import '../../data/repository/video/video_repository.dart' as _i944;
 import '../../data/usecase/upload_usecase_mixin.dart' as _i938;
 import '../../data/usecase/upload_video_usecase.dart' as _i640;
 import 'account_service.dart' as _i997;
@@ -59,8 +60,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i997.AccountService(storageService: gh<_i845.LocalStorage>()));
     gh.singleton<_i313.LanguageService>(
         () => _i313.LanguageService(localStorage: gh<_i845.LocalStorage>()));
-    gh.factory<_i134.IUploadRepository>(
-        () => _i655.UploadRepository(gh<_i818.UploadDS>())..init());
     gh.lazySingleton<_i227.AuthApi>(
         () => remoteService.authApi(gh<_i7.DioProvider>()));
     gh.lazySingleton<_i925.UserApi>(
@@ -71,20 +70,24 @@ extension GetItInjectableX on _i174.GetIt {
         () => remoteService.youTubeApi(gh<_i7.DioProvider>()));
     gh.lazySingleton<_i217.HighlightApi>(
         () => remoteService.highlightApi(gh<_i7.DioProvider>()));
+    gh.lazySingleton<_i818.UploadDS>(
+        () => remoteService.uploadDS(gh<_i7.DioProvider>()));
     gh.factory<_i649.IAuthRepository>(() => _i214.AuthRepository(
           gh<_i227.AuthApi>(),
           gh<_i845.LocalStorage>(),
         ));
+    gh.factory<_i71.IVideoRepository>(
+        () => _i944.VideoRepository(gh<_i765.VideoApi>()));
     gh.factory<_i913.IHighlightRepository>(
         () => _i631.HighlightRepository(gh<_i217.HighlightApi>()));
+    gh.factory<_i630.IAccountRepository>(
+        () => _i710.AccountRepository(gh<_i925.UserApi>()));
+    gh.factory<_i134.IUploadRepository>(
+        () => _i655.UploadRepository(gh<_i818.UploadDS>())..init());
     gh.lazySingleton<_i640.UploadVideoUseCase>(() => _i640.UploadVideoUseCase(
           gh<_i71.IVideoRepository>(),
           gh<_i134.IUploadRepository>(),
         ));
-    gh.lazySingleton<_i938.UploadUseCaseMixin>(
-        () => _i938.UploadUseCaseMixin(gh<_i134.IUploadRepository>()));
-    gh.factory<_i630.IAccountRepository>(
-        () => _i710.AccountRepository(gh<_i925.UserApi>()));
     await gh.singletonAsync<_i184.AuthService>(
       () {
         final i = _i184.AuthService(
@@ -97,6 +100,8 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
       dispose: (i) => i.dispose(),
     );
+    gh.lazySingleton<_i938.UploadUseCaseMixin>(
+        () => _i938.UploadUseCaseMixin(gh<_i134.IUploadRepository>()));
     return this;
   }
 }

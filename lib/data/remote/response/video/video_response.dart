@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import '../base_response.dart';
 
 part 'video_response.g.dart';
 
@@ -37,36 +36,31 @@ enum UploadStatus {
 
 @JsonSerializable()
 class Video {
-  final String id;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final DateTime? deletedAt;
-  final String userId;
-  final String batchId;
-  final int batchOrder;
-  final String name;
-  final double duration;
-  final String fileUrl;
-  final String thumbnail;
-  final VideoFormat format;
-  final UploadStatus uploadStatus;
-  final int size;
+  String id;
+
+  String? userId;
+  String? batchId;
+  int? batchOrder;
+  String? name;
+  double? duration;
+  String? fileUrl;
+  String? thumbnail;
+  VideoFormat? format;
+  UploadStatus? uploadStatus;
+  int? size;
 
   Video({
     required this.id,
-    required this.createdAt,
-    required this.updatedAt,
-    this.deletedAt,
-    required this.userId,
-    required this.batchId,
+    this.userId,
+    this.batchId,
     this.batchOrder = 1,
-    required this.name,
-    required this.duration,
-    required this.fileUrl,
-    required this.thumbnail,
+    this.name,
+    this.duration,
+    this.fileUrl,
+    this.thumbnail,
     this.format = VideoFormat.mp4,
-    this.uploadStatus = UploadStatus.pending,
-    required this.size,
+    this.uploadStatus,
+    this.size,
   });
 
   factory Video.fromJson(Map<String, dynamic> json) => _$VideoFromJson(json);

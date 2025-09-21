@@ -3,9 +3,11 @@ import 'package:flutter_bump_app/data/remote/request/video/update_video_status_r
 import 'package:flutter_bump_app/data/remote/response/base_response.dart';
 import 'package:flutter_bump_app/data/remote/response/video/video_response.dart';
 import 'package:flutter_bump_app/data/remote/video_api.dart';
+import 'package:injectable/injectable.dart';
 
 import 'ivideo_repository.dart';
 
+@Injectable(as: IVideoRepository)
 class VideoRepository extends IVideoRepository {
   final VideoApi videoApi;
 
@@ -55,15 +57,16 @@ class VideoRepository extends IVideoRepository {
   }
 
   @override
-  Future<Video> updateVideo(UpdateVideoStatusRequest request) async {
+  Future<Video?> updateVideo(UpdateVideoStatusRequest request) async {
     try {
       final response = await videoApi.updateVideoStatus(request);
       if (response.isSuccess) {
         return response.data!;
       }
-      throw Exception(response.message);
+      // throw Exception(response.message);
     } catch (e) {
-      throw Exception(e);
+      // throw Exception(e);
     }
+    return null;
   }
 }
