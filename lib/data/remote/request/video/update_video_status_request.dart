@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import '../../response/video/video_response.dart';
 
 part 'update_video_status_request.g.dart';
@@ -12,6 +13,7 @@ class UpdateVideoStatusRequest {
   final double? duration;
   final int? size;
   final String? name;
+  final int? progress;
 
   UpdateVideoStatusRequest({
     required this.videoId,
@@ -21,6 +23,7 @@ class UpdateVideoStatusRequest {
     this.duration,
     this.size,
     this.name,
+    this.progress,
   });
 
   factory UpdateVideoStatusRequest.fromJson(Map<String, dynamic> json) =>

@@ -11,7 +11,7 @@ class BaseResponse<T> {
   final String? deviceId;
   final int? statusCode;
 
-  bool get isSuccess => statusCode == 200;
+  bool get isSuccess => statusCode == 200 || statusCode == 201;
 
   BaseResponse({
     // this.success,

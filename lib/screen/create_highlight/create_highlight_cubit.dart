@@ -151,14 +151,17 @@ class CreateHighlightCubit extends BaseCubit<CreateHighlightState> {
 
   Future<void> uploadVideo(File file) async {
     uploadProgress.value = 0.0;
-    await uploadVideoUsecase.call(UploadVideoUseCaseParam(
+    await uploadVideoUsecase.call(
+      UploadVideoUseCaseParam(
         uploadUseCaseParam: UploadUseCaseParam(
           file: file,
           type: PreSignUrlType.video,
         ),
         onProgress: (progress, total) {
           uploadProgress.value = (progress / total) * 100;
-        }));
+        },
+      ),
+    );
   }
 
   // Future<void> uploadVideo() async {

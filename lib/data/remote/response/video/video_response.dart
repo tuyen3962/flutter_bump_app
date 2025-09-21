@@ -28,6 +28,8 @@ enum UploadStatus {
   pending,
   @JsonValue('UPLOADING')
   uploading,
+  @JsonValue('PROGRESS')
+  progress,
   @JsonValue('COMPLETED')
   completed,
   @JsonValue('FAILED')

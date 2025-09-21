@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_bump_app/data/remote/request/video/create_video_request.dart';
 import 'package:flutter_bump_app/data/remote/request/video/update_video_status_request.dart';
 import 'package:flutter_bump_app/data/remote/response/base_response.dart';
@@ -59,6 +61,7 @@ class VideoRepository extends IVideoRepository {
   @override
   Future<Video?> updateVideo(UpdateVideoStatusRequest request) async {
     try {
+      log(request.toJson().toString(), name: 'UpdateVideoStatusRequest');
       final response = await videoApi.updateVideoStatus(request);
       if (response.isSuccess) {
         return response.data!;
