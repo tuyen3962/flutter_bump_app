@@ -71,7 +71,7 @@ class _UploadingVideoLoadingState extends State<UploadingVideoLoading>
               Icon(Icons.cloud_upload_outlined,
                   color: appTheme.primaryColor, size: 24),
               const SizedBox(width: 12),
-              Expanded(
+              const Expanded(
                 child: Text(
                   'Uploading Video',
                   style: TextStyle(
