@@ -31,9 +31,11 @@ import '../../data/repository/video/ivideo_repository.dart' as _i71;
 import '../../data/repository/video/video_repository.dart' as _i944;
 import '../../data/usecase/upload_usecase_mixin.dart' as _i938;
 import '../../data/usecase/upload_video_usecase.dart' as _i640;
+import '../../data/usecase/upload_video_with_batch_usecase.dart' as _i722;
 import 'account_service.dart' as _i997;
 import 'auth_service.dart' as _i184;
 import 'language_service.dart' as _i313;
+import 'photo_gallery_service.dart' as _i364;
 import 'provider/dio_provider.dart' as _i7;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -48,6 +50,10 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final remoteService = _$RemoteService();
+    gh.singleton<_i364.PhotoGalleryService>(
+      () => _i364.PhotoGalleryService(),
+      dispose: (i) => i.dispose(),
+    );
     gh.lazySingleton<_i7.DioProvider>(() => _i7.DioProvider());
     await gh.singletonAsync<_i845.LocalStorage>(
       () {
@@ -88,6 +94,11 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i71.IVideoRepository>(),
           gh<_i134.IUploadRepository>(),
         ));
+    gh.lazySingleton<_i722.UploadVideoWithBatchUseCase>(
+        () => _i722.UploadVideoWithBatchUseCase(
+              gh<_i71.IVideoRepository>(),
+              gh<_i134.IUploadRepository>(),
+            ));
     await gh.singletonAsync<_i184.AuthService>(
       () {
         final i = _i184.AuthService(

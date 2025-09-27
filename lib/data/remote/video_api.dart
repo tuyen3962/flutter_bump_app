@@ -26,4 +26,8 @@ abstract class VideoApi {
   @POST('/api/videos/batch')
   Future<BaseResponse<Video>> createVideoBatch(
       @Body() Map<String, dynamic> request);
+
+  @POST('/api/videos/with-batch')
+  Future<BaseResponse<List<Video>>> createVideoWithBatch(
+      @Body() Map<String, dynamic> request);
 }

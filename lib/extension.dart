@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
 import 'package:flutter_bump_app/config/constant/app_constant.dart';
 import 'package:flutter_bump_app/main.dart';
 import 'package:flutter_bump_app/utils/reponsive/size_config.dart';
 import 'package:flutter_bump_app/utils/util.dart';
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
 extension DateStringExtension on String {
   bool get isTodayDateFormat {
@@ -93,6 +93,12 @@ extension DateTimeExtension on DateTime? {
 extension ThemeExtension on BuildContext {
   ThemeData get theme => Theme.of(this);
   Size get screenSize => MediaQuery.of(this).size;
+
+  double get statusBarHeight => MediaQuery.of(this).viewPadding.top;
+
+  double get screenWidth => MediaQuery.of(this).size.width;
+
+  double get screenHeight => MediaQuery.of(this).size.height;
 }
 
 extension HomePageExtension on BuildContext {}

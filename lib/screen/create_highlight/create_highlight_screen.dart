@@ -5,13 +5,14 @@ import 'package:flutter_bump_app/base/widget/base_page.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_bloc_provider.dart';
 import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
 import 'package:flutter_bump_app/extension.dart';
-import 'package:flutter_bump_app/extension/color_extension.dart';
 import 'package:flutter_bump_app/main.dart';
 import 'package:flutter_bump_app/screen/create_highlight/create_highlight_cubit.dart';
 import 'package:flutter_bump_app/screen/create_highlight/create_highlight_state.dart';
-import 'package:flutter_bump_app/utils/image_picker_handler.dart';
+import 'package:flutter_bump_app/utils/lazy_list/lazy_list.dart';
+import 'package:flutter_bump_app/widget/extension/widget_extension.dart';
 
-import 'widget/uploading_video_loading.dart';
+import 'widget/enter_name_highlight_dialog.dart';
+import 'widget/my_video_view.dart';
 
 @RoutePage()
 class CreateHighlightPage
@@ -39,52 +40,55 @@ class CreateHighlightScreen extends StatefulWidget {
 class CreateHighlightScreenState extends BaseBlocNoAppBarPageState<
     CreateHighlightScreen, CreateHighlightState, CreateHighlightCubit> {
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      cubit.initializeLibrary();
-    });
-  }
-
-  @override
   String get title => 'Create Highlight';
 
   @override
   Widget buildBody(BuildContext context, CreateHighlightCubit cubit) {
     return BlocBuilder<CreateHighlightCubit, CreateHighlightState>(
       builder: (context, state) {
-        return Stack(
-          children: [
-            Scaffold(
-              backgroundColor: appTheme.alpha,
-              body: Column(
-                children: [
-                  // Header
-                  _buildHeader(),
+        return Scaffold(
+          backgroundColor: appTheme.alpha,
+          body: Column(
+            children: [
+              // Header
+              _buildHeader(),
 
-                  // File Format Info
-                  _buildFileFormatInfo(),
+              // File Format Info
+              _buildFileFormatInfo(),
 
-                  // Record/Upload Toggle
-                  _buildModeToggle(state),
+              // Record/Upload Toggle
+              // _buildModeToggle(state),
 
-                  // Library Header
-                  _buildLibraryHeader(state),
+              // Library Header
+              _buildLibraryHeader(state),
 
-                  // Video Grid
-                  Expanded(
-                    child: _buildVideoGrid(state),
-                  ),
+              // Video Grid
+              LazyListView(
+                listPadding: padding(horizontal: 16, vertical: 8),
+                itemBuilder: (index, item) =>
+                    MyVideoView(item: item, state: state, cubit: cubit),
+                controller: cubit.photoGalleryService.mediaListCtrl,
+                shrinkWrap: false,
+                lineItemCount: 2,
+                paddingBetweenItem: 8,
+                paddingBetweenLine: 8,
+                skeletonView: () {
+                  return const SizedBox();
+                },
+              ).expand(),
 
-                  // Create Highlight Button
-                  if (state.hasSelectedVideos) _buildCreateButton(state),
-                ],
+              AnimatedCrossFade(
+                crossFadeState: state.hasSelectedVideos
+                    ? CrossFadeState.showFirst
+                    : CrossFadeState.showSecond,
+                firstChild: _buildCreateButton(state),
+                secondChild: const SizedBox(),
+                duration: const Duration(milliseconds: 300),
+                firstCurve: Curves.easeInOut,
+                secondCurve: Curves.easeInOut,
               ),
-            ),
-
-            // Name Dialog Overlay
-            if (state.showNameDialog) _buildNameDialog(state),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -169,116 +173,112 @@ class CreateHighlightScreenState extends BaseBlocNoAppBarPageState<
     );
   }
 
-  Widget _buildModeToggle(CreateHighlightState state) {
-    return Container(
-      padding: padding(all: 16),
-      decoration: BoxDecoration(
-        color: appTheme.gray50,
-        border: Border(
-          bottom: BorderSide(color: appTheme.gray200, width: 1),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: GestureDetector(
-              onTap: () => cubit.setActiveMode(CreateMode.record),
-              child: Container(
-                padding: padding(all: 12),
-                margin: padding(right: 8.w),
-                decoration: BoxDecoration(
-                  color: state.activeMode == CreateMode.record
-                      ? appTheme.blue500
-                      : appTheme.alpha,
-                  border: Border.all(
-                    color: state.activeMode == CreateMode.record
-                        ? appTheme.blue500
-                        : appTheme.gray200,
-                    width: 2,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.videocam,
-                      size: 18,
-                      color: state.activeMode == CreateMode.record
-                          ? appTheme.alpha
-                          : appTheme.gray700,
-                    ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      'Record',
-                      style: AppStyle.medium16(
-                        color: state.activeMode == CreateMode.record
-                            ? appTheme.alpha
-                            : appTheme.gray700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: GestureDetector(
-              // onTap: () => cubit.setActiveMode(CreateMode.upload),
-              onTap: () async {
-                final image = await ImagePickerHandler.onGetVideo();
-                // print(image);
-                if (image != null) {
-                  UploadingVideoLoading.showUploadingDialog(context,
-                      uploadProgress: cubit.uploadProgress);
-                  await cubit.uploadVideo(image);
-
-                  // cubit.uploadVideo(image, context);
-                }
-              },
-              child: Container(
-                padding: padding(all: 12),
-                margin: padding(left: 8.w),
-                decoration: BoxDecoration(
-                  color: state.activeMode == CreateMode.upload
-                      ? appTheme.blue500
-                      : appTheme.alpha,
-                  border: Border.all(
-                    color: state.activeMode == CreateMode.upload
-                        ? appTheme.blue500
-                        : appTheme.gray200,
-                    width: 2,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.upload,
-                      size: 18,
-                      color: state.activeMode == CreateMode.upload
-                          ? appTheme.alpha
-                          : appTheme.gray700,
-                    ),
-                    SizedBox(width: 8.w),
-                    Text(
-                      'Upload',
-                      style: AppStyle.medium16(
-                        color: state.activeMode == CreateMode.upload
-                            ? appTheme.alpha
-                            : appTheme.gray700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildModeToggle(CreateHighlightState state) {
+  //   return Container(
+  //     padding: padding(all: 16),
+  //     decoration: BoxDecoration(
+  //       color: appTheme.gray50,
+  //       border: Border(
+  //         bottom: BorderSide(color: appTheme.gray200, width: 1),
+  //       ),
+  //     ),
+  //     child: Row(
+  //       children: [
+  //         Expanded(
+  //           child: GestureDetector(
+  //             onTap: () => cubit.setActiveMode(CreateMode.record),
+  //             child: Container(
+  //               padding: padding(all: 12),
+  //               margin: padding(right: 8.w),
+  //               decoration: BoxDecoration(
+  //                 color: state.activeMode == CreateMode.record
+  //                     ? appTheme.blue500
+  //                     : appTheme.alpha,
+  //                 border: Border.all(
+  //                   color: state.activeMode == CreateMode.record
+  //                       ? appTheme.blue500
+  //                       : appTheme.gray200,
+  //                   width: 2,
+  //                 ),
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 children: [
+  //                   Icon(
+  //                     Icons.videocam,
+  //                     size: 18,
+  //                     color: state.activeMode == CreateMode.record
+  //                         ? appTheme.alpha
+  //                         : appTheme.gray700,
+  //                   ),
+  //                   SizedBox(width: 8.w),
+  //                   Text(
+  //                     'Record',
+  //                     style: AppStyle.medium16(
+  //                       color: state.activeMode == CreateMode.record
+  //                           ? appTheme.alpha
+  //                           : appTheme.gray700,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         Expanded(
+  //           child: GestureDetector(
+  //             onTap: () async {
+  //               final image = await ImagePickerHandler.onGetVideo();
+  //               if (image != null) {
+  //                 UploadingVideoLoading.showUploadingDialog(context,
+  //                     uploadProgress: cubit.uploadProgress);
+  //                 await cubit.uploadVideo(image);
+  //               }
+  //             },
+  //             child: Container(
+  //               padding: padding(all: 12),
+  //               margin: padding(left: 8.w),
+  //               decoration: BoxDecoration(
+  //                 color: state.activeMode == CreateMode.upload
+  //                     ? appTheme.blue500
+  //                     : appTheme.alpha,
+  //                 border: Border.all(
+  //                   color: state.activeMode == CreateMode.upload
+  //                       ? appTheme.blue500
+  //                       : appTheme.gray200,
+  //                   width: 2,
+  //                 ),
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 children: [
+  //                   Icon(
+  //                     Icons.upload,
+  //                     size: 18,
+  //                     color: state.activeMode == CreateMode.upload
+  //                         ? appTheme.alpha
+  //                         : appTheme.gray700,
+  //                   ),
+  //                   SizedBox(width: 8.w),
+  //                   Text(
+  //                     'Upload',
+  //                     style: AppStyle.medium16(
+  //                       color: state.activeMode == CreateMode.upload
+  //                           ? appTheme.alpha
+  //                           : appTheme.gray700,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildLibraryHeader(CreateHighlightState state) {
     return Container(
@@ -306,163 +306,38 @@ class CreateHighlightScreenState extends BaseBlocNoAppBarPageState<
     );
   }
 
-  Widget _buildVideoGrid(CreateHighlightState state) {
-    if (state.isLoading) {
-      return Center(
-        child: CircularProgressIndicator(
-          color: appTheme.blue500,
-        ),
-      );
-    }
+  // Widget _buildVideoGrid(CreateHighlightState state) {
+  // if (state.isLoading) {
+  //   return Center(
+  //     child: CircularProgressIndicator(
+  //       color: appTheme.blue500,
+  //     ),
+  //   );
+  // }
 
-    if (state.libraryItems.isEmpty) {
-      return _buildEmptyState();
-    }
+  // if (state.libraryItems.isEmpty) {
+  //   return _buildEmptyState();
+  // }
 
-    return RefreshIndicator(
-      onRefresh: cubit.refreshLibrary,
-      color: appTheme.blue500,
-      child: GridView.builder(
-        padding: padding(all: 16),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          childAspectRatio: 0.8,
-          crossAxisSpacing: 12,
-          mainAxisSpacing: 12,
-        ),
-        itemCount: state.libraryItems.length,
-        itemBuilder: (context, index) {
-          final item = state.libraryItems[index];
-          return _buildVideoItem(item, state);
-        },
-      ),
-    );
-  }
-
-  Widget _buildVideoItem(LibraryItem item, CreateHighlightState state) {
-    final isSelected = state.isVideoSelected(item.id);
-    final selectionNumber = state.getSelectionNumber(item.id);
-
-    return GestureDetector(
-      onTap: () => cubit.toggleVideoSelection(item.id),
-      child: Container(
-        decoration: BoxDecoration(
-          color: appTheme.alpha,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: isSelected ? appTheme.blue500 : appTheme.gray200,
-            width: isSelected ? 2 : 1,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: appTheme.blue200.withSafeOpacity(0.5),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: appTheme.gray200.withSafeOpacity(0.3),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Thumbnail with selection indicator
-            Expanded(
-              child: Stack(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: _getColorFromHex(item.thumbnail),
-                      borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(8)),
-                    ),
-                    child: Center(
-                      child: Container(
-                        width: 32.w,
-                        height: 32.h,
-                        decoration: BoxDecoration(
-                          color: appTheme.alpha.withSafeOpacity(0.8),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Icon(
-                          Icons.play_arrow,
-                          color: appTheme.gray600,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // Selection indicator
-                  Positioned(
-                    top: 8.h,
-                    left: 8.w,
-                    child: Container(
-                      width: 20.w,
-                      height: 20.h,
-                      decoration: BoxDecoration(
-                        color: isSelected ? appTheme.blue500 : appTheme.alpha,
-                        border: Border.all(
-                          color:
-                              isSelected ? appTheme.blue500 : appTheme.gray300,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: isSelected
-                          ? Center(
-                              child: Text(
-                                '$selectionNumber',
-                                style:
-                                    AppStyle.regular12(color: appTheme.alpha),
-                              ),
-                            )
-                          : null,
-                    ),
-                  ),
-
-                  // Duration
-                  Positioned(
-                    bottom: 4.h,
-                    right: 4.w,
-                    child: Container(
-                      padding: padding(horizontal: 6.w, vertical: 2.h),
-                      decoration: BoxDecoration(
-                        color: appTheme.blackColor.withSafeOpacity(0.7),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        item.duration,
-                        style: AppStyle.regular12(color: appTheme.alpha),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Title
-            Padding(
-              padding: padding(all: 8),
-              child: Text(
-                item.title,
-                style: AppStyle.medium14(),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // return RefreshIndicator(
+  //   onRefresh: cubit.refreshLibrary,
+  //   color: appTheme.blue500,
+  //   child: GridView.builder(
+  //     padding: padding(all: 16),
+  //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //       crossAxisCount: 2,
+  //       childAspectRatio: 0.8,
+  //       crossAxisSpacing: 12,
+  //       mainAxisSpacing: 12,
+  //     ),
+  //     itemCount: state.libraryItems.length,
+  //     itemBuilder: (context, index) {
+  //       final item = state.libraryItems[index];
+  //       return _buildVideoItem(item, state);
+  //     },
+  //   ),
+  // );
+  // }
 
   Widget _buildCreateButton(CreateHighlightState state) {
     return Container(
@@ -477,7 +352,8 @@ class CreateHighlightScreenState extends BaseBlocNoAppBarPageState<
         width: double.infinity,
         height: 48.h,
         child: ElevatedButton(
-          onPressed: cubit.showNameDialog,
+          onPressed: () => EnterNameHighlightDialog.show(context,
+              onHighlightNameChanged: cubit.updateHighlightName),
           style: ElevatedButton.styleFrom(
             backgroundColor: appTheme.blue500,
             foregroundColor: appTheme.alpha,
@@ -530,164 +406,5 @@ class CreateHighlightScreenState extends BaseBlocNoAppBarPageState<
         ),
       ),
     );
-  }
-
-  Widget _buildNameDialog(CreateHighlightState state) {
-    return Container(
-      color: appTheme.blackColor.withSafeOpacity(0.5),
-      child: Center(
-        child: Container(
-          margin: padding(all: 16),
-          padding: padding(all: 24),
-          decoration: BoxDecoration(
-            color: appTheme.alpha,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Name Your Highlight',
-                    style: AppStyle.bold18(),
-                  ),
-                  GestureDetector(
-                    onTap: cubit.hideNameDialog,
-                    child: Container(
-                      padding: padding(all: 4),
-                      child: Icon(
-                        Icons.close,
-                        size: 20,
-                        color: appTheme.gray400,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 16.h),
-
-              // Input field
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Highlight Name',
-                    style: AppStyle.medium14(color: appTheme.gray700),
-                  ),
-                  SizedBox(height: 8.h),
-                  TextFormField(
-                    initialValue: state.highlightName,
-                    onChanged: cubit.updateHighlightName,
-                    autofocus: true,
-                    style: AppStyle.regular16(),
-                    decoration: InputDecoration(
-                      hintText: 'Enter highlight name...',
-                      hintStyle: AppStyle.regular16(color: appTheme.gray400),
-                      filled: true,
-                      fillColor: appTheme.alpha,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: appTheme.gray300),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: appTheme.gray300),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide:
-                            BorderSide(color: appTheme.blue500, width: 2),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 8.h,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 24.h),
-
-              // Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 48.h,
-                      child: OutlinedButton(
-                        onPressed: cubit.hideNameDialog,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: appTheme.gray700,
-                          side: BorderSide(color: appTheme.gray300),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          'Cancel',
-                          style: AppStyle.medium16(color: appTheme.gray700),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: SizedBox(
-                      height: 48.h,
-                      child: ElevatedButton(
-                        onPressed: state.highlightName.trim().isNotEmpty
-                            ? () async {
-                                final success = await cubit.createHighlight();
-                                if (success && mounted) {
-                                  // context.router.pushNamed('/activity');
-                                }
-                              }
-                            : null,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: appTheme.blue500,
-                          foregroundColor: appTheme.alpha,
-                          disabledBackgroundColor: appTheme.gray300,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: state.isLoading
-                            ? SizedBox(
-                                width: 16.w,
-                                height: 16.h,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      appTheme.alpha),
-                                ),
-                              )
-                            : Text(
-                                'Create',
-                                style: AppStyle.medium16(color: appTheme.alpha),
-                              ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Color _getColorFromHex(String hex) {
-    // Convert hex color string to Color
-    if (hex.startsWith('#')) {
-      hex = hex.substring(1);
-    }
-    return Color(int.parse('FF$hex', radix: 16));
   }
 }

@@ -5,17 +5,23 @@ import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
 import 'package:flutter_bump_app/config/constant/app_constant.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
 import 'package:flutter_bump_app/config/service/app_service.dart';
+import 'package:flutter_bump_app/config/service/photo_gallery_service.dart';
+import 'package:flutter_bump_app/data/repository/video/ivideo_repository.dart';
 import 'package:flutter_bump_app/data/usecase/upload_usecase_mixin.dart';
 import 'package:flutter_bump_app/data/usecase/upload_video_usecase.dart';
 import 'package:flutter_bump_app/screen/create_highlight/create_highlight_state.dart';
 
 class CreateHighlightCubit extends BaseCubit<CreateHighlightState> {
+  final IVideoRepository videoRepository = locator.get();
   final AccountService accountService = locator.get();
   final UploadVideoUseCase uploadVideoUsecase = locator.get();
+  final PhotoGalleryService photoGalleryService = locator.get();
 
   CreateHighlightCubit() : super(const CreateHighlightState());
 
   final uploadProgress = BaseStreamController<double>(0.0);
+
+  List<PhotoMediaAsset> selectedVideos = [];
 
   @override
   Future<void> close() {
@@ -23,66 +29,23 @@ class CreateHighlightCubit extends BaseCubit<CreateHighlightState> {
     return super.close();
   }
 
-  void initializeLibrary() {
-    emit(state.copyWith(isLoading: true));
-
-    // Initialize with mock data
-    final mockLibraryItems = [
-      const LibraryItem(
-        id: '1',
-        title: 'Match Highlights 2024',
-        duration: '2:45',
-        thumbnail: '#F3F4F6',
-      ),
-      const LibraryItem(
-        id: '2',
-        title: 'Training Session',
-        duration: '1:30',
-        thumbnail: '#E5E7EB',
-      ),
-      const LibraryItem(
-        id: '3',
-        title: 'Tournament Finals',
-        duration: '3:20',
-        thumbnail: '#F3F4F6',
-      ),
-      const LibraryItem(
-        id: '4',
-        title: 'Practice Drills',
-        duration: '0:45',
-        thumbnail: '#E5E7EB',
-      ),
-      const LibraryItem(
-        id: '5',
-        title: 'Doubles Match',
-        duration: '4:15',
-        thumbnail: '#F3F4F6',
-      ),
-      const LibraryItem(
-        id: '6',
-        title: 'Serve Practice',
-        duration: '1:10',
-        thumbnail: '#E5E7EB',
-      ),
-    ];
-
-    emit(state.copyWith(
-      libraryItems: mockLibraryItems,
-      isLoading: false,
-    ));
+  @override
+  void onInit() {
+    super.onInit();
+    photoGalleryService.checkAndInitService();
   }
 
-  void setActiveMode(CreateMode mode) {
-    emit(state.copyWith(activeMode: mode));
-  }
-
-  void toggleVideoSelection(String videoId) {
+  void toggleVideoSelection(PhotoMediaAsset video) {
+    final id = video.assetEntity.id;
     final currentSelection = List<String>.from(state.selectedVideoIds);
 
-    if (currentSelection.contains(videoId)) {
-      currentSelection.remove(videoId);
+    final index = currentSelection.indexOf(id);
+    if (index >= 0) {
+      currentSelection.removeAt(index);
+      selectedVideos.removeAt(index);
     } else {
-      currentSelection.add(videoId);
+      currentSelection.add(id);
+      selectedVideos.add(video);
     }
 
     emit(state.copyWith(selectedVideoIds: currentSelection));
@@ -92,51 +55,40 @@ class CreateHighlightCubit extends BaseCubit<CreateHighlightState> {
     emit(state.copyWith(selectedVideoIds: []));
   }
 
-  void showNameDialog() {
-    emit(state.copyWith(showNameDialog: true));
-  }
-
-  void hideNameDialog() {
-    emit(state.copyWith(
-      showNameDialog: false,
-      highlightName: '',
-    ));
-  }
-
   void updateHighlightName(String name) {
-    emit(state.copyWith(highlightName: name));
+    // emit(state.copyWith(highlightName: name));
   }
 
-  Future<bool> createHighlight() async {
-    if (state.highlightName.trim().isEmpty) {
-      return false;
-    }
+  // Future<bool> createHighlight() async {
+  //   if (state.highlightName.trim().isEmpty) {
+  //     return false;
+  //   }
 
-    emit(state.copyWith(isLoading: true));
+  //   emit(state.copyWith(isLoading: true));
 
-    try {
-      // Simulate API call to create highlight
-      await Future.delayed(const Duration(seconds: 2));
+  //   try {
+  //     // Simulate API call to create highlight
+  //     await Future.delayed(const Duration(seconds: 2));
 
-      // In real app, call API
-      // final result = await accountService.createHighlight(
-      //   name: state.highlightName,
-      //   videoIds: state.selectedVideoIds,
-      // );
+  //     // In real app, call API
+  //     // final result = await accountService.createHighlight(
+  //     //   name: state.highlightName,
+  //     //   videoIds: state.selectedVideoIds,
+  //     // );
 
-      emit(state.copyWith(
-        isLoading: false,
-        showNameDialog: false,
-        highlightName: '',
-        selectedVideoIds: [],
-      ));
+  //     emit(state.copyWith(
+  //       isLoading: false,
+  //       showNameDialog: false,
+  //       highlightName: '',
+  //       selectedVideoIds: [],
+  //     ));
 
-      return true;
-    } catch (e) {
-      emit(state.copyWith(isLoading: false));
-      return false;
-    }
-  }
+  //     return true;
+  //   } catch (e) {
+  //     emit(state.copyWith(isLoading: false));
+  //     return false;
+  //   }
+  // }
 
   Future<void> recordVideo() async {
     // Handle video recording

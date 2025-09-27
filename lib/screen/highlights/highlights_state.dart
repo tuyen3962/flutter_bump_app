@@ -78,9 +78,13 @@ class HighlightsState extends BaseState {
   List<Highlight> get filteredHighlights {
     switch (currentFilter) {
       case HighlightFilter.posted:
-        return highlights.where((h) => h.socialPostStatus == SocialPostStatus.posted).toList();
+        return highlights
+            .where((h) => h.socialPostStatus == SocialPostStatus.posted)
+            .toList();
       case HighlightFilter.notPosted:
-        return highlights.where((h) => h.socialPostStatus == SocialPostStatus.notPosted).toList();
+        return highlights
+            .where((h) => h.socialPostStatus == SocialPostStatus.notPosted)
+            .toList();
       case HighlightFilter.all:
         return highlights;
     }

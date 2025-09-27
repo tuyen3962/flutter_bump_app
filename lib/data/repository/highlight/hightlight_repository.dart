@@ -1,10 +1,8 @@
-import 'package:flutter_bump_app/data/remote/response/base_response.dart';
-
+import 'package:flutter_bump_app/data/remote/highlight_api.dart';
 import 'package:flutter_bump_app/data/remote/response/highlights/highlight_response.dart';
 import 'package:injectable/injectable.dart';
 
 import 'ihightlight_repository.dart';
-import 'package:flutter_bump_app/data/remote/highlight_api.dart';
 
 @Injectable(as: IHighlightRepository)
 class HighlightRepository extends IHighlightRepository {
@@ -45,12 +43,11 @@ class HighlightRepository extends IHighlightRepository {
   }
 
   @override
-  Future<PaginatedResponse<Highlight>> getHighlights(
-      {int page = 1, int limit = 10}) async {
+  Future<List<Highlight>> getHighlights({int page = 1, int limit = 10}) async {
     try {
       final response =
           await highlightApi.getHighlights({'page': page, 'limit': limit});
-      return response;
+      return response.data;
     } catch (e) {
       throw Exception(e);
     }

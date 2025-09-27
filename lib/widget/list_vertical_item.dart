@@ -11,59 +11,90 @@ class ListVerticalItem<T> extends StatelessWidget {
     this.paddingBetweenLine = 4,
     this.controller,
     this.divider,
+    this.viewPadding,
+    this.physics,
+    this.isShrinkWrap = true,
+    this.isLoading = false,
+    this.isSameSize = false,
+    this.skeletonView,
   });
 
   final List<T> items;
+  final bool isShrinkWrap;
   final Widget Function(int index, T item) itemBuilder;
   final double paddingBetweenItem;
   final double paddingBetweenLine;
   final int lineItemCount;
   final Widget? divider;
   final ScrollController? controller;
+  final ScrollPhysics? physics;
+  final EdgeInsets? viewPadding;
+  final bool isLoading;
+  final Widget? skeletonView;
+  final bool isSameSize;
 
   @override
   Widget build(BuildContext context) {
-    final itemColumn = items.length ~/ lineItemCount + 1;
-    Widget widget;
-    if (divider != null) {
-      widget = ListView.separated(
-          controller: controller,
-          itemBuilder: (context, index) => buildLineItem(index),
-          separatorBuilder: (context, index) => divider!,
-          itemCount: itemColumn);
-    } else {
-      widget = SingleChildScrollView(
-        controller: controller,
-        child: Column(
-            children: List.generate(
-                itemColumn,
-                (index) => Padding(
-                    padding: padding(
-                        bottom:
-                            index != itemColumn - 1 ? paddingBetweenLine : 0),
-                    child: buildLineItem(index)))),
-      );
+    final itemColumn = (isLoading ? 30 : items.length) ~/ lineItemCount + 1;
+    double? itemSize = null;
+    if (isSameSize) {
+      final screenSize = MediaQuery.of(context).size;
+      itemSize = (screenSize.width -
+              paddingBetweenItem * (lineItemCount - 1) -
+              (viewPadding?.left ?? 0) -
+              (viewPadding?.right ?? 0)) /
+          lineItemCount;
     }
-    return widget;
+    return ListView.separated(
+        controller: controller,
+        shrinkWrap: isShrinkWrap,
+        physics: physics,
+        padding: viewPadding ?? padding(),
+        itemBuilder: (context, index) => buildLineItem(index, itemSize),
+        separatorBuilder: (context, index) =>
+            divider ?? SizedBox(height: paddingBetweenLine),
+        itemCount: itemColumn);
   }
 
-  Widget buildLineItem(int index) {
-    final currentIndex = index * lineItemCount;
-    if (currentIndex >= items.length) return const SizedBox();
+  Widget buildLineItem(int index, double? itemSize) {
+    final currentIndex = isLoading ? index : index * lineItemCount;
+    if (currentIndex >= items.length && !isLoading) return const SizedBox();
+    if (itemSize != null) {
+      return SizedBox(
+        height: itemSize,
+        width: itemSize,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: paddingBetweenItem,
+          children: List.generate(
+            lineItemCount,
+            (index) {
+              return Expanded(
+                child: currentIndex + index >= items.length && !isLoading
+                    ? Container()
+                    : isLoading
+                        ? skeletonView ?? const SizedBox()
+                        : itemBuilder(
+                            currentIndex + index, items[currentIndex + index]),
+              );
+            },
+          ),
+        ),
+      );
+    }
     return IntrinsicHeight(
       child: Row(
+        spacing: paddingBetweenItem,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: List.generate(
           lineItemCount,
           (index) => Expanded(
-            child: Padding(
-                padding: padding(
-                    left: index == 0 ? 0 : paddingBetweenItem,
-                    right: index == 0 ? paddingBetweenItem : 0),
-                child: currentIndex + index >= items.length
-                    ? Container()
+            child: currentIndex + index >= items.length && !isLoading
+                ? Container()
+                : isLoading
+                    ? skeletonView ?? const SizedBox()
                     : itemBuilder(
-                        currentIndex + index, items[currentIndex + index])),
+                        currentIndex + index, items[currentIndex + index]),
           ),
         ),
       ),

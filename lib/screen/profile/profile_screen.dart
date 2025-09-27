@@ -33,7 +33,8 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => ProfileScreenState();
 }
 
-class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, ProfileState, ProfileCubit> {
+class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen,
+    ProfileState, ProfileCubit> {
   @override
   String get title => 'Profile';
 
@@ -82,7 +83,8 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
                         color: appTheme.transparentColor,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Icon(Icons.edit, size: 18, color: appTheme.gray600),
+                      child:
+                          Icon(Icons.edit, size: 18, color: appTheme.gray600),
                     ),
                   ),
                 ],
@@ -148,14 +150,8 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
                         SizedBox(height: 16.h),
                         _buildInfoItem('Full Name', userInfo['fullName']!),
                         _buildInfoItem('Email', userInfo['email']!),
-                        _buildInfoItem('Phone', userInfo['phoneNumber']!),
                         _buildInfoItem('Year of Birth', userInfo['birthYear']!),
                         _buildInfoItem('Gender', userInfo['gender']!),
-                        _buildInfoItemWithIcon(
-                          'Location',
-                          userInfo['location']!,
-                          Icons.location_on,
-                        ),
                         _buildInfoItemWithIcon(
                           'Member Since',
                           userInfo['joinDate']!,
@@ -163,10 +159,7 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
                           isLast: true,
                         ),
                         SizedBox(height: 24.h),
-                        Text(
-                          'Account',
-                          style: AppStyle.bold18(),
-                        ),
+                        Text('Account', style: AppStyle.bold18()),
                         SizedBox(height: 16.h),
                         Container(
                           margin: padding(bottom: 12.h),
@@ -188,7 +181,8 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
                                 child: Center(
                                   child: Text(
                                     'YT',
-                                    style: AppStyle.bold12(color: appTheme.alpha),
+                                    style:
+                                        AppStyle.bold12(color: appTheme.alpha),
                                   ),
                                 ),
                               ),
@@ -203,14 +197,16 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
                                     ),
                                     Text(
                                       'Connected',
-                                      style: AppStyle.regular12(color: appTheme.gray500),
+                                      style: AppStyle.regular12(
+                                          color: appTheme.gray500),
                                     ),
                                   ],
                                 ),
                               ),
                               Text(
                                 'Connected',
-                                style: AppStyle.medium14(color: appTheme.green600),
+                                style:
+                                    AppStyle.medium14(color: appTheme.green600),
                               ),
                             ],
                           ),
@@ -235,7 +231,8 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
                                 child: Center(
                                   child: Text(
                                     'TT',
-                                    style: AppStyle.bold12(color: appTheme.alpha),
+                                    style:
+                                        AppStyle.bold12(color: appTheme.alpha),
                                   ),
                                 ),
                               ),
@@ -250,7 +247,8 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
                                     ),
                                     Text(
                                       'Not connected',
-                                      style: AppStyle.regular12(color: appTheme.gray500),
+                                      style: AppStyle.regular12(
+                                          color: appTheme.gray500),
                                     ),
                                   ],
                                 ),
@@ -259,7 +257,8 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
                                 onTap: () {},
                                 child: Text(
                                   'Connect',
-                                  style: AppStyle.medium14(color: appTheme.blue600),
+                                  style: AppStyle.medium14(
+                                      color: appTheme.blue600),
                                 ),
                               ),
                             ],
@@ -284,21 +283,24 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     'Subscription',
                                     style: AppStyle.bold16(),
                                   ),
                                   Container(
-                                    padding: padding(horizontal: 8.w, vertical: 4.h),
+                                    padding:
+                                        padding(horizontal: 8.w, vertical: 4.h),
                                     decoration: BoxDecoration(
                                       color: Color(0xFFF3E8FF),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Text(
                                       'Pro',
-                                      style: AppStyle.medium12(color: Color(0xFF7C3AED)),
+                                      style: AppStyle.medium12(
+                                          color: Color(0xFF7C3AED)),
                                     ),
                                   ),
                                 ],
@@ -306,14 +308,17 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
                               SizedBox(height: 8.h),
                               Text(
                                 'Pro Plan - Unlimited highlights, advanced editing, and priority processing',
-                                style: AppStyle.regular14(color: appTheme.gray600),
+                                style:
+                                    AppStyle.regular14(color: appTheme.gray600),
                               ),
                               SizedBox(height: 12.h),
                               GestureDetector(
-                                onTap: () => context.pushRoute(const SubscriptionRoute()),
+                                onTap: () => context
+                                    .pushRoute(const SubscriptionRoute()),
                                 child: Text(
                                   'Manage Subscription',
-                                  style: AppStyle.medium14(color: Color(0xFF7C3AED)),
+                                  style: AppStyle.medium14(
+                                      color: Color(0xFF7C3AED)),
                                 ),
                               ),
                             ],
@@ -324,28 +329,26 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
                           () => context.pushRoute(const SettingsRoute()),
                         ),
                         SizedBox(height: 12.h),
-                        _buildSettingsButton('Help & Support', () {}),
-                        SizedBox(height: 16.h),
+                        // _buildSettingsButton('Help & Support', () {}),
+                        // SizedBox(height: 16.h),
                         SizedBox(
                           width: double.infinity,
                           height: 48.h,
                           child: ElevatedButton(
-                            onPressed: () {
-                              showLogoutConfirmDialog(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: appTheme.red500,
-                              foregroundColor: appTheme.alpha,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                              onPressed: () {
+                                showLogoutConfirmDialog(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: appTheme.red500,
+                                foregroundColor: appTheme.alpha,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                elevation: 0,
                               ),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              'Log Out',
-                              style: AppStyle.medium16(color: appTheme.alpha),
-                            ),
-                          ),
+                              child: Text('Log Out',
+                                  style: AppStyle.medium16(
+                                      color: appTheme.alpha))),
                         ),
                         SizedBox(height: 24.h),
                       ],
@@ -386,7 +389,8 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
     );
   }
 
-  Widget _buildInfoItemWithIcon(String label, String value, IconData icon, {bool isLast = false}) {
+  Widget _buildInfoItemWithIcon(String label, String value, IconData icon,
+      {bool isLast = false}) {
     return Container(
       padding: padding(vertical: 12.h),
       decoration: BoxDecoration(

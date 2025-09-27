@@ -12,6 +12,7 @@ import 'package:injectable/injectable.dart';
 
 import 'upload_usecase_mixin.dart';
 
+@Deprecated('Remove this')
 class UploadVideoUseCaseParam {
   final UploadUseCaseParam uploadUseCaseParam;
   final Function(int progress, int total)? onProgress;
@@ -22,6 +23,7 @@ class UploadVideoUseCaseParam {
   });
 }
 
+@Deprecated('Use UploadVideoWithBatchUseCase instead')
 @lazySingleton
 class UploadVideoUseCase extends BaseUseCase<Video, UploadVideoUseCaseParam> {
   final IUploadRepository uploadRepository;
