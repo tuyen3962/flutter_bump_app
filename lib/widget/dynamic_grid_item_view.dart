@@ -47,7 +47,7 @@ class DynamicGridItemView<T> extends StatelessWidget {
                       ? Expanded(
                           child: itemBuilder(
                               items[currentIndex + i], currentIndex + i))
-                      : SizedBox(),
+                      : const SizedBox(),
                 ),
               ),
             );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bump_app/extension.dart';
+import 'package:flutter_bump_app/extension/color_extension.dart';
 import 'package:flutter_bump_app/main.dart';
 import 'package:flutter_bump_app/utils/flash/flash.dart';
 
@@ -198,8 +199,8 @@ void showSimpleToast(String content) {
         backgroundColor: appTheme.fadeTextColor,
         boxShadows: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
-            offset: Offset(2.0, 2.0),
+            color: Colors.black.withSafeOpacity(0.5),
+            offset: const Offset(2.0, 2.0),
             blurRadius: 4.0,
           ),
         ],

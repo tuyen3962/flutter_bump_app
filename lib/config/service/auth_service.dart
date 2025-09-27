@@ -10,6 +10,7 @@ import 'package:flutter_bump_app/data/repository/account/iaccount_repository.dar
 import 'package:flutter_bump_app/data/repository/auth/iauth_repository.dart';
 import 'package:flutter_bump_app/utils/device_info_util.dart';
 import 'package:flutter_bump_app/utils/flash/toast.dart';
+import 'package:flutter_bump_app/utils/logger_helper.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 
@@ -20,10 +21,11 @@ class AuthService {
   final AccountService accountService;
   final IAccountRepository accountRepository;
 
-  AuthService(
-      {required this.authRepository,
-      required this.accountService,
-      required this.accountRepository});
+  AuthService({
+    required this.authRepository,
+    required this.accountService,
+    required this.accountRepository,
+  });
 
   final googleAccount = BaseStreamController<GoogleSignInAccount?>(null);
 
@@ -48,9 +50,11 @@ class AuthService {
     try {
       final result = await _googleSignIn.authenticate();
       final isSuccess = await authRepository.googleMobileLogin(
-          GoogleMobileLoginRequest(
-              idToken: result.authentication.idToken ?? '',
-              device: await DeviceInfoUtil.getDeviceInfo()));
+        GoogleMobileLoginRequest(
+          idToken: result.authentication.idToken ?? '',
+          device: await DeviceInfoUtil.getDeviceInfo(),
+        ),
+      );
       if (isSuccess) {
         final userInfo = await accountRepository.getUserProfile();
         accountService.setAccount(userInfo);
@@ -75,15 +79,6 @@ class AuthService {
     }
   }
 
-  // void _handleAuthenticationError(Object error) {
-  //   log('Authentication error: $error');
-  // }
-
-  // // Save user info to Firestore
-  // static Future<void> _saveUserToFirestore(User user) async {
-  //   log('Saving user to Firestore: ${user.uid}');
-  // }
-
   // Sign out
   static Future<void> signOut() async {
     try {
@@ -92,8 +87,8 @@ class AuthService {
         _googleSignIn.signOut(),
       ]);
     } catch (e) {
-      print('Error signing out: $e');
-      throw e;
+      loggerHelper.error('Error signing out: $e');
+      rethrow;
     }
   }
 }

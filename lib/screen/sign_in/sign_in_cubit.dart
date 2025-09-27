@@ -7,7 +7,7 @@ import 'package:flutter_bump_app/utils/loading.dart';
 class SignInCubit extends BaseCubit<SignInState> {
   final AuthService authService;
 
-  SignInCubit({required this.authService}) : super(SignInState());
+  SignInCubit({required this.authService}) : super(const SignInState());
 
   Future<void> signInWithGoogle() async {
     try {
@@ -16,41 +16,14 @@ class SignInCubit extends BaseCubit<SignInState> {
       final result = await authService.signInWithGoogle();
       if (result) {
         emit(state.copyWith(
-            isLoading: false, errorMessage: null, isSuccess: true));
+          isLoading: false,
+          errorMessage: null,
+          isSuccess: true,
+        ));
       } else {
         emit(state.copyWith(isLoading: false, errorMessage: 'Đã xảy ra lỗi'));
       }
-    }
-    //  on Exception catch (e) {
-    // log('Error during Google sign-in: ${e.toString()}');
-    // String errorMessage = 'Đã xảy ra lỗi';
-
-    // switch (e.code) {
-    //   case 'account-exists-with-different-credential':
-    //     errorMessage = 'Tài khoản đã tồn tại với thông tin đăng nhập khác';
-    //     break;
-    //   case 'invalid-credential':
-    //     errorMessage = 'Thông tin đăng nhập không hợp lệ';
-    //     break;
-    //   case 'operation-not-allowed':
-    //     errorMessage = 'Phương thức đăng nhập chưa được kích hoạt';
-    //     break;
-    //   case 'user-disabled':
-    //     errorMessage = 'Tài khoản đã bị vô hiệu hóa';
-    //     break;
-    //   case 'user-not-found':
-    //     errorMessage = 'Không tìm thấy tài khoản';
-    //     break;
-    //   case 'wrong-password':
-    //     errorMessage = 'Mật khẩu không đúng';
-    //     break;
-    //   default:
-    //     errorMessage = e.message ?? 'Đã xảy ra lỗi không xác định';
-    // }
-
-    // emit(state.copyWith(isLoading: false));
-    // }
-    catch (e) {
+    } catch (e) {
       emit(state.copyWith(isLoading: false));
     }
     dismissLoading();

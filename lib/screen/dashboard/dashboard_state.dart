@@ -1,16 +1,31 @@
 import 'package:flutter_bump_app/base/widget/cubit/base_state.dart';
 
 class DashboardState extends BaseState {
-  final int currentIndex;
+  final String? errorMessage;
+  final dynamic data; // Replace with your specific data type
 
-  const DashboardState({this.currentIndex = 0});
+  const DashboardState({
+    this.errorMessage,
+    this.data,
+    super.isLoading = false,
+  });
 
-  @override
-  List<Object?> get props => [currentIndex];
-
-  DashboardState copyWith({int? currentIndex}) {
+  DashboardState copyWith({
+    bool? isLoading,
+    String? errorMessage,
+    dynamic data, // Replace with your specific data type
+  }) {
     return DashboardState(
-      currentIndex: currentIndex ?? this.currentIndex,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage ?? this.errorMessage,
+      data: data ?? this.data,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        isLoading,
+        errorMessage,
+        data,
+      ];
 }

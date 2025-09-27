@@ -1,3 +1,4 @@
+import 'package:flutter_bump_app/data/model/request/update_profile_request.dart';
 import 'package:flutter_bump_app/data/model/user.dart';
 import 'package:flutter_bump_app/data/remote/user_api.dart';
 import 'package:flutter_bump_app/data/repository/account/iaccount_repository.dart';
@@ -19,9 +20,8 @@ class AccountRepository extends IAccountRepository {
   }
 
   @override
-  Future<User?> updateUserProfile(User user) async {
-    // final response = await userApi.updateUserProfile(user);
-    // return response.data;
-    throw Exception('Not implemented');
+  Future<User?> updateUserProfile(UpdateProfileRequest request) async {
+    final response = await userApi.updateUserProfile(request);
+    return response.data;
   }
 }

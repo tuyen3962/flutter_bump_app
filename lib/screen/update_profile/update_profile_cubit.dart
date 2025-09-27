@@ -1,191 +1,103 @@
-import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
+import 'package:flutter_bump_app/config/constant/app_constant.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
 import 'package:flutter_bump_app/config/service/app_service.dart';
+import 'package:flutter_bump_app/config/service/profile_servide.dart';
+import 'package:flutter_bump_app/data/model/request/update_profile_request.dart';
+import 'package:flutter_bump_app/utils/image_picker_handler.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'update_profile_state.dart';
 
 class UpdateProfileCubit extends BaseCubit<UpdateProfileState> {
+  late final ProfileServide profileServide = locator.get();
   late final AccountService accountService = locator.get();
-  final ImagePicker _imagePicker = ImagePicker();
 
-  UpdateProfileCubit() : super(const UpdateProfileState());
+  UpdateProfileCubit() : super(const UpdateProfileState()) {
+    _loadCurrentUserData();
+  }
 
-  void initializeProfile() {
-    // Initialize with current user data
+  void _loadCurrentUserData() {
+    // Load current user data from service
+    final currentUser = accountService.myAccount.value;
     emit(state.copyWith(
-      fullName: 'John Doe',
-      email: 'john.doe@email.com',
-      phoneNumber: '+1 (555) 123-4567',
-      birthYear: '1990',
-      gender: 'Male',
-      location: 'San Francisco, CA',
-      bio: 'Passionate pickleball player and highlight creator',
-      hasChanges: false,
+      name: currentUser?.name,
+      bio: currentUser?.bio,
+      gender: currentUser?.gender,
+      // avatarPath: currentUser.avatar,
     ));
   }
 
-  void updateFullName(String fullName) {
-    emit(state.copyWith(
-      fullName: fullName,
-      hasChanges: true,
-    ));
-  }
-
-  void updateEmail(String email) {
-    emit(state.copyWith(
-      email: email,
-      hasChanges: true,
-    ));
-  }
-
-  void updatePhoneNumber(String phoneNumber) {
-    emit(state.copyWith(
-      phoneNumber: phoneNumber,
-      hasChanges: true,
-    ));
-  }
-
-  void updateBirthYear(String birthYear) {
-    emit(state.copyWith(
-      birthYear: birthYear,
-      hasChanges: true,
-    ));
-  }
-
-  void updateGender(String gender) {
-    emit(state.copyWith(
-      gender: gender,
-      hasChanges: true,
-    ));
-  }
-
-  void updateLocation(String location) {
-    emit(state.copyWith(
-      location: location,
-      hasChanges: true,
-    ));
+  void updateName(String name) {
+    emit(state.copyWith(name: name));
   }
 
   void updateBio(String bio) {
-    emit(state.copyWith(
-      bio: bio,
-      hasChanges: true,
-    ));
+    emit(state.copyWith(bio: bio));
   }
 
-  void resetChanges() {
-    emit(state.copyWith(
-      hasChanges: false,
-    ));
+  void updateGender(UserGender gender) {
+    emit(state.copyWith(gender: gender));
   }
 
-  Future<void> pickImageFromCamera() async {
+  Future<void> pickAvatarCamera() async {
     try {
-      final XFile? image = await _imagePicker.pickImage(
+      final File? image = await ImagePickerHandler.onGetImage(
         source: ImageSource.camera,
-        imageQuality: 80,
-        maxWidth: 800,
-        maxHeight: 800,
       );
 
       if (image != null) {
-        emit(state.copyWith(
-          profileImagePath: image.path,
-          hasChanges: true,
-        ));
+        emit(state.copyWith(avatarPath: image.path));
       }
     } catch (e) {
-      log(e.toString());
+      emit(state.copyWith(errorMessage: 'Failed to take photo'));
     }
   }
 
-  Future<void> pickImageFromGallery() async {
+  Future<void> pickAvatarGallery() async {
     try {
-      final XFile? image = await _imagePicker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 80,
-        maxWidth: 800,
-        maxHeight: 800,
-      );
+      final File? image = await ImagePickerHandler.onGetImage();
 
       if (image != null) {
-        emit(state.copyWith(
-          profileImagePath: image.path,
-          hasChanges: true,
-        ));
+        emit(state.copyWith(avatarPath: image.path));
       }
     } catch (e) {
-      log(e.toString());
+      emit(state.copyWith(errorMessage: 'Failed to pick image'));
     }
   }
 
-  Future<bool> saveProfile() async {
-    if (!state.hasChanges) return true;
+  void removeAvatar() {
+    emit(state.copyWith(clearAvatar: true));
+  }
 
-    emit(state.copyWith(isSaving: true));
+  Future<void> saveProfile() async {
+    if (state.name.trim().isEmpty) {
+      emit(state.copyWith(errorMessage: 'Name is required'));
+      return;
+    }
+
+    emit(state.copyWith(isLoading: true, errorMessage: ''));
 
     try {
-      // Call API to save profile
-      await Future.delayed(const Duration(seconds: 2)); // Simulate API call
-
-      // Here you would call your actual API
-      // final result = await accountService.updateProfile({
-      //   'fullName': state.fullName,
-      //   'email': state.email,
-      //   'phoneNumber': state.phoneNumber,
-      //   'birthYear': state.birthYear,
-      //   'gender': state.gender,
-      //   'location': state.location,
-      //   'bio': state.bio,
-      //   'profileImage': state.profileImagePath,
-      // });
+      await profileServide.updateProfile(
+        UpdateProfileRequest(
+          name: state.name.trim(),
+          bio: state.bio.trim(),
+          gender: state.gender?.name ?? UserGender.OTHER.name,
+        ),
+      );
 
       emit(state.copyWith(
-        isSaving: false,
-        hasChanges: false,
+        isLoading: false,
+        isSuccess: true,
       ));
-
-      // showSuccess('Profile updated successfully!');
-      return true;
     } catch (e) {
-      emit(state.copyWith(isSaving: false));
-      return false;
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: 'Failed to update profile. Please try again.',
+      ));
     }
-  }
-
-  String? validateForm() {
-    if (state.fullName.trim().isEmpty) {
-      return 'Full name is required';
-    }
-
-    if (state.email.trim().isEmpty) {
-      return 'Email is required';
-    }
-
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}').hasMatch(state.email)) {
-      return 'Please enter a valid email';
-    }
-
-    if (state.phoneNumber.trim().isEmpty) {
-      return 'Phone number is required';
-    }
-
-    if (state.birthYear.trim().isEmpty) {
-      return 'Birth year is required';
-    }
-
-    final year = int.tryParse(state.birthYear);
-    if (year == null || year < 1900 || year > DateTime.now().year) {
-      return 'Please enter a valid year';
-    }
-
-    if (state.location.trim().isEmpty) {
-      return 'Location is required';
-    }
-
-    return null; // No errors
   }
 }

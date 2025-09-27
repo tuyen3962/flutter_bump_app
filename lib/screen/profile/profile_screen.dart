@@ -1,15 +1,18 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bump_app/base/stream/base_stream_builder.dart';
 import 'package:flutter_bump_app/base/widget/base_page.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_bloc_provider.dart';
 import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
+import 'package:flutter_bump_app/data/model/user.dart';
 import 'package:flutter_bump_app/extension.dart';
+import 'package:flutter_bump_app/extension/color_extension.dart';
 import 'package:flutter_bump_app/main.dart';
 import 'package:flutter_bump_app/router/app_route.dart';
 import 'package:flutter_bump_app/screen/profile/profile_cubit.dart';
-import 'package:flutter_bump_app/widget/dialog/show_logout_confirm_dialog.dart';
-
-import 'profile_state.dart';
+import 'package:flutter_bump_app/screen/profile/profile_state.dart';
+import 'package:flutter_bump_app/widget/line_widget.dart';
 
 @RoutePage()
 class ProfilePage extends BaseBlocProvider<ProfileState, ProfileCubit> {
@@ -33,325 +36,80 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => ProfileScreenState();
 }
 
-class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, ProfileState, ProfileCubit> {
+class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen,
+    ProfileState, ProfileCubit> {
   @override
   String get title => 'Profile';
 
   @override
-  Widget buildBody(BuildContext context, ProfileCubit cubit) {
-    final userInfo = {
-      'fullName': 'John Doe',
-      'email': 'john.doe@email.com',
-      'birthYear': '1990',
-      'gender': 'Male',
-      'location': 'San Francisco, CA',
-      'joinDate': 'January 2024',
-      'phoneNumber': '+1 (555) 123-4567',
-      'bio': 'Passionate pickleball player and highlight creator'
-    };
+  bool get isSafeArea => false;
 
-    return Scaffold(
-      backgroundColor: appTheme.alpha,
-      body: Column(
-        children: [
-          Container(
-            padding: padding(all: 16),
-            decoration: BoxDecoration(
-              color: appTheme.alpha,
-              border: Border(
-                bottom: BorderSide(color: appTheme.gray200, width: 1),
-              ),
+  @override
+  Widget buildBody(BuildContext context, ProfileCubit cubit) {
+    return BlocBuilder<ProfileCubit, ProfileState>(
+      builder: (context, state) {
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            color: appTheme.greenF4Color,
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                _buildHeader(cubit),
+                Expanded(
+                  child: _buildProfileContent(state, cubit),
+                ),
+              ],
             ),
-            child: SafeArea(
-              child: Row(
-                children: [
-                  SizedBox(width: 32.w, height: 32.h),
-                  Expanded(
-                    child: Text(
-                      'Profile',
-                      style: AppStyle.bold18(),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => context.pushRoute(const UpdateProfileRoute()),
-                    child: Container(
-                      width: 32.w,
-                      height: 32.h,
-                      decoration: BoxDecoration(
-                        color: appTheme.transparentColor,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Icon(Icons.edit, size: 18, color: appTheme.gray600),
-                    ),
-                  ),
-                ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildHeader(ProfileCubit cubit) {
+    return Container(
+      padding: padding(all: 16.w),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: context.back,
+            child: Container(
+              width: 32.w,
+              height: 32.h,
+              decoration: BoxDecoration(
+                color: appTheme.green800Color.withSafeOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                Icons.arrow_back,
+                color: appTheme.green800Color,
+                size: 20,
               ),
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Container(
-                    padding: padding(all: 24),
-                    decoration: BoxDecoration(
-                      color: appTheme.alpha,
-                      border: Border(
-                        bottom: BorderSide(color: appTheme.gray200, width: 1),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 96.w,
-                          height: 96.h,
-                          decoration: BoxDecoration(
-                            color: appTheme.blue100,
-                            borderRadius: BorderRadius.circular(48),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'JD',
-                              style: AppStyle.bold24(color: appTheme.blue600),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        Text(
-                          userInfo['fullName']!,
-                          style: AppStyle.bold20(),
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          userInfo['email']!,
-                          style: AppStyle.regular16(color: appTheme.gray500),
-                        ),
-                        SizedBox(height: 12.h),
-                        Text(
-                          userInfo['bio']!,
-                          style: AppStyle.regular14(color: appTheme.gray600),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: padding(all: 24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Personal Information',
-                          style: AppStyle.bold18(),
-                        ),
-                        SizedBox(height: 16.h),
-                        _buildInfoItem('Full Name', userInfo['fullName']!),
-                        _buildInfoItem('Email', userInfo['email']!),
-                        _buildInfoItem('Phone', userInfo['phoneNumber']!),
-                        _buildInfoItem('Year of Birth', userInfo['birthYear']!),
-                        _buildInfoItem('Gender', userInfo['gender']!),
-                        _buildInfoItemWithIcon(
-                          'Location',
-                          userInfo['location']!,
-                          Icons.location_on,
-                        ),
-                        _buildInfoItemWithIcon(
-                          'Member Since',
-                          userInfo['joinDate']!,
-                          Icons.calendar_today,
-                          isLast: true,
-                        ),
-                        SizedBox(height: 24.h),
-                        Text(
-                          'Account',
-                          style: AppStyle.bold18(),
-                        ),
-                        SizedBox(height: 16.h),
-                        Container(
-                          margin: padding(bottom: 12.h),
-                          padding: padding(all: 12),
-                          decoration: BoxDecoration(
-                            color: appTheme.alpha,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: appTheme.gray300),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 32.w,
-                                height: 32.h,
-                                decoration: BoxDecoration(
-                                  color: appTheme.red500,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'YT',
-                                    style: AppStyle.bold12(color: appTheme.alpha),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'YouTube',
-                                      style: AppStyle.medium16(),
-                                    ),
-                                    Text(
-                                      'Connected',
-                                      style: AppStyle.regular12(color: appTheme.gray500),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Text(
-                                'Connected',
-                                style: AppStyle.medium14(color: appTheme.green600),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          margin: padding(bottom: 24.h),
-                          padding: padding(all: 12),
-                          decoration: BoxDecoration(
-                            color: appTheme.alpha,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: appTheme.gray300),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 32.w,
-                                height: 32.h,
-                                decoration: BoxDecoration(
-                                  color: appTheme.blackColor,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    'TT',
-                                    style: AppStyle.bold12(color: appTheme.alpha),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'TikTok',
-                                      style: AppStyle.medium16(),
-                                    ),
-                                    Text(
-                                      'Not connected',
-                                      style: AppStyle.regular12(color: appTheme.gray500),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {},
-                                child: Text(
-                                  'Connect',
-                                  style: AppStyle.medium14(color: appTheme.blue600),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: padding(all: 16),
-                          margin: padding(bottom: 12.h),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                              colors: [
-                                appTheme.blue50,
-                                Color(0xFFF3E8FF),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: appTheme.gray300),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Subscription',
-                                    style: AppStyle.bold16(),
-                                  ),
-                                  Container(
-                                    padding: padding(horizontal: 8.w, vertical: 4.h),
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFF3E8FF),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      'Pro',
-                                      style: AppStyle.medium12(color: Color(0xFF7C3AED)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 8.h),
-                              Text(
-                                'Pro Plan - Unlimited highlights, advanced editing, and priority processing',
-                                style: AppStyle.regular14(color: appTheme.gray600),
-                              ),
-                              SizedBox(height: 12.h),
-                              GestureDetector(
-                                onTap: () => context.pushRoute(const SubscriptionRoute()),
-                                child: Text(
-                                  'Manage Subscription',
-                                  style: AppStyle.medium14(color: Color(0xFF7C3AED)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        _buildSettingsButton(
-                          'Settings',
-                          () => context.pushRoute(const SettingsRoute()),
-                        ),
-                        SizedBox(height: 12.h),
-                        _buildSettingsButton('Help & Support', () {}),
-                        SizedBox(height: 16.h),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 48.h,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              showLogoutConfirmDialog(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: appTheme.red500,
-                              foregroundColor: appTheme.alpha,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              elevation: 0,
-                            ),
-                            child: Text(
-                              'Log Out',
-                              style: AppStyle.medium16(color: appTheme.alpha),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 24.h),
-                      ],
-                    ),
-                  ),
-                ],
+            child: Text(
+              'Profile',
+              textAlign: TextAlign.center,
+              style: AppStyle.bold18(color: appTheme.green2DColor),
+            ),
+          ),
+          GestureDetector(
+            onTap: () => context.pushRoute(const UpdateProfileRoute()),
+            child: Container(
+              width: 32.w,
+              height: 32.h,
+              decoration: BoxDecoration(
+                color: appTheme.green800Color.withSafeOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                Icons.edit_outlined,
+                color: appTheme.green800Color,
+                size: 18,
               ),
             ),
           ),
@@ -360,87 +118,321 @@ class ProfileScreenState extends BaseBlocNoAppBarPageState<ProfileScreen, Profil
     );
   }
 
-  Widget _buildInfoItem(String label, String value, {bool isLast = false}) {
-    return Container(
-      padding: padding(vertical: 12.h),
-      decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(
-                bottom: BorderSide(color: appTheme.gray100, width: 1),
-              ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: AppStyle.regular16(color: appTheme.gray600),
-          ),
-          Text(
-            value,
-            style: AppStyle.medium16(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoItemWithIcon(String label, String value, IconData icon, {bool isLast = false}) {
-    return Container(
-      padding: padding(vertical: 12.h),
-      decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(
-                bottom: BorderSide(color: appTheme.gray100, width: 1),
-              ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+  Widget _buildProfileContent(ProfileState state, ProfileCubit cubit) {
+    return BaseStreamBuilder(
+      controller: cubit.accountService.myAccount,
+      builder: (user) {
+        return SingleChildScrollView(
+          padding: padding(all: 24),
+          child: Column(
             children: [
-              Icon(
-                icon,
-                size: 16,
-                color: appTheme.gray600,
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                label,
-                style: AppStyle.regular16(color: appTheme.gray600),
-              ),
+              // Profile Picture & Basic Info
+              _buildProfileHeader(state, user),
+              const LineWidget(),
+              SizedBox(height: 24.h),
+              // Personal Information
+              _buildPersonalInformation(state, user),
+              SizedBox(height: 24.h),
+              // Account Section
+              _buildAccountSection(state, cubit),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProfileHeader(ProfileState state, User? user) {
+    return Column(
+      children: [
+        Container(
+          width: 96.w,
+          height: 96.h,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                appTheme.green81Color.withSafeOpacity(0.8),
+                appTheme.green69Color.withSafeOpacity(0.8),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: appTheme.green81Color.withSafeOpacity(0.25),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(
+              color: appTheme.green300.withSafeOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: Center(
+            child: Container(
+              width: 64.w,
+              height: 64.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    appTheme.green200Color.withSafeOpacity(0.5),
+                    appTheme.emerald200Color.withSafeOpacity(0.5),
+                  ],
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  'A',
+                  style: AppStyle.bold20(color: appTheme.green800Color),
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 16.h),
+        Text(
+          user?.name ?? '',
+          style: AppStyle.bold20(color: appTheme.green2DColor),
+        ),
+        SizedBox(height: 4.h),
+        Text(
+          user?.email ?? '',
+          style: AppStyle.regular16(color: appTheme.green3DColor),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPersonalInformation(ProfileState state, User? user) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Personal Information',
+          style: AppStyle.bold18(color: appTheme.green2DColor),
+        ),
+        SizedBox(height: 12.h),
+
+        // Full Name
+        _buildInfoRow('Full Name', user?.name ?? ''),
+
+        // Gender
+        _buildInfoRow('Gender', user?.gender?.name ?? ''),
+      ],
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Container(
+      padding: padding(vertical: 12.h),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: appTheme.green300.withSafeOpacity(0.5),
+            width: 1.w,
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: AppStyle.regular16(color: appTheme.green3DColor),
+            ),
+          ),
           Text(
             value,
-            style: AppStyle.medium16(),
+            style: AppStyle.medium16(color: appTheme.green2DColor),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSettingsButton(String title, VoidCallback? onTap) {
-    return SizedBox(
-      width: double.infinity,
-      height: 48.h,
-      child: OutlinedButton(
-        onPressed: onTap,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: appTheme.gray900,
-          side: BorderSide(color: appTheme.gray300),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+  Widget _buildAccountSection(ProfileState state, ProfileCubit cubit) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Account',
+          style: AppStyle.bold18(color: appTheme.green2DColor),
+        ),
+        SizedBox(height: 16.h),
+        _buildPlatformConnection(
+          'YouTube',
+          'YT',
+          appTheme.redColor,
+          'Connected',
+          true,
+        ),
+        SizedBox(height: 12.h),
+        _buildPlatformConnection(
+          'TikTok',
+          'TT',
+          appTheme.blackColor,
+          'Connected',
+          true,
+        ),
+        SizedBox(height: 12.h),
+
+        // SOL Wallet
+        _buildWalletConnection(cubit),
+        SizedBox(height: 12.h),
+
+        // Settings Button
+        _buildActionButton(
+          'Settings',
+          Icons.settings_outlined,
+          () {},
+        ),
+        SizedBox(height: 12.h),
+        // Help & Support Button
+        _buildActionButton(
+          'Help & Support',
+          Icons.help_outline,
+          () {},
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlatformConnection(
+    String platformName,
+    String shortName,
+    Color iconColor,
+    String status,
+    bool isConnected,
+  ) {
+    return Container(
+      padding: padding(all: 12.w),
+      decoration: BoxDecoration(
+        color: appTheme.whiteText.withSafeOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: appTheme.green300.withSafeOpacity(0.5),
+          width: 1.w,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Platform Icon
+          Container(
+            width: 32.w,
+            height: 32.h,
+            decoration: BoxDecoration(
+              color: iconColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Center(
+              child: Text(
+                shortName,
+                style: AppStyle.bold12(color: appTheme.whiteText),
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Text(
+              platformName,
+              style: AppStyle.medium16(color: appTheme.green2DColor),
+            ),
+          ),
+          Text(
+            status,
+            style: AppStyle.medium14(
+              color: isConnected ? appTheme.green600 : appTheme.redColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWalletConnection(ProfileCubit cubit) {
+    return GestureDetector(
+      onTap: () {},
+      child: Container(
+        padding: padding(all: 12.w),
+        decoration: BoxDecoration(
+          color: appTheme.whiteText.withSafeOpacity(0.2),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: appTheme.green300.withSafeOpacity(0.5),
+            width: 1.w,
           ),
         ),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            title,
-            style: AppStyle.medium16(),
+        child: Row(
+          children: [
+            Container(
+              width: 32.w,
+              height: 32.h,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    appTheme.green81Color,
+                    appTheme.green69Color,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                Icons.account_balance_wallet_outlined,
+                color: appTheme.whiteText,
+                size: 16,
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Text(
+                'SOL Wallet',
+                style: AppStyle.medium16(color: appTheme.green2DColor),
+              ),
+            ),
+            Text(
+              'Not Connected',
+              style: AppStyle.medium14(color: appTheme.red600Color),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(String title, IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: padding(all: 12.w),
+        decoration: BoxDecoration(
+          color: appTheme.whiteText.withSafeOpacity(0.2),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: appTheme.green300.withSafeOpacity(0.5),
+            width: 1.w,
           ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: appTheme.green2DColor,
+              size: 20,
+            ),
+            SizedBox(width: 12.w),
+            Text(
+              title,
+              style: AppStyle.medium16(color: appTheme.green2DColor),
+            ),
+          ],
         ),
       ),
     );

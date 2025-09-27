@@ -45,6 +45,12 @@ class AppStyle {
         color: color ?? appTheme.gray900,
       );
 
+  static TextStyle regular20({Color? color}) => TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w400,
+        color: color ?? appTheme.gray900,
+      );
+
   static TextStyle regular40({Color? color}) => TextStyle(
         fontSize: 40,
         fontWeight: FontWeight.w500,

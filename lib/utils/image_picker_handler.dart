@@ -32,9 +32,11 @@ class ImagePickerHandler {
     return null;
   }
 
-  static Future<File?> onGetImage() async {
+  static Future<File?> onGetImage({ImageSource? source}) async {
     try {
-      final result = await _picker.pickImage(source: ImageSource.gallery);
+      final result = await _picker.pickImage(
+        source: source ?? ImageSource.gallery,
+      );
       if (result != null) {
         return File(result.path);
       }

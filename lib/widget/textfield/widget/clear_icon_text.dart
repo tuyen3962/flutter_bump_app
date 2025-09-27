@@ -17,7 +17,7 @@ class ClearIconText extends StatelessWidget {
         }
         handleAfterClear?.call();
       },
-      child: Column(
+      child: const Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

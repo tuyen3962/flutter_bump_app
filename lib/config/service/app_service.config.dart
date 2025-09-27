@@ -34,6 +34,7 @@ import '../../data/usecase/upload_video_usecase.dart' as _i640;
 import 'account_service.dart' as _i997;
 import 'auth_service.dart' as _i184;
 import 'language_service.dart' as _i313;
+import 'profile_servide.dart' as _i709;
 import 'provider/dio_provider.dart' as _i7;
 
 extension GetItInjectableX on _i174.GetIt {
@@ -84,6 +85,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i710.AccountRepository(gh<_i925.UserApi>()));
     gh.factory<_i134.IUploadRepository>(
         () => _i655.UploadRepository(gh<_i818.UploadDS>())..init());
+    gh.singleton<_i709.ProfileServide>(() => _i709.ProfileServide(
+          accountService: gh<_i997.AccountService>(),
+          accountRepository: gh<_i630.IAccountRepository>(),
+        ));
     gh.lazySingleton<_i640.UploadVideoUseCase>(() => _i640.UploadVideoUseCase(
           gh<_i71.IVideoRepository>(),
           gh<_i134.IUploadRepository>(),

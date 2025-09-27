@@ -209,28 +209,28 @@ class NormalPalettes extends BasePalettes {}
 
 class WalletPalettes extends BasePalettes {
   @override
-  Color get primary500 => Color(0xFFDA3602);
+  Color get primary500 => const Color(0xFFDA3602);
   @override
-  Color get primary300 => Color(0xFFFF8746);
+  Color get primary300 => const Color(0xFFFF8746);
   @override
-  Color get primary200 => Color(0xFFFF8746);
+  Color get primary200 => const Color(0xFFFF8746);
   @override
-  Color get primary100 => Color(0xFFFF8746);
+  Color get primary100 => const Color(0xFFFF8746);
 
   @override
-  Color get secondary50 => Color(0xFFE6F0FD);
+  Color get secondary50 => const Color(0xFFE6F0FD);
   @override
-  Color get secondary300 => Color(0xFF00BD5D);
+  Color get secondary300 => const Color(0xFF00BD5D);
 
   @override
-  Color get warning400 => Color(0xFFC74500);
+  Color get warning400 => const Color(0xFFC74500);
   @override
-  Color get warning300 => Color(0xFFE65000);
+  Color get warning300 => const Color(0xFFE65000);
   @override
-  Color get warning200 => Color(0xFFFFE7B8);
+  Color get warning200 => const Color(0xFFFFE7B8);
   @override
-  Color get warning100 => Color(0xFFF6F2E9);
+  Color get warning100 => const Color(0xFFF6F2E9);
 
   @override
-  Color get alphaBlack => Color(0xFF000000);
+  Color get alphaBlack => const Color(0xFF000000);
 }

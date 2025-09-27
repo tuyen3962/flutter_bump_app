@@ -7,7 +7,7 @@ import 'profile_state.dart';
 class ProfileCubit extends BaseCubit<ProfileState> {
   late final AccountService accountService = locator.get();
 
-  ProfileCubit() : super(ProfileState());
+  ProfileCubit() : super(const ProfileState());
 
   @override
   void onInit() {
@@ -25,7 +25,7 @@ class ProfileCubit extends BaseCubit<ProfileState> {
   void doSomething() {
     // Example method
     emit(state.copyWith(isLoading: true));
-    
+
     // Simulate async operation
     Future.delayed(const Duration(seconds: 1), () {
       if (!isClose) {

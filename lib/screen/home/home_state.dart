@@ -1,31 +1,61 @@
 import 'package:flutter_bump_app/base/widget/cubit/base_state.dart';
+import 'package:flutter_bump_app/models/brand_model.dart';
 
 class HomeState extends BaseState {
-  final String? errorMessage;
-  final dynamic data; // Replace with your specific data type
+  final List<BrandModel> availableBrands;
+  final BrandModel? selectedBrand;
+  final String videoUrl;
+  final ValidationResultState validationState;
+  final String validationMessage;
+  final bool showEarningsPopup;
+  final int tokens;
 
   const HomeState({
-    this.errorMessage,
-    this.data,
-    super.isLoading = false,
+    this.availableBrands = const [],
+    this.selectedBrand,
+    this.videoUrl = '',
+    this.validationState = ValidationResultState.idle,
+    this.validationMessage = '',
+    this.showEarningsPopup = false,
+    this.tokens = 142,
   });
 
   HomeState copyWith({
-    bool? isLoading,
-    String? errorMessage,
-    dynamic data, // Replace with your specific data type
+    List<BrandModel>? availableBrands,
+    BrandModel? selectedBrand,
+    String? videoUrl,
+    ValidationResultState? validationState,
+    String? validationMessage,
+    bool? showEarningsPopup,
+    int? tokens,
   }) {
     return HomeState(
-      isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
-      data: data ?? this.data,
+      availableBrands: availableBrands ?? this.availableBrands,
+      selectedBrand: selectedBrand ?? this.selectedBrand,
+      videoUrl: videoUrl ?? this.videoUrl,
+      validationState: validationState ?? this.validationState,
+      validationMessage: validationMessage ?? this.validationMessage,
+      showEarningsPopup: showEarningsPopup ?? this.showEarningsPopup,
+      tokens: tokens ?? this.tokens,
     );
   }
 
   @override
   List<Object?> get props => [
         isLoading,
-        errorMessage,
-        data,
+        availableBrands,
+        selectedBrand,
+        videoUrl,
+        validationState,
+        validationMessage,
+        showEarningsPopup,
+        tokens,
       ];
+}
+
+enum ValidationResultState {
+  idle,
+  validating,
+  valid,
+  invalid,
 }

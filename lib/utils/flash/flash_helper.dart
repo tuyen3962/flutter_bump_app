@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bump_app/extension/color_extension.dart';
 
 import 'flash.dart';
 
@@ -53,16 +54,16 @@ class Toast extends StatefulWidget {
 
   /// Emit a message for the specified duration.
   static Future<T?> show<T>(
-      BuildContext context,
-      Object message, {
-        Duration duration = const Duration(seconds: 3),
-        Alignment? alignment,
-        EdgeInsets? margin,
-        BorderRadius? borderRadius,
-        Color? backgroundColor,
-        TextStyle? textStyle,
-        EdgeInsets? padding,
-      }) {
+    BuildContext context,
+    Object message, {
+    Duration duration = const Duration(seconds: 3),
+    Alignment? alignment,
+    EdgeInsets? margin,
+    BorderRadius? borderRadius,
+    Color? backgroundColor,
+    TextStyle? textStyle,
+    EdgeInsets? padding,
+  }) {
     return context.findAncestorStateOfType<_ToastState>()!.show(message,
         duration: duration,
         alignment: alignment,
@@ -95,15 +96,15 @@ class _ToastState extends State<Toast> {
   }
 
   Future<T?> show<T>(
-      Object message, {
-        Duration duration = const Duration(seconds: 3),
-        Alignment? alignment,
-        EdgeInsets? margin,
-        BorderRadius? borderRadius,
-        Color? backgroundColor,
-        TextStyle? textStyle,
-        EdgeInsets? padding,
-      }) async {
+    Object message, {
+    Duration duration = const Duration(seconds: 3),
+    Alignment? alignment,
+    EdgeInsets? margin,
+    BorderRadius? borderRadius,
+    Color? backgroundColor,
+    TextStyle? textStyle,
+    EdgeInsets? padding,
+  }) async {
     // Wait initialized.
     await initialized.future;
 
@@ -124,7 +125,7 @@ class _ToastState extends State<Toast> {
       return showFlash<T>(
         context: context,
         builder: (context, controller) {
-          final child;
+          final Widget child;
           if (message is WidgetBuilder) {
             child = message(context);
           } else if (message is Widget) {
@@ -191,15 +192,15 @@ class _MessageItem<T> {
 extension ToastShortcuts on BuildContext {
   /// Emit a message for the specified duration.
   Future<T?> showToast<T>(
-      Object message, {
-        Duration duration = const Duration(seconds: 3),
-        Alignment? alignment,
-        EdgeInsets? margin,
-        BorderRadius? borderRadius,
-        Color? backgroundColor,
-        TextStyle? textStyle,
-        EdgeInsets? padding,
-      }) {
+    Object message, {
+    Duration duration = const Duration(seconds: 3),
+    Alignment? alignment,
+    EdgeInsets? margin,
+    BorderRadius? borderRadius,
+    Color? backgroundColor,
+    TextStyle? textStyle,
+    EdgeInsets? padding,
+  }) {
     assert(message is String || message is Widget || message is WidgetBuilder);
     return Toast.show(this, message,
         duration: duration,
@@ -220,7 +221,7 @@ extension FlashBarShortcuts on BuildContext {
     bool persistent = true,
     Duration? duration,
     Duration? transitionDuration,
-    WillPopCallback? onWillPop,
+    Future<bool> Function()? onWillPop,
     bool? enableVerticalDrag,
     HorizontalDismissDirection? horizontalDismissDirection,
     FlashBehavior? behavior,
@@ -280,9 +281,9 @@ extension FlashBarShortcuts on BuildContext {
               (isThemeDark
                   ? theme.colorScheme.onSurface
                   : Color.alphaBlend(
-                theme.colorScheme.onSurface.withOpacity(0.80),
-                theme.colorScheme.surface,
-              ));
+                      theme.colorScheme.onSurface.withSafeOpacity(0.80),
+                      theme.colorScheme.surface,
+                    ));
           final $titleColor = titleStyle?.color ??
               flashTheme.titleStyle?.color ??
               theme.colorScheme.surface;
@@ -302,12 +303,10 @@ extension FlashBarShortcuts on BuildContext {
               secondary: $actionColor,
               secondaryContainer: colorScheme.onSecondary,
               surface: colorScheme.onSurface,
-              background: $backgroundColor,
               error: colorScheme.onError,
               onPrimary: colorScheme.primary,
               onSecondary: colorScheme.secondary,
               onSurface: colorScheme.surface,
-              onBackground: colorScheme.background,
               onError: colorScheme.error,
               brightness: $brightness,
             ),
@@ -349,18 +348,18 @@ extension FlashBarShortcuts on BuildContext {
               behavior: behavior ?? flashTheme.behavior ?? FlashBehavior.fixed,
               position: position ?? flashTheme.position ?? FlashPosition.bottom,
               enableVerticalDrag:
-              enableVerticalDrag ?? flashTheme.enableVerticalDrag ?? true,
+                  enableVerticalDrag ?? flashTheme.enableVerticalDrag ?? true,
               horizontalDismissDirection: horizontalDismissDirection ??
                   flashTheme.horizontalDismissDirection,
               brightness: $brightness,
               backgroundColor: $backgroundColor,
               backgroundGradient:
-              backgroundGradient ?? flashTheme.backgroundGradient,
+                  backgroundGradient ?? flashTheme.backgroundGradient,
               boxShadows: boxShadows ?? flashTheme.boxShadows,
               barrierBlur: barrierBlur ?? flashTheme.barrierBlur,
               barrierColor: barrierColor ?? flashTheme.barrierColor,
               barrierDismissible:
-              barrierDismissible ?? flashTheme.barrierDismissible ?? true,
+                  barrierDismissible ?? flashTheme.barrierDismissible ?? true,
               borderRadius: borderRadius ?? flashTheme.borderRadius,
               borderColor: borderColor ?? flashTheme.borderColor,
               borderWidth: borderWidth ?? flashTheme.borderWidth,
@@ -383,15 +382,15 @@ extension FlashBarShortcuts on BuildContext {
               constraints: constraints ?? flashTheme.constraints,
               child: FlashBar(
                 padding:
-                padding ?? flashTheme.padding ?? const EdgeInsets.all(16.0),
+                    padding ?? flashTheme.padding ?? const EdgeInsets.all(16.0),
                 title: title == null
                     ? null
                     : DefaultTextStyle(
-                  style: inverseTheme.textTheme.titleLarge!
-                      .merge(flashTheme.titleStyle)
-                      .merge(titleStyle),
-                  child: title,
-                ),
+                        style: inverseTheme.textTheme.titleLarge!
+                            .merge(flashTheme.titleStyle)
+                            .merge(titleStyle),
+                        child: title,
+                      ),
                 content: DefaultTextStyle(
                   style: inverseTheme.textTheme.titleMedium!
                       .merge(flashTheme.contentStyle)
@@ -402,9 +401,9 @@ extension FlashBarShortcuts on BuildContext {
                 icon: icon == null
                     ? null
                     : IconTheme(
-                  data: IconThemeData(color: $indicatorColor),
-                  child: icon,
-                ),
+                        data: IconThemeData(color: $indicatorColor),
+                        child: icon,
+                      ),
                 indicatorColor: $indicatorColor,
                 primaryAction: primaryActionBuilder == null
                     ? null
@@ -418,7 +417,7 @@ extension FlashBarShortcuts on BuildContext {
                 showProgressIndicator: showProgressIndicator,
                 progressIndicatorController: progressIndicatorController,
                 progressIndicatorBackgroundColor:
-                progressIndicatorBackgroundColor,
+                    progressIndicatorBackgroundColor,
                 progressIndicatorValueColor: progressIndicatorValueColor,
               ),
             ),
@@ -491,7 +490,7 @@ extension FlashDialogShortcuts on BuildContext {
   Future<T?> showFlashDialog<T>({
     bool persistent = true,
     Duration? transitionDuration,
-    WillPopCallback? onWillPop,
+    Future<bool> Function()? onWillPop,
     Brightness? brightness,
     Color? backgroundColor,
     TextStyle? titleStyle,
@@ -565,13 +564,13 @@ extension FlashDialogShortcuts on BuildContext {
             brightness: $brightness,
             backgroundColor: $backgroundColor,
             backgroundGradient:
-            backgroundGradient ?? flashTheme.backgroundGradient,
+                backgroundGradient ?? flashTheme.backgroundGradient,
             boxShadows: boxShadows ?? flashTheme.boxShadows,
             barrierBlur: barrierBlur ?? flashTheme.barrierBlur,
             barrierColor:
-            barrierColor ?? flashTheme.barrierColor ?? Colors.black54,
+                barrierColor ?? flashTheme.barrierColor ?? Colors.black54,
             barrierDismissible:
-            barrierDismissible ?? flashTheme.barrierDismissible ?? true,
+                barrierDismissible ?? flashTheme.barrierDismissible ?? true,
             borderRadius: borderRadius ?? flashTheme.borderRadius,
             borderColor: borderColor ?? flashTheme.borderColor,
             borderWidth: borderWidth ?? flashTheme.borderWidth,
@@ -596,7 +595,7 @@ extension FlashDialogShortcuts on BuildContext {
             constraints: constraints ?? flashTheme.constraints,
             child: FlashBar(
               padding:
-              padding ?? flashTheme.padding ?? const EdgeInsets.all(16.0),
+                  padding ?? flashTheme.padding ?? const EdgeInsets.all(16.0),
               title: title == null
                   ? null
                   : DefaultTextStyle(style: $titleStyle, child: title),
@@ -659,11 +658,11 @@ extension FlashDialogShortcuts on BuildContext {
             controller: controller,
             backgroundColor: $backgroundColor,
             backgroundGradient:
-            backgroundGradient ?? flashTheme.backgroundGradient,
+                backgroundGradient ?? flashTheme.backgroundGradient,
             boxShadows: boxShadows ?? flashTheme.boxShadows,
             barrierBlur: barrierBlur ?? flashTheme.barrierBlur,
             barrierColor:
-            barrierColor ?? flashTheme.barrierColor ?? Colors.black54,
+                barrierColor ?? flashTheme.barrierColor ?? Colors.black54,
             barrierDismissible: false,
             borderRadius: borderRadius ?? flashTheme.borderRadius,
             borderColor: borderColor ?? flashTheme.borderColor,
@@ -917,54 +916,54 @@ class FlashBarThemeData {
   /// A default light theme.
   const FlashBarThemeData.light()
       : this(
-    brightness: Brightness.light,
-    infoColor: const Color(0xFF64B5F6),
-    successColor: const Color(0xFF81C784),
-    errorColor: const Color(0xFFE57373),
-  );
+          brightness: Brightness.light,
+          infoColor: const Color(0xFF64B5F6),
+          successColor: const Color(0xFF81C784),
+          errorColor: const Color(0xFFE57373),
+        );
 
   /// A default dark theme.
   const FlashBarThemeData.dark()
       : this(
-    brightness: Brightness.dark,
-    infoColor: const Color(0xFF42A5F5),
-    successColor: const Color(0xFF66BB6A),
-    errorColor: const Color(0xFFEF5350),
-  );
+          brightness: Brightness.dark,
+          infoColor: const Color(0xFF42A5F5),
+          successColor: const Color(0xFF66BB6A),
+          errorColor: const Color(0xFFEF5350),
+        );
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is FlashBarThemeData &&
-              runtimeType == other.runtimeType &&
-              transitionDuration == other.transitionDuration &&
-              behavior == other.behavior &&
-              position == other.position &&
-              enableVerticalDrag == other.enableVerticalDrag &&
-              horizontalDismissDirection == other.horizontalDismissDirection &&
-              brightness == other.brightness &&
-              backgroundColor == other.backgroundColor &&
-              backgroundGradient == other.backgroundGradient &&
-              boxShadows == other.boxShadows &&
-              barrierBlur == other.barrierBlur &&
-              barrierColor == other.barrierColor &&
-              barrierDismissible == other.barrierDismissible &&
-              borderRadius == other.borderRadius &&
-              borderColor == other.borderColor &&
-              borderWidth == other.borderWidth &&
-              constraints == other.constraints &&
-              margin == other.margin &&
-              insetAnimationDuration == other.insetAnimationDuration &&
-              insetAnimationCurve == other.insetAnimationCurve &&
-              forwardAnimationCurve == other.forwardAnimationCurve &&
-              reverseAnimationCurve == other.reverseAnimationCurve &&
-              padding == other.padding &&
-              titleStyle == other.titleStyle &&
-              contentStyle == other.contentStyle &&
-              actionColor == other.actionColor &&
-              infoColor == other.infoColor &&
-              successColor == other.successColor &&
-              errorColor == other.errorColor;
+      other is FlashBarThemeData &&
+          runtimeType == other.runtimeType &&
+          transitionDuration == other.transitionDuration &&
+          behavior == other.behavior &&
+          position == other.position &&
+          enableVerticalDrag == other.enableVerticalDrag &&
+          horizontalDismissDirection == other.horizontalDismissDirection &&
+          brightness == other.brightness &&
+          backgroundColor == other.backgroundColor &&
+          backgroundGradient == other.backgroundGradient &&
+          boxShadows == other.boxShadows &&
+          barrierBlur == other.barrierBlur &&
+          barrierColor == other.barrierColor &&
+          barrierDismissible == other.barrierDismissible &&
+          borderRadius == other.borderRadius &&
+          borderColor == other.borderColor &&
+          borderWidth == other.borderWidth &&
+          constraints == other.constraints &&
+          margin == other.margin &&
+          insetAnimationDuration == other.insetAnimationDuration &&
+          insetAnimationCurve == other.insetAnimationCurve &&
+          forwardAnimationCurve == other.forwardAnimationCurve &&
+          reverseAnimationCurve == other.reverseAnimationCurve &&
+          padding == other.padding &&
+          titleStyle == other.titleStyle &&
+          contentStyle == other.contentStyle &&
+          actionColor == other.actionColor &&
+          infoColor == other.infoColor &&
+          successColor == other.successColor &&
+          errorColor == other.errorColor;
 
   @override
   int get hashCode =>
@@ -1033,7 +1032,7 @@ class FlashBarThemeData {
       position: position ?? this.position,
       enableVerticalDrag: enableVerticalDrag ?? this.enableVerticalDrag,
       horizontalDismissDirection:
-      horizontalDismissDirection ?? this.horizontalDismissDirection,
+          horizontalDismissDirection ?? this.horizontalDismissDirection,
       brightness: brightness ?? this.brightness,
       backgroundColor: backgroundColor ?? this.backgroundColor,
       backgroundGradient: backgroundGradient ?? this.backgroundGradient,
@@ -1047,12 +1046,12 @@ class FlashBarThemeData {
       constraints: constraints ?? this.constraints,
       margin: margin ?? this.margin,
       insetAnimationDuration:
-      insetAnimationDuration ?? this.insetAnimationDuration,
+          insetAnimationDuration ?? this.insetAnimationDuration,
       insetAnimationCurve: insetAnimationCurve ?? this.insetAnimationCurve,
       forwardAnimationCurve:
-      forwardAnimationCurve ?? this.forwardAnimationCurve,
+          forwardAnimationCurve ?? this.forwardAnimationCurve,
       reverseAnimationCurve:
-      reverseAnimationCurve ?? this.reverseAnimationCurve,
+          reverseAnimationCurve ?? this.reverseAnimationCurve,
       padding: padding ?? this.padding,
       titleStyle: titleStyle ?? this.titleStyle,
       contentStyle: contentStyle ?? this.contentStyle,
@@ -1173,29 +1172,29 @@ class FlashDialogThemeData {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is FlashDialogThemeData &&
-              runtimeType == other.runtimeType &&
-              transitionDuration == other.transitionDuration &&
-              brightness == other.brightness &&
-              backgroundColor == other.backgroundColor &&
-              backgroundGradient == other.backgroundGradient &&
-              boxShadows == other.boxShadows &&
-              barrierBlur == other.barrierBlur &&
-              barrierColor == other.barrierColor &&
-              barrierDismissible == other.barrierDismissible &&
-              borderRadius == other.borderRadius &&
-              borderColor == other.borderColor &&
-              borderWidth == other.borderWidth &&
-              constraints == other.constraints &&
-              margin == other.margin &&
-              insetAnimationDuration == other.insetAnimationDuration &&
-              insetAnimationCurve == other.insetAnimationCurve &&
-              forwardAnimationCurve == other.forwardAnimationCurve &&
-              reverseAnimationCurve == other.reverseAnimationCurve &&
-              padding == other.padding &&
-              titleStyle == other.titleStyle &&
-              contentStyle == other.contentStyle &&
-              actionColor == other.actionColor;
+      other is FlashDialogThemeData &&
+          runtimeType == other.runtimeType &&
+          transitionDuration == other.transitionDuration &&
+          brightness == other.brightness &&
+          backgroundColor == other.backgroundColor &&
+          backgroundGradient == other.backgroundGradient &&
+          boxShadows == other.boxShadows &&
+          barrierBlur == other.barrierBlur &&
+          barrierColor == other.barrierColor &&
+          barrierDismissible == other.barrierDismissible &&
+          borderRadius == other.borderRadius &&
+          borderColor == other.borderColor &&
+          borderWidth == other.borderWidth &&
+          constraints == other.constraints &&
+          margin == other.margin &&
+          insetAnimationDuration == other.insetAnimationDuration &&
+          insetAnimationCurve == other.insetAnimationCurve &&
+          forwardAnimationCurve == other.forwardAnimationCurve &&
+          reverseAnimationCurve == other.reverseAnimationCurve &&
+          padding == other.padding &&
+          titleStyle == other.titleStyle &&
+          contentStyle == other.contentStyle &&
+          actionColor == other.actionColor;
 
   @override
   int get hashCode =>
@@ -1259,12 +1258,12 @@ class FlashDialogThemeData {
       constraints: constraints ?? this.constraints,
       margin: margin ?? this.margin,
       insetAnimationDuration:
-      insetAnimationDuration ?? this.insetAnimationDuration,
+          insetAnimationDuration ?? this.insetAnimationDuration,
       insetAnimationCurve: insetAnimationCurve ?? this.insetAnimationCurve,
       forwardAnimationCurve:
-      forwardAnimationCurve ?? this.forwardAnimationCurve,
+          forwardAnimationCurve ?? this.forwardAnimationCurve,
       reverseAnimationCurve:
-      reverseAnimationCurve ?? this.reverseAnimationCurve,
+          reverseAnimationCurve ?? this.reverseAnimationCurve,
       padding: padding ?? this.padding,
       titleStyle: titleStyle ?? this.titleStyle,
       contentStyle: contentStyle ?? this.contentStyle,
@@ -1360,24 +1359,24 @@ class FlashBlockDialogThemeData {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is FlashBlockDialogThemeData &&
-              runtimeType == other.runtimeType &&
-              transitionDuration == other.transitionDuration &&
-              brightness == other.brightness &&
-              backgroundColor == other.backgroundColor &&
-              backgroundGradient == other.backgroundGradient &&
-              boxShadows == other.boxShadows &&
-              barrierBlur == other.barrierBlur &&
-              barrierColor == other.barrierColor &&
-              borderRadius == other.borderRadius &&
-              borderColor == other.borderColor &&
-              borderWidth == other.borderWidth &&
-              margin == other.margin &&
-              insetAnimationDuration == other.insetAnimationDuration &&
-              insetAnimationCurve == other.insetAnimationCurve &&
-              forwardAnimationCurve == other.forwardAnimationCurve &&
-              reverseAnimationCurve == other.reverseAnimationCurve &&
-              padding == other.padding;
+      other is FlashBlockDialogThemeData &&
+          runtimeType == other.runtimeType &&
+          transitionDuration == other.transitionDuration &&
+          brightness == other.brightness &&
+          backgroundColor == other.backgroundColor &&
+          backgroundGradient == other.backgroundGradient &&
+          boxShadows == other.boxShadows &&
+          barrierBlur == other.barrierBlur &&
+          barrierColor == other.barrierColor &&
+          borderRadius == other.borderRadius &&
+          borderColor == other.borderColor &&
+          borderWidth == other.borderWidth &&
+          margin == other.margin &&
+          insetAnimationDuration == other.insetAnimationDuration &&
+          insetAnimationCurve == other.insetAnimationCurve &&
+          forwardAnimationCurve == other.forwardAnimationCurve &&
+          reverseAnimationCurve == other.reverseAnimationCurve &&
+          padding == other.padding;
 
   @override
   int get hashCode =>
@@ -1429,12 +1428,12 @@ class FlashBlockDialogThemeData {
       borderWidth: borderWidth ?? this.borderWidth,
       margin: margin ?? this.margin,
       insetAnimationDuration:
-      insetAnimationDuration ?? this.insetAnimationDuration,
+          insetAnimationDuration ?? this.insetAnimationDuration,
       insetAnimationCurve: insetAnimationCurve ?? this.insetAnimationCurve,
       forwardAnimationCurve:
-      forwardAnimationCurve ?? this.forwardAnimationCurve,
+          forwardAnimationCurve ?? this.forwardAnimationCurve,
       reverseAnimationCurve:
-      reverseAnimationCurve ?? this.reverseAnimationCurve,
+          reverseAnimationCurve ?? this.reverseAnimationCurve,
       padding: padding ?? this.padding,
     );
   }

@@ -1,67 +1,53 @@
 import 'package:flutter_bump_app/base/widget/cubit/base_state.dart';
+import 'package:flutter_bump_app/config/constant/app_constant.dart';
 
 class UpdateProfileState extends BaseState {
-  final String fullName;
-  final String email;
-  final String phoneNumber;
-  final String birthYear;
-  final String gender;
-  final String location;
+  final String name;
   final String bio;
-  final bool hasChanges;
-  final bool isSaving;
-  final String? profileImagePath;
+  final UserGender? gender;
+  final String? avatarPath;
+  final bool isSuccess;
+  final String errorMessage;
 
   const UpdateProfileState({
-    this.fullName = '',
-    this.email = '',
-    this.phoneNumber = '',
-    this.birthYear = '',
-    this.gender = 'Male',
-    this.location = '',
+    super.isLoading = false,
+    this.name = '',
     this.bio = '',
-    this.hasChanges = false,
-    this.isSaving = false,
-    this.profileImagePath,
+    this.gender,
+    this.avatarPath,
+    this.isSuccess = false,
+    this.errorMessage = '',
   });
 
   UpdateProfileState copyWith({
-    String? fullName,
-    String? email,
-    String? phoneNumber,
-    String? birthYear,
-    String? gender,
-    String? location,
+    String? name,
     String? bio,
-    bool? hasChanges,
-    bool? isSaving,
-    String? profileImagePath,
+    UserGender? gender,
+    String? avatarPath,
+    bool? isLoading,
+    bool? isSuccess,
+    String? errorMessage,
+    bool? clearAvatar,
   }) {
     return UpdateProfileState(
-      fullName: fullName ?? this.fullName,
-      email: email ?? this.email,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      birthYear: birthYear ?? this.birthYear,
-      gender: gender ?? this.gender,
-      location: location ?? this.location,
+      name: name ?? this.name,
       bio: bio ?? this.bio,
-      hasChanges: hasChanges ?? this.hasChanges,
-      isSaving: isSaving ?? this.isSaving,
-      profileImagePath: profileImagePath ?? this.profileImagePath,
+      gender: gender ?? this.gender,
+      avatarPath: clearAvatar == true ? null : (avatarPath ?? this.avatarPath),
+      isLoading: isLoading ?? this.isLoading,
+      isSuccess: isSuccess ?? this.isSuccess,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 
   @override
   List<Object?> get props => [
-        fullName,
-        email,
-        phoneNumber,
-        birthYear,
-        gender,
-        location,
+        isLoading,
+        name,
         bio,
-        hasChanges,
-        isSaving,
-        profileImagePath,
+        gender,
+        avatarPath,
+        isSuccess,
+        errorMessage,
       ];
 }
