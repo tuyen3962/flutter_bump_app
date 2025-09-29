@@ -29,8 +29,6 @@ import '../../data/repository/upload/iupload_repository.dart' as _i134;
 import '../../data/repository/upload/upload_repository.dart' as _i655;
 import '../../data/repository/video/ivideo_repository.dart' as _i71;
 import '../../data/repository/video/video_repository.dart' as _i944;
-import '../../data/usecase/upload_usecase_mixin.dart' as _i938;
-import '../../data/usecase/upload_video_usecase.dart' as _i640;
 import '../../data/usecase/upload_video_with_batch_usecase.dart' as _i722;
 import 'account_service.dart' as _i997;
 import 'auth_service.dart' as _i184;
@@ -90,10 +88,6 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i710.AccountRepository(gh<_i925.UserApi>()));
     gh.factory<_i134.IUploadRepository>(
         () => _i655.UploadRepository(gh<_i818.UploadDS>())..init());
-    gh.lazySingleton<_i640.UploadVideoUseCase>(() => _i640.UploadVideoUseCase(
-          gh<_i71.IVideoRepository>(),
-          gh<_i134.IUploadRepository>(),
-        ));
     gh.lazySingleton<_i722.UploadVideoWithBatchUseCase>(
         () => _i722.UploadVideoWithBatchUseCase(
               gh<_i71.IVideoRepository>(),
@@ -111,8 +105,6 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
       dispose: (i) => i.dispose(),
     );
-    gh.lazySingleton<_i938.UploadUseCaseMixin>(
-        () => _i938.UploadUseCaseMixin(gh<_i134.IUploadRepository>()));
     return this;
   }
 }

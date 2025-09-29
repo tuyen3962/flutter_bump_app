@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter_bump_app/data/remote/request/video/create_video_request.dart';
 import 'package:flutter_bump_app/data/remote/request/video/update_video_status_request.dart';
 import 'package:flutter_bump_app/data/remote/response/base_response.dart';
@@ -16,38 +14,6 @@ class VideoRepository extends IVideoRepository {
   VideoRepository(this.videoApi);
 
   @override
-  Future<Video> createVideo(CreateVideoRequest request) async {
-    try {
-      final response = await videoApi.createVideoBatch(request.toJson());
-      if (response.isSuccess) {
-        return response.data!;
-      }
-      throw Exception(response.message);
-    } catch (e) {
-      throw Exception(e);
-    }
-  }
-
-  @override
-  Future<void> deleteVideo(String id) async {
-    // try {
-    //   final response = await videoApi.deleteVideo(id);
-    //   if (response.success == true) {
-    //     return;
-    //   }
-    //   throw Exception(response.message);
-    // } catch (e) {
-    //   throw Exception(e);
-    // }
-    throw Exception('Not implemented');
-  }
-
-  @override
-  Future<Video> getVideo(String id) async {
-    throw Exception('Not implemented');
-  }
-
-  @override
   Future<PaginatedResponse<Video>> getVideos(
       {int page = 1, int limit = 10}) async {
     try {
@@ -59,17 +25,43 @@ class VideoRepository extends IVideoRepository {
   }
 
   @override
+  Future<String> createBatchVideo() async {
+    try {
+      final response = await videoApi.createBatchUploadVideo();
+      return response.data?.id ?? '';
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<Video> createVideoWithBatch(CreateVideoRequest request) async {
+    try {
+      final response = await videoApi.createVideoWithBatch(request);
+      return response.data!;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<bool> updateVideoBatchStatus(
+      UpdateVideoBatchStatusRequest request) async {
+    try {
+      final response = await videoApi.updateVideoBatchStatus(request);
+      return response.isSuccess;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
   Future<Video?> updateVideo(UpdateVideoStatusRequest request) async {
     try {
-      log(request.toJson().toString(), name: 'UpdateVideoStatusRequest');
       final response = await videoApi.updateVideoStatus(request);
-      if (response.isSuccess) {
-        return response.data!;
-      }
-      // throw Exception(response.message);
+      return response.data!;
     } catch (e) {
-      // throw Exception(e);
+      throw Exception(e);
     }
-    return null;
   }
 }

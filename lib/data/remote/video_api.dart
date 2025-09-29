@@ -5,6 +5,8 @@ import 'package:flutter_bump_app/data/remote/response/video/video_response.dart'
 import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 
+import 'request/video/create_video_request.dart';
+
 part 'video_api.g.dart';
 
 @RestApi()
@@ -20,14 +22,17 @@ abstract class VideoApi {
       @Body() UpdateVideoStatusRequest request);
 
   @PUT('/api/videos/batch/status')
-  Future<BaseResponse<List<Video>>> getBatchVideoStatus(
-      @Query('batchId') String batchId);
+  Future<BaseResponse> updateVideoBatchStatus(
+      @Body() UpdateVideoBatchStatusRequest request);
 
   @POST('/api/videos/batch')
   Future<BaseResponse<Video>> createVideoBatch(
       @Body() Map<String, dynamic> request);
 
   @POST('/api/videos/with-batch')
-  Future<BaseResponse<List<Video>>> createVideoWithBatch(
-      @Body() Map<String, dynamic> request);
+  Future<BaseResponse<Video>> createVideoWithBatch(
+      @Body() CreateVideoRequest request);
+
+  @POST('/api/videos/batch')
+  Future<BaseResponse<Video>> createBatchUploadVideo();
 }

@@ -33,8 +33,7 @@ class _UploadingVideoLoadingState extends State<UploadingVideoLoading>
     super.initState();
     _uploadProgressSubscription =
         widget.uploadProgress.stream.listen((progress) {
-      if (progress == 100) {
-        print('end');
+      if (progress == 1) {
         Navigator.of(context).pop();
       }
     });
@@ -108,11 +107,11 @@ class _UploadingVideoLoadingState extends State<UploadingVideoLoading>
                       width: 120,
                       height: 120,
                       child: CircularProgressIndicator(
-                        value: value / 100,
+                        value: value,
                         strokeWidth: 8,
                         backgroundColor: Colors.transparent,
                         valueColor: AlwaysStoppedAnimation<Color>(
-                          widget.uploadProgress.value == 100
+                          widget.uploadProgress.value == 1
                               ? appTheme.primaryColor
                               : appTheme.green400,
                         ),

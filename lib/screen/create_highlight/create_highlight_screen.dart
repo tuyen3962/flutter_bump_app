@@ -13,6 +13,7 @@ import 'package:flutter_bump_app/widget/extension/widget_extension.dart';
 
 import 'widget/enter_name_highlight_dialog.dart';
 import 'widget/my_video_view.dart';
+import 'widget/uploading_video_loading.dart';
 
 @RoutePage()
 class CreateHighlightPage
@@ -353,7 +354,13 @@ class CreateHighlightScreenState extends BaseBlocNoAppBarPageState<
         height: 48.h,
         child: ElevatedButton(
           onPressed: () => EnterNameHighlightDialog.show(context,
-              onHighlightNameChanged: cubit.updateHighlightName),
+              onHighlightNameChanged: (name) {
+            cubit.updateHighlightName(name);
+            Future.delayed(const Duration(milliseconds: 100), () {
+              UploadingVideoLoading.showUploadingDialog(context,
+                  uploadProgress: cubit.uploadProgress);
+            });
+          }),
           style: ElevatedButton.styleFrom(
             backgroundColor: appTheme.blue500,
             foregroundColor: appTheme.alpha,

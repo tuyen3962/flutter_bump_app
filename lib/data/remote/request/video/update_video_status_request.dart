@@ -5,24 +5,30 @@ import '../../response/video/video_response.dart';
 part 'update_video_status_request.g.dart';
 
 @JsonSerializable()
+class UpdateVideoBatchStatusRequest {
+  final String batchId;
+  final List<UpdateVideoStatusRequest> videos;
+
+  UpdateVideoBatchStatusRequest({
+    required this.batchId,
+    required this.videos,
+  });
+
+  factory UpdateVideoBatchStatusRequest.fromJson(Map<String, dynamic> json) =>
+      _$UpdateVideoBatchStatusRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UpdateVideoBatchStatusRequestToJson(this);
+}
+
+@JsonSerializable()
 class UpdateVideoStatusRequest {
   final String videoId;
   final UploadStatus? uploadStatus;
-  final String? fileUrl;
-  final String? thumbnail;
-  final double? duration;
-  final int? size;
-  final String? name;
   final int? progress;
 
   UpdateVideoStatusRequest({
     required this.videoId,
     this.uploadStatus,
-    this.fileUrl,
-    this.thumbnail,
-    this.duration,
-    this.size,
-    this.name,
     this.progress,
   });
 

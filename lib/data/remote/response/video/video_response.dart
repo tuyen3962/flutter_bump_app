@@ -28,8 +28,6 @@ enum UploadStatus {
   pending,
   @JsonValue('UPLOADING')
   uploading,
-  @JsonValue('PROGRESS')
-  progress,
   @JsonValue('COMPLETED')
   completed,
   @JsonValue('FAILED')
@@ -44,12 +42,12 @@ class Video {
   String? batchId;
   int? batchOrder;
   String? name;
-  double? duration;
+  // double? duration;
   String? fileUrl;
   String? thumbnail;
   VideoFormat? format;
   UploadStatus? uploadStatus;
-  int? size;
+  // int? size;
 
   Video({
     required this.id,
@@ -57,12 +55,12 @@ class Video {
     this.batchId,
     this.batchOrder = 1,
     this.name,
-    this.duration,
+    // this.duration,
     this.fileUrl,
     this.thumbnail,
     this.format = VideoFormat.mp4,
     this.uploadStatus,
-    this.size,
+    // this.size,
   });
 
   factory Video.fromJson(Map<String, dynamic> json) => _$VideoFromJson(json);

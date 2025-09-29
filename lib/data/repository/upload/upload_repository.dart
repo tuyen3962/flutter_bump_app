@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_bump_app/config/constant/app_config.dart';
 import 'package:flutter_bump_app/config/constant/app_constant.dart';
+import 'package:flutter_bump_app/data/remote/response/upload/presign_response.dart';
 import 'package:flutter_bump_app/data/remote/upload_ds.dart';
 import 'package:flutter_bump_app/data/repository/upload/iupload_repository.dart';
 import 'package:injectable/injectable.dart';
@@ -21,10 +22,15 @@ class UploadRepository extends IUploadRepository {
   }
 
   @override
-  Future<String> getPreSignUrl(PreSignUrlType type) async {
+  Future<PreSignResponse> getPreSignUrl(
+      PreSignUrlType type, String mimeType) async {
     try {
-      final response = await uploadDS.getPreSignUrl(PreSignUrlType.video);
-      return response.data ?? '';
+      final response = await uploadDS
+          .getPreSignUrl(PreSignUrlType.video, {'miniType': mimeType});
+      if (response.data == null) {
+        throw Exception('PreSignResponse is null');
+      }
+      return response.data!;
     } catch (e) {
       throw Exception(e);
     }

@@ -1,10 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter_bump_app/config/constant/app_constant.dart';
+import 'package:flutter_bump_app/data/remote/response/upload/presign_response.dart';
 import 'package:flutter_bump_app/data/repository/ibase_repository.dart';
 
 abstract class IUploadRepository extends IBaseRepository {
-  Future<String> getPreSignUrl(PreSignUrlType type);
+  Future<PreSignResponse> getPreSignUrl(PreSignUrlType type, String mimeType);
 
   Future<void> uploadFile(String preSignUrl, File file, PreSignUrlType type,
       {String? fileName, Function(int, int)? onProgress});

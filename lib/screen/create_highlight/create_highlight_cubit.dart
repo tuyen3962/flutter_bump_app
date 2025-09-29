@@ -7,14 +7,13 @@ import 'package:flutter_bump_app/config/service/account_service.dart';
 import 'package:flutter_bump_app/config/service/app_service.dart';
 import 'package:flutter_bump_app/config/service/photo_gallery_service.dart';
 import 'package:flutter_bump_app/data/repository/video/ivideo_repository.dart';
-import 'package:flutter_bump_app/data/usecase/upload_usecase_mixin.dart';
-import 'package:flutter_bump_app/data/usecase/upload_video_usecase.dart';
+import 'package:flutter_bump_app/data/usecase/upload_video_with_batch_usecase.dart';
 import 'package:flutter_bump_app/screen/create_highlight/create_highlight_state.dart';
 
 class CreateHighlightCubit extends BaseCubit<CreateHighlightState> {
   final IVideoRepository videoRepository = locator.get();
   final AccountService accountService = locator.get();
-  final UploadVideoUseCase uploadVideoUsecase = locator.get();
+  final UploadVideoWithBatchUseCase uploadVideoUsecase = locator.get();
   final PhotoGalleryService photoGalleryService = locator.get();
 
   CreateHighlightCubit() : super(const CreateHighlightState());
@@ -55,40 +54,12 @@ class CreateHighlightCubit extends BaseCubit<CreateHighlightState> {
     emit(state.copyWith(selectedVideoIds: []));
   }
 
-  void updateHighlightName(String name) {
-    // emit(state.copyWith(highlightName: name));
+  void updateHighlightName(String name) async {
+    await uploadVideoUsecase.call(UploadVideoUseCaseParam(
+        type: PreSignUrlType.video,
+        assets: selectedVideos,
+        onProgress: (progress) => uploadProgress.value = progress));
   }
-
-  // Future<bool> createHighlight() async {
-  //   if (state.highlightName.trim().isEmpty) {
-  //     return false;
-  //   }
-
-  //   emit(state.copyWith(isLoading: true));
-
-  //   try {
-  //     // Simulate API call to create highlight
-  //     await Future.delayed(const Duration(seconds: 2));
-
-  //     // In real app, call API
-  //     // final result = await accountService.createHighlight(
-  //     //   name: state.highlightName,
-  //     //   videoIds: state.selectedVideoIds,
-  //     // );
-
-  //     emit(state.copyWith(
-  //       isLoading: false,
-  //       showNameDialog: false,
-  //       highlightName: '',
-  //       selectedVideoIds: [],
-  //     ));
-
-  //     return true;
-  //   } catch (e) {
-  //     emit(state.copyWith(isLoading: false));
-  //     return false;
-  //   }
-  // }
 
   Future<void> recordVideo() async {
     // Handle video recording
@@ -103,17 +74,24 @@ class CreateHighlightCubit extends BaseCubit<CreateHighlightState> {
 
   Future<void> uploadVideo(File file) async {
     uploadProgress.value = 0.0;
-    await uploadVideoUsecase.call(
-      UploadVideoUseCaseParam(
-        uploadUseCaseParam: UploadUseCaseParam(
-          file: file,
-          type: PreSignUrlType.video,
-        ),
-        onProgress: (progress, total) {
-          uploadProgress.value = (progress / total) * 100;
-        },
-      ),
-    );
+    // await uploadVideoUsecase.call(UploadVideoUseCaseParam(
+    //   type: PreSignUrlType.video,
+    //   assets: [file],
+    //   onProgress: (progress, total) {
+    //     uploadProgress.value = (progress / total) * 100;
+    //   },
+    // ));
+    // await uploadVideoUsecase.call(
+    //     // UploadVideoUseCaseParam(
+    //     //   uploadUseCaseParam: UploadUseCaseParam(
+    //     //     file: file,
+    //     //     type: PreSignUrlType.video,
+    //     //   ),
+    //     //   onProgress: (progress, total) {
+    //     //     uploadProgress.value = (progress / total) * 100;
+    //     //   },
+    //     // ),
+    //     );
   }
 
   // Future<void> uploadVideo() async {
