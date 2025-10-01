@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter_bump_app/screen/create_highlight/create_highlight_screen.dart';
 import 'package:flutter_bump_app/screen/dashboard/dashboard_screen.dart';
 import 'package:flutter_bump_app/screen/home/home_screen.dart';
 import 'package:flutter_bump_app/screen/profile/profile_screen.dart';
@@ -23,5 +24,7 @@ class AppRouter extends _$AppRouter {
         AutoRoute(page: HomeRoute.page),
         AutoRoute(page: ProfileRoute.page),
         AutoRoute(page: UpdateProfileRoute.page),
+        AutoRoute(page: CreateHighlightRoute.page),
+        
       ];
 }

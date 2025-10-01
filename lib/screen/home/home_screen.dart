@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bump_app/base/stream/base_stream_builder.dart';
 import 'package:flutter_bump_app/base/widget/base_page.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_bloc_provider.dart';
+import 'package:flutter_bump_app/config/service/app_service.dart';
 import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
 import 'package:flutter_bump_app/extension.dart';
 import 'package:flutter_bump_app/extension/color_extension.dart';
@@ -23,7 +24,10 @@ class HomePage extends BaseBlocProvider<HomeState, HomeCubit> {
 
   @override
   HomeCubit createCubit() {
-    return HomeCubit();
+    return HomeCubit(
+      profileServide: locator.get(),
+      accountService: locator.get(),
+    );
   }
 }
 
@@ -124,7 +128,7 @@ class HomeScreenState
                       style: AppStyle.regular16(color: appTheme.whiteText),
                     ),
                     Text(
-                      'Ready to earn?',
+                      user?.bio ?? 'Welcome back to Bump!',
                       style: AppStyle.regular14(color: appTheme.green800Color),
                     ),
                   ],

@@ -34,7 +34,9 @@ class _UploadingVideoLoadingState extends State<UploadingVideoLoading>
     _uploadProgressSubscription =
         widget.uploadProgress.stream.listen((progress) {
       if (progress == 1) {
-        Navigator.of(context).pop();
+        if (mounted) {
+          Navigator.of(context).pop();
+        }
       }
     });
   }
@@ -66,20 +68,25 @@ class _UploadingVideoLoadingState extends State<UploadingVideoLoading>
           mainAxisSize: MainAxisSize.min,
           children: [
             // Header
-            Row(children: [
-              Icon(Icons.cloud_upload_outlined,
-                  color: appTheme.primaryColor, size: 24),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'Uploading Video',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+            Row(
+              children: [
+                Icon(
+                  Icons.cloud_upload_outlined,
+                  color: appTheme.primaryColor,
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Text(
+                    'Uploading Video',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
-            ]),
+              ],
+            ),
             const SizedBox(height: 24),
 
             // Progress Circle

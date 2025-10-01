@@ -15,6 +15,12 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    CreateHighlightRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const CreateHighlightPage(),
+      );
+    },
     DashboardRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -52,6 +58,20 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [CreateHighlightPage]
+class CreateHighlightRoute extends PageRouteInfo<void> {
+  const CreateHighlightRoute({List<PageRouteInfo>? children})
+      : super(
+          CreateHighlightRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'CreateHighlightRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for

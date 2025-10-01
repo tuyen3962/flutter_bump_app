@@ -353,14 +353,21 @@ class CreateHighlightScreenState extends BaseBlocNoAppBarPageState<
         width: double.infinity,
         height: 48.h,
         child: ElevatedButton(
-          onPressed: () => EnterNameHighlightDialog.show(context,
-              onHighlightNameChanged: (name) {
-            cubit.updateHighlightName(name);
-            Future.delayed(const Duration(milliseconds: 100), () {
-              UploadingVideoLoading.showUploadingDialog(context,
-                  uploadProgress: cubit.uploadProgress);
-            });
-          }),
+          onPressed: () => EnterNameHighlightDialog.show(
+            context,
+            onHighlightNameChanged: (name) {
+              cubit.updateHighlightName(name);
+              Future.delayed(
+                const Duration(milliseconds: 100),
+                () {
+                  UploadingVideoLoading.showUploadingDialog(
+                    context,
+                    uploadProgress: cubit.uploadProgress,
+                  );
+                },
+              );
+            },
+          ),
           style: ElevatedButton.styleFrom(
             backgroundColor: appTheme.blue500,
             foregroundColor: appTheme.alpha,
@@ -378,40 +385,40 @@ class CreateHighlightScreenState extends BaseBlocNoAppBarPageState<
     );
   }
 
-  Widget _buildEmptyState() {
-    return Center(
-      child: Padding(
-        padding: padding(all: 64),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 64.w,
-              height: 64.h,
-              decoration: BoxDecoration(
-                color: appTheme.gray200,
-                borderRadius: BorderRadius.circular(32),
-              ),
-              child: Icon(
-                Icons.videocam,
-                size: 24,
-                color: appTheme.gray400,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              'No videos yet',
-              style: AppStyle.bold18(),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              'Record or upload your first pickleball video to create highlights',
-              style: AppStyle.regular14(color: appTheme.gray500),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildEmptyState() {
+  //   return Center(
+  //     child: Padding(
+  //       padding: padding(all: 64),
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: [
+  //           Container(
+  //             width: 64.w,
+  //             height: 64.h,
+  //             decoration: BoxDecoration(
+  //               color: appTheme.gray200,
+  //               borderRadius: BorderRadius.circular(32),
+  //             ),
+  //             child: Icon(
+  //               Icons.videocam,
+  //               size: 24,
+  //               color: appTheme.gray400,
+  //             ),
+  //           ),
+  //           SizedBox(height: 16.h),
+  //           Text(
+  //             'No videos yet',
+  //             style: AppStyle.bold18(),
+  //           ),
+  //           SizedBox(height: 8.h),
+  //           Text(
+  //             'Record or upload your first pickleball video to create highlights',
+  //             style: AppStyle.regular14(color: appTheme.gray500),
+  //             textAlign: TextAlign.center,
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }

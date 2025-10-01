@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bump_app/extension.dart';
+import 'package:flutter_bump_app/main.dart';
 import 'package:flutter_bump_app/widget/circle_item.dart';
 
 class LoadMoreView<T> extends StatelessWidget {
@@ -77,9 +78,13 @@ class LoadMoreView<T> extends StatelessWidget {
 
   Widget _buildLoadMore() {
     return CircleItem(
-        padding: padding(all: 8),
-        child: SizedBox(
-            height: 20.w, width: 20.w, child: CircularProgressIndicator()));
+      padding: padding(all: 8),
+      child: SizedBox(
+        height: 20.w,
+        width: 20.w,
+        child: CircularProgressIndicator(color: appTheme.appColor),
+      ),
+    );
   }
 }
 
@@ -116,13 +121,16 @@ class SimpleLoadMoreView<T> extends StatelessWidget {
         _buildBody(),
         if (isLoadMore)
           Positioned(
-              bottom: 20,
-              child: CircleItem(
-                  padding: padding(all: 8),
-                  child: SizedBox(
-                      height: 20.w,
-                      width: 20.w,
-                      child: CircularProgressIndicator())))
+            bottom: 20,
+            child: CircleItem(
+              padding: padding(all: 8),
+              child: SizedBox(
+                height: 20.w,
+                width: 20.w,
+                child: CircularProgressIndicator(color: appTheme.appColor),
+              ),
+            ),
+          )
       ],
     );
   }

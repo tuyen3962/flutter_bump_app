@@ -30,7 +30,7 @@ class UploadVideoWithBatchUseCase
   final IVideoRepository videoRepository;
 
   UploadVideoWithBatchUseCase(this.videoRepository, this.uploadRepository);
-  Timer? timer = null;
+  Timer? timer;
   // Video? _currentVideo;
   Map<String, int> videoProgress = {};
 
@@ -62,7 +62,7 @@ class UploadVideoWithBatchUseCase
 
   Future<void> startTimer(String batchId, int totalVideos,
       Function(double progress)? onProgress) async {
-    timer = Timer.periodic(Duration(seconds: 5), (_) async {
+    timer = Timer.periodic(const Duration(seconds: 5), (_) async {
       // updateStatusProgress();
       loggerHelper.logCyan('update video status progress');
 

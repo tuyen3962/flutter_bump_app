@@ -202,8 +202,8 @@ class PhotoGalleryService {
   }
 
   Future<PhotoMediaAsset> _convertMedia(AssetEntity asset) async {
-    File? file = null;
-    Uint8List? thumbnailByte = null;
+    File? file;
+    Uint8List? thumbnailByte;
     if (asset.type == AssetType.image) {
       file = await asset.loadFile();
       if (file?.path.endsWith('HEIC') == true) {
