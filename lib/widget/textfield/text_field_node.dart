@@ -28,7 +28,7 @@ class TextFieldHandler {
   final bool notShowInForm;
   late final ValueNotifier<bool> canEditNotifier;
   final int? maxLength;
-  FocusNode? nextNode = null;
+  FocusNode? nextNode;
   final bool showMaxLength;
   final String prefixIconPath;
   final bool autoAddFirstText;

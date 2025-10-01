@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_bump_app/extension.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ImageAssetCustom extends StatelessWidget {
   final String imagePath;
@@ -10,8 +10,9 @@ class ImageAssetCustom extends StatelessWidget {
   final Color? color;
   final bool? sizeBaseOnWidth;
   final BoxFit? boxFit;
+
   const ImageAssetCustom({
-    Key? key,
+    super.key,
     required this.imagePath,
     this.size,
     this.width,
@@ -19,14 +20,13 @@ class ImageAssetCustom extends StatelessWidget {
     this.color,
     this.boxFit,
     this.sizeBaseOnWidth = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     if (imagePath.contains('svg')) {
       return SvgPicture.asset(
         imagePath,
-        color: color,
         width: width ?? (sizeBaseOnWidth! ? size?.w : size?.h),
         height: height != null
             ? height?.h
@@ -34,6 +34,8 @@ class ImageAssetCustom extends StatelessWidget {
                 ? width?.h
                 : height?.h,
         fit: boxFit ?? BoxFit.contain,
+        colorFilter:
+            color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
       );
     }
     return Image.asset(

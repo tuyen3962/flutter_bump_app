@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_bump_app/data/model/request/update_profile_request.dart';
 import 'package:flutter_bump_app/data/model/user.dart';
 import 'package:flutter_bump_app/data/remote/response/base_response.dart';
 import 'package:retrofit/http.dart';
@@ -13,7 +14,8 @@ abstract class UserApi {
   @GET('/api/user/profile')
   Future<BaseResponse<User>> getUserProfile();
 
-  // @PUT('/api/user/profile')
-  // Future<BaseResponse<User>> updateUserProfile(
-  //     @Body() UpdateProfileRequest request);
+  @PUT('/api/user/profile')
+  Future<BaseResponse<User>> updateUserProfile(
+    @Body() UpdateProfileRequest request,
+  );
 }

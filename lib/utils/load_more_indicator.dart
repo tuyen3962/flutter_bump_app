@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bump_app/extension.dart';
+import 'package:flutter_bump_app/extension/color_extension.dart';
 import 'package:flutter_bump_app/widget/list_vertical_item.dart';
 
 // enum LoadMoreListType { single, two }
@@ -159,11 +160,11 @@ class LoadMoreIndicatorState<T> extends State<LoadMoreIndicator<T>>
                   boxShadow: [
                     BoxShadow(
                       blurRadius: 10,
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withSafeOpacity(0.1),
                     )
                   ],
                 ),
-                child: SizedBox(
+                child: const SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(),
@@ -187,7 +188,7 @@ class LoadMoreIndicatorState<T> extends State<LoadMoreIndicator<T>>
         (widget.emptyBuilder != null && widget.items.isEmpty)) {
       return Center(
         child: widget.isLoading
-            ? SizedBox(
+            ? const SizedBox(
                 width: 20, height: 20, child: CircularProgressIndicator())
             : widget.items.isEmpty
                 ? widget.emptyBuilder!()

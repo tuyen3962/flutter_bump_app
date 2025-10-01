@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 library flash;
 
 import 'dart:async';
@@ -5,6 +7,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bump_app/extension.dart';
 
 export 'flash_helper.dart';
 
@@ -20,7 +23,7 @@ Future<T?> showFlash<T>({
   Duration? duration,
   Duration transitionDuration = const Duration(milliseconds: 500),
   bool persistent = true,
-  WillPopCallback? onWillPop,
+  Future<bool> Function()? onWillPop,
 }) {
   return FlashController<T>(
     context,
@@ -71,7 +74,7 @@ class FlashController<T> {
   ///
   /// If the callback returns a Future that resolves to false, the enclosing
   /// route will not be popped.
-  final WillPopCallback? onWillPop;
+  final Future<bool> Function()? onWillPop;
 
   /// The animation controller that the route uses to drive the transitions.
   ///
@@ -671,7 +674,7 @@ class _FlashState<T> extends State<Flash<T>> {
                 final blur = (widget.barrierBlur ?? 0.0) * value;
                 final color = widget.barrierColor ?? Colors.transparent;
                 Widget child = Container(
-                  constraints: BoxConstraints.expand(),
+                  constraints: const BoxConstraints.expand(),
                   color: color.withOpacity(color.opacity * value),
                 );
                 // https://github.com/flutter/flutter/issues/77258
@@ -1016,7 +1019,7 @@ class _FlashBarState extends State<FlashBar>
   final double _initialOpacity = 1.0;
   final double _finalOpacity = 0.4;
 
-  final Duration _pulseAnimationDuration = Duration(seconds: 1);
+  final Duration _pulseAnimationDuration = const Duration(seconds: 1);
 
   late bool _isTitlePresent;
   late bool _isActionsPresent;
@@ -1146,7 +1149,7 @@ class _FlashBarState extends State<FlashBar>
               if (_isActionsPresent)
                 ButtonTheme(
                   padding: EdgeInsets.symmetric(horizontal: buttonRightPadding),
-                  child: ButtonBar(
+                  child: OverflowBar(
                     children: widget.actions!,
                   ),
                 ),
@@ -1166,9 +1169,7 @@ class _FlashBarState extends State<FlashBar>
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  SizedBox(
-                    width: 17,
-                  ),
+                  SizedBox(width: 17.w),
                   _getIcon(),
                   Expanded(
                     child: Column(
@@ -1200,7 +1201,7 @@ class _FlashBarState extends State<FlashBar>
               if (_isActionsPresent)
                 ButtonTheme(
                   padding: EdgeInsets.symmetric(horizontal: buttonRightPadding),
-                  child: ButtonBar(
+                  child: OverflowBar(
                     children: widget.actions!,
                   ),
                 ),
@@ -1254,7 +1255,7 @@ class _FlashBarState extends State<FlashBar>
               if (_isActionsPresent)
                 ButtonTheme(
                   padding: EdgeInsets.symmetric(horizontal: buttonRightPadding),
-                  child: ButtonBar(
+                  child: OverflowBar(
                     children: widget.actions!,
                   ),
                 ),
@@ -1314,7 +1315,7 @@ class _FlashBarState extends State<FlashBar>
               if (_isActionsPresent)
                 ButtonTheme(
                   padding: EdgeInsets.symmetric(horizontal: buttonRightPadding),
-                  child: ButtonBar(
+                  child: OverflowBar(
                     children: widget.actions!,
                   ),
                 ),
@@ -1341,9 +1342,9 @@ class _FlashBarState extends State<FlashBar>
 
   Widget _getTitle() {
     return Semantics(
-      child: widget.title,
       namesRoute: true,
       container: true,
+      child: widget.title,
     );
   }
 

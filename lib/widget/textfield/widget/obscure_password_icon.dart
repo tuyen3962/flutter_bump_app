@@ -15,7 +15,7 @@ class ObscurePasswordIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: ImageAssetCustom(
+      child: const ImageAssetCustom(
         imagePath: '',
         // imagePath: !isObscure
         //     ? Assets.icons.visible.path

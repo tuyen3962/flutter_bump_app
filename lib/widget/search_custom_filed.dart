@@ -5,7 +5,7 @@ import 'package:flutter_bump_app/utils/search_controller.dart';
 
 class SearchCustomField extends StatefulWidget {
   const SearchCustomField({
-    Key? key,
+    super.key,
     required this.onGetSearchValue,
     this.hintText,
     this.paddingTextfield,
@@ -15,7 +15,7 @@ class SearchCustomField extends StatefulWidget {
     this.hasBorder = false,
     this.textStyle,
     this.margin,
-  }) : super(key: key);
+  });
 
   final EdgeInsets? paddingTextfield;
   final EdgeInsets? margin;
@@ -58,7 +58,7 @@ class _SearchCustomFieldState extends State<SearchCustomField> {
           borderRadius: BorderRadius.circular(1000),
           border: widget.hasBorder
               ? Border.all(color: appTheme.borderColor)
-              : Border(),
+              : const Border(),
         ),
         child: TextField(
           controller: controller,

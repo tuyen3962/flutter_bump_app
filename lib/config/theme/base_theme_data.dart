@@ -17,7 +17,7 @@ abstract class BaseThemeData {
   Color get whiteText => Colors.white;
   Color get blackColor => Colors.black;
 
-  Color get appColor => Color(0xFF2979FF);
+  Color get appColor => const Color(0xFF2979FF);
   Color get transparentColor => Colors.transparent;
 
   Color alpha = const Color(0xFFFFFFFF);
@@ -89,6 +89,15 @@ abstract class BaseThemeData {
   Color green800 = const Color(0xFF2E7D32);
   Color green900 = const Color(0xFF1B5E20);
 
+  Color greenF4Color = const Color(0xFFF0FDF4);
+  Color green81Color = const Color(0xFF10B981);
+  Color green69Color = const Color(0xFF059669);
+  Color green4AColor = const Color(0xFF16A34A);
+  Color green3DColor = const Color(0xFF15803D);
+  Color green2DColor = const Color(0xFF14532D);
+  Color green57Color = const Color(0xFF047857);
+  Color green80Color = const Color(0xFF4ADE80);
+
   // Extended Color Palette - Blue Series (Additional)
   Color blue50 = const Color(0xFFE3F2FD);
   Color blue100 = const Color(0xFFBBDEFB);
@@ -112,4 +121,19 @@ abstract class BaseThemeData {
   Color red700 = const Color(0xFFD32F2F);
   Color red800 = const Color(0xFFC62828);
   Color red900 = const Color(0xFFB71C1C);
+
+  Color get yellowColor => const Color(0xFFEAB308);
+  Color get orangeColor => const Color(0xFFF97316);
+  Color get yellow800Color => const Color(0xFF92400E);
+  Color get yellow400Color => const Color(0xFFFBBF24);
+  Color get yellow900Color => const Color(0xFF78350F);
+  Color get red400Color => const Color(0xFFF87171);
+  Color get red900Color => const Color(0xFF7F1D1D);
+  Color get grey300Color => const Color(0xFFD1D5DB);
+  Color get green800Color => const Color(0xFF166534);
+  Color get greyColor => const Color(0xFF6B7280);
+  Color get redColor => const Color(0xFFEF4444);
+  Color get green200Color => const Color(0xFFBBF7D0);
+  Color get emerald200Color => const Color(0xFFA7F3D0);
+  Color get red600Color => const Color(0xFFDC2626);
 }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bump_app/config/lang/locale_keys.g.dart';
 import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
 import 'package:flutter_bump_app/extension.dart';
+import 'package:flutter_bump_app/extension/color_extension.dart';
 import 'package:flutter_bump_app/gen/assets.gen.dart';
 import 'package:flutter_bump_app/main.dart';
 import 'package:flutter_bump_app/widget/circle_item.dart';
@@ -27,7 +28,7 @@ class AppBarCustom extends StatefulWidget {
   final Widget? titleView;
 
   const AppBarCustom({
-    Key? key,
+    super.key,
     this.onBack,
     this.title,
     this.padding,
@@ -42,7 +43,7 @@ class AppBarCustom extends StatefulWidget {
     this.isBackIcon = true,
     this.backIcon,
     this.titleView,
-  }) : super(key: key);
+  });
 
   @override
   _AppBarCustomState createState() => _AppBarCustomState();
@@ -60,7 +61,8 @@ class _AppBarCustomState extends State<AppBarCustom> {
   @override
   Widget build(BuildContext context) {
     final appNameText = Text(LocaleKeys.notification_text.tr(),
-        style: AppStyle.medium12(color: appTheme.whiteText.withOpacity(.8)));
+        style:
+            AppStyle.medium12(color: appTheme.whiteText.withSafeOpacity(.8)));
     return Container(
       color: widget.backgroundColor,
       width: double.infinity,
@@ -75,17 +77,22 @@ class _AppBarCustomState extends State<AppBarCustom> {
               child: Transform.rotate(
                 angle: pi,
                 child: Assets.icons.arrowRight.svg(
-                    width: 32.w,
-                    height: 32.w,
-                    color: widget.backColor ?? appTheme.background),
+                  width: 32.w,
+                  height: 32.w,
+                  colorFilter: ColorFilter.mode(
+                    widget.backColor ?? appTheme.whiteText,
+                    BlendMode.srcIn,
+                  ),
+                ),
               ),
             )
           else
             CircleItem(
-                onTap: back,
-                padding: padding(all: 6),
-                backgroundColor: appTheme.whiteText.withOpacity(.16),
-                child: Icon(Icons.close, color: appTheme.whiteText, size: 20)),
+              onTap: back,
+              padding: padding(all: 6),
+              backgroundColor: appTheme.whiteText.withSafeOpacity(.16),
+              child: Icon(Icons.close, color: appTheme.whiteText, size: 20),
+            ),
         ],
         Padding(
           padding: (widget.showBack ?? true)

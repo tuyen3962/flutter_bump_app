@@ -29,7 +29,7 @@ class CustomFileImage extends StatelessWidget {
         height: size ?? height,
         width: size ?? width,
         fit: boxFit,
-        errorBuilder: (context, error, stackTrace) => DefaultImage(),
+        errorBuilder: (context, error, stackTrace) => const DefaultImage(),
       );
     } else if (byte != null) {
       return Image.memory(
@@ -37,10 +37,10 @@ class CustomFileImage extends StatelessWidget {
         height: size ?? height,
         width: size ?? width,
         fit: boxFit,
-        errorBuilder: (context, error, stackTrace) => DefaultImage(),
+        errorBuilder: (context, error, stackTrace) => const DefaultImage(),
       );
     }
 
-    return SizedBox();
+    return const SizedBox();
   }
 }

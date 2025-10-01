@@ -260,7 +260,7 @@ class TitleTextField extends StatelessWidget {
                     borderSide: BorderSide(color: appTheme.errorColor)),
             border: inputBorder ?? border,
             focusedBorder:
-                inputBorder ?? border.copyWith(borderSide: BorderSide()),
+                inputBorder ?? border.copyWith(borderSide: const BorderSide()),
             enabledBorder: inputBorder ?? border,
             focusedErrorBorder: errorInputBorder ?? border,
           ),
@@ -304,5 +304,7 @@ class TitleTextField extends StatelessWidget {
   }
 
   OutlineInputBorder get border => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(16), borderSide: BorderSide());
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(),
+      );
 }
