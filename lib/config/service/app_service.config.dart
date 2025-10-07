@@ -142,7 +142,6 @@ extension GetItInjectableX on _i174.GetIt {
         return i.init().then((_) => i);
       },
       preResolve: true,
-      dispose: (i) => i.dispose(),
     );
     gh.lazySingleton<_i722.UploadVideoWithBatchUseCase>(
         () => _i722.UploadVideoWithBatchUseCase(

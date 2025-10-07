@@ -57,15 +57,80 @@ class SignInScreenState
         return Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
-            color: appTheme.greenF4Color,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF0F172A), // #0F172A
+                Color(0xFF1E293B), // #1E293B
+              ],
+            ),
           ),
           child: SafeArea(
-            child: Column(
+            child: Padding(
+              padding: padding(horizontal: 24.w, vertical: 48.h),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildLogo(),
+                  SizedBox(height: 32.h),
+                  _buildTitle(),
+                  SizedBox(height: 8.h),
+                  _buildStats(),
+                  SizedBox(height: 36.h),
+                  _buildSignInButton(cubit, state),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLogo() {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: const Duration(milliseconds: 800),
+      builder: (context, value, child) {
+        return Transform.scale(
+          scale: 0.8 + (0.2 * value),
+          child: Opacity(
+            opacity: value,
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                _buildHeader(),
-                Expanded(child: _buildMainContent()),
-                _buildBottomWidget(cubit),
+                Container(
+                  width: 96.w,
+                  height: 96.h,
+                  decoration: BoxDecoration(
+                    color: appTheme.green4AColor.withSafeOpacity(0.1),
+                    borderRadius: BorderRadius.circular(48),
+                    boxShadow: [
+                      BoxShadow(
+                        color: appTheme.green4AColor.withSafeOpacity(0.3),
+                        blurRadius: 60,
+                        spreadRadius: 20,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: 96.w,
+                  height: 96.h,
+                  decoration: BoxDecoration(
+                    color: appTheme.green4AColor,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.rocket_launch,
+                      size: 48.w,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -74,216 +139,125 @@ class SignInScreenState
     );
   }
 
-  Widget _buildHeader() {
-    return Padding(
-      padding: padding(top: 48.h, bottom: 32.h),
-      child: Column(
-        children: [
-          TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0.0, end: 1.0),
-            duration: const Duration(milliseconds: 800),
-            builder: (context, value, child) {
-              return Transform.scale(
-                scale: 0.8 + (0.2 * value),
-                child: Opacity(
-                  opacity: value,
-                  child: Container(
-                    width: 80.w,
-                    height: 80.h,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          appTheme.green81Color,
-                          appTheme.green69Color,
-                          appTheme.green4AColor,
-                        ],
-                      ),
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: appTheme.green81Color.withSafeOpacity(0.3),
-                          blurRadius: 20,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Container(
-                        width: 48.w,
-                        height: 48.h,
-                        decoration: BoxDecoration(
-                          color: appTheme.whiteText,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Center(
-                          child: Container(
-                            width: 24.w,
-                            height: 24.h,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  appTheme.green81Color,
-                                  appTheme.green69Color,
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+  Widget _buildTitle() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'SPONSOR.FUN',
+              style: AppStyle.bold32(color: appTheme.green4AColor),
+            ),
+            SizedBox(width: 8.w),
+            TweenAnimationBuilder<double>(
+              tween: Tween(begin: 0.0, end: 1.0),
+              duration: const Duration(milliseconds: 1500),
+              builder: (context, value, child) {
+                return Transform.translate(
+                  offset: Offset(0, -4 * (1 - value).abs()),
+                  child: Icon(
+                    Icons.rocket_launch,
+                    size: 24.w,
+                    color: appTheme.green4AColor,
                   ),
-                ),
-              );
-            },
-          ),
-          SizedBox(height: 24.h),
-          Text(
-            'Clipit',
-            style: AppStyle.bold32(color: appTheme.green2DColor),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'Next-gen content validation',
-            style: AppStyle.regular16(color: appTheme.green3DColor),
-          ),
-        ],
-      ),
+                );
+              },
+            ),
+          ],
+        ),
+        SizedBox(height: 12.h),
+        Text(
+          'Sponsor The Movement You Believe In!',
+          style: AppStyle.regular16(color: Colors.white70),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 
-  Widget _buildMainContent() {
-    return Padding(
-      padding: padding(horizontal: 24.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Column(
-            children: [
-              SizedBox(height: 24.h),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: AppStyle.regular20(color: appTheme.green2DColor),
-                  children: [
-                    TextSpan(
-                      text: 'Your vision',
-                      style: AppStyle.regular20(color: appTheme.green3DColor),
-                    ),
-                    const TextSpan(text: ', '),
-                    TextSpan(
-                      text: 'your video',
-                      style: AppStyle.regular20(color: appTheme.green57Color),
-                    ),
-                    const TextSpan(text: '.'),
-                  ],
-                ),
-              ),
-              SizedBox(height: 12.h),
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(
-                  style: AppStyle.regular20(color: appTheme.green2DColor),
-                  children: [
-                    const TextSpan(text: 'Your '),
-                    TextSpan(
-                      text: 'reward',
-                      style: AppStyle.regular20(color: appTheme.green3DColor),
-                    ),
-                    const TextSpan(text: ', with '),
-                    TextSpan(
-                      text: 'Clipit',
-                      style: AppStyle.bold20(
-                        color: appTheme.green4AColor,
-                      ),
-                    ),
-                    const TextSpan(text: '.'),
-                  ],
-                ),
-              ),
-              SizedBox(height: 24.h),
-              Container(
-                width: 64.w,
-                height: 1,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      appTheme.transparentColor,
-                      appTheme.green80Color,
-                      appTheme.transparentColor,
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+  Widget _buildStats() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildStatItem(
+          icon: Icons.local_fire_department,
+          iconColor: Colors.orange,
+          text: '10K+ Creators',
+        ),
+        SizedBox(width: 24.w),
+        _buildStatItem(
+          icon: Icons.account_balance_wallet,
+          iconColor: appTheme.green69Color,
+          text: '₿ 2,847 SOL Paid',
+        ),
+      ],
     );
   }
 
-  Widget _buildBottomWidget(SignInCubit cubit) {
-    return Padding(
-      padding: padding(left: 24.w, right: 24.w, bottom: 32.h),
-      child: Column(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            height: 56.h,
-            child: ElevatedButton(
-              onPressed:
-                  cubit.state.isLoading ? null : () => cubit.signInWithGoogle(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: appTheme.transparentColor,
-                foregroundColor: appTheme.whiteText,
-                shadowColor: appTheme.green81Color.withSafeOpacity(0.25),
-                elevation: 8,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                padding: EdgeInsets.zero,
-              ),
-              child: Ink(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [appTheme.green4AColor, appTheme.green69Color],
-                  ),
-                  borderRadius: BorderRadius.circular(28),
-                ),
-                child: Container(
-                  alignment: Alignment.center,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Sign in with Google',
-                        style: AppStyle.medium16(color: appTheme.whiteText),
-                      ),
-                      SizedBox(width: 8.w),
-                      Icon(
-                        Icons.arrow_forward,
-                        color: appTheme.whiteText,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+  Widget _buildStatItem({
+    required IconData icon,
+    required Color iconColor,
+    required String text,
+  }) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 12.w,
+          color: iconColor,
+        ),
+        SizedBox(width: 4.w),
+        Text(
+          text,
+          style: AppStyle.regular12(color: Colors.white60),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSignInButton(SignInCubit cubit, SignInState state) {
+    return SizedBox(
+      width: double.infinity,
+      height: 40.h,
+      child: ElevatedButton(
+        onPressed: state.isLoading ? null : () => cubit.signInWithGoogle(),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: appTheme.transparentColor,
+          foregroundColor: appTheme.whiteText,
+          shadowColor: appTheme.green81Color.withSafeOpacity(0.25),
+          elevation: 8,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          SizedBox(height: 16.h),
-          Text(
-            'By continuing, you agree to our Terms & Privacy Policy',
-            textAlign: TextAlign.center,
-            style: AppStyle.regular14(
-              color: appTheme.green3DColor,
+          padding: EdgeInsets.zero,
+        ),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [appTheme.green4AColor, appTheme.green69Color],
             ),
+            borderRadius: BorderRadius.circular(12),
           ),
-        ],
+          child: Container(
+            alignment: Alignment.center,
+            child: state.isLoading
+                ? SizedBox(
+                    width: 20.w,
+                    height: 20.h,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        appTheme.whiteText,
+                      ),
+                      strokeWidth: 2,
+                    ),
+                  )
+                : Text(
+                    'Continue with Gmail',
+                    style: AppStyle.medium16(color: appTheme.whiteText),
+                  ),
+          ),
+        ),
       ),
     );
   }
