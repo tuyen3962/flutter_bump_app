@@ -32,4 +32,25 @@ class AuthRepository extends IAuthRepository {
       return false;
     }
   }
+
+  @override
+  Future<bool> privyVerify(PrivyGoogleLoginRequest request) async {
+    try {
+      final response = await api.privyVerify(request);
+      if (response.isSuccess) {
+        final tokens = response.data;
+        await Future.wait([
+          localStorage.cacheAccessToken(tokens?.accessToken ?? ''),
+          localStorage.cacheRefreshToken(tokens?.refreshToken ?? ''),
+          // localStorage.cacheUserID(response.user?.id ?? ''),
+          // localStorage.saveValue(keyTokenType, tokens?.tokenType ?? '')
+        ]);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      handleError(e);
+      return false;
+    }
+  }
 }

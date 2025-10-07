@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter_bump_app/base/stream/base_stream_controller.dart';
-import 'package:flutter_bump_app/config/constant/app_config.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
 import 'package:flutter_bump_app/data/remote/exception/error_exception.dart';
 import 'package:flutter_bump_app/data/remote/request/auth/google_mobile_login_request.dart';
@@ -14,14 +13,18 @@ import 'package:flutter_bump_app/utils/logger_helper.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 
+import 'privy_wallet_service.dart';
+
 @singleton
 class AuthService {
-  static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  // static final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   final IAuthRepository authRepository;
   final AccountService accountService;
   final IAccountRepository accountRepository;
+  final PrivyWalletService privyWalletService;
 
   AuthService({
+    required this.privyWalletService,
     required this.authRepository,
     required this.accountService,
     required this.accountRepository,
@@ -34,10 +37,10 @@ class AuthService {
 
   @PostConstruct(preResolve: true)
   Future<void> init() async {
-    await _googleSignIn.initialize(clientId: AppConfig.clientId);
-    _googleSignIn.attemptLightweightAuthentication();
-    _authenticationEvents =
-        _googleSignIn.authenticationEvents.listen(_handleAuthenticationEvent);
+    // await _googleSignIn.initialize(clientId: AppConfig.clientId);
+    // _googleSignIn.attemptLightweightAuthentication();
+    // _authenticationEvents =
+    //     _googleSignIn.authenticationEvents.listen(_handleAuthenticationEvent);
   }
 
   @disposeMethod
@@ -48,19 +51,31 @@ class AuthService {
   // Sign in with Google
   Future<bool> signInWithGoogle() async {
     try {
-      final result = await _googleSignIn.authenticate();
-      final isSuccess = await authRepository.googleMobileLogin(
-        GoogleMobileLoginRequest(
-          idToken: result.authentication.idToken ?? '',
-          device: await DeviceInfoUtil.getDeviceInfo(),
-        ),
-      );
-      if (isSuccess) {
-        final userInfo = await accountRepository.getUserProfile();
-        accountService.setAccount(userInfo);
-        return true;
+      final result = await privyWalletService.loginWithGoogle();
+      if (result.isNotEmpty) {
+        final isSuccess = await authRepository.privyVerify(
+            PrivyGoogleLoginRequest(
+                token: result, device: await DeviceInfoUtil.getDeviceInfo()));
+        if (isSuccess) {
+          final userInfo = await accountRepository.getUserProfile();
+          accountService.setAccount(userInfo);
+          return true;
+        }
       }
       return false;
+      // final result = await _googleSignIn.authenticate();
+      // final isSuccess = await authRepository.googleMobileLogin(
+      //   GoogleMobileLoginRequest(
+      //     idToken: result.authentication.idToken ?? '',
+      //     device: await DeviceInfoUtil.getDeviceInfo(),
+      //   ),
+      // );
+      // if (isSuccess) {
+      //   final userInfo = await accountRepository.getUserProfile();
+      //   accountService.setAccount(userInfo);
+      //   return true;
+      // }
+      // return false;
     } catch (e) {
       log('Error signing in with Google: $e');
       if (e is ErrorException && (e.error ?? '').isNotEmpty) {
@@ -84,7 +99,7 @@ class AuthService {
     try {
       await Future.wait([
         // _auth.signOut(),
-        _googleSignIn.signOut(),
+        // _googleSignIn.signOut(),
       ]);
     } catch (e) {
       loggerHelper.error('Error signing out: $e');

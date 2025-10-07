@@ -1,0 +1,96 @@
+import 'package:flutter_bump_app/data/remote/bid/bid_api.dart';
+import 'package:flutter_bump_app/data/remote/bid/bid_request.dart';
+import 'package:flutter_bump_app/data/remote/bid/bid_response.dart';
+import 'package:flutter_bump_app/data/remote/response/base_response.dart';
+import 'package:flutter_bump_app/data/repository/bid/ibid_repository.dart';
+import 'package:injectable/injectable.dart';
+
+@Injectable(as: IBidRepository)
+class BidRepository extends IBidRepository {
+  final BidApi bidApi;
+
+  BidRepository(this.bidApi);
+
+  @override
+  Future<PlaceBidResponse> placeBid(PlaceBidRequest request) async {
+    final response = await bidApi.placeBid(request);
+    if (response.isSuccess) {
+      return response.data!;
+    }
+    throw Exception(response.message);
+  }
+
+  @override
+  Future<PaginatedResponse<BidResponse>> getBids(
+      {int page = 1, int limit = 20}) async {
+    return await bidApi.getBids();
+  }
+
+  @override
+  Future<BidResponse> getBidDetail(String bidId) async {
+    final response = await bidApi.getBidDetail(bidId);
+    if (response.isSuccess) {
+      return response.data!;
+    }
+    throw Exception(response.message);
+  }
+
+  @override
+  Future<CancelBidResponse> cancelBid(String bidId) async {
+    final response = await bidApi.cancelBid(bidId);
+    if (response.isSuccess) {
+      return response.data!;
+    }
+    throw Exception(response.message);
+  }
+
+  @override
+  Future<BidResponse> acceptBid(String bidId) async {
+    final response = await bidApi.acceptBid(bidId);
+    if (response.isSuccess) {
+      return response.data!;
+    }
+    throw Exception(response.message);
+  }
+
+  @override
+  Future<BidResponse> rejectBid(String bidId) async {
+    final response = await bidApi.rejectBid(bidId);
+    if (response.isSuccess) {
+      return response.data!;
+    }
+    throw Exception(response.message);
+  }
+
+  @override
+  Future<PaginatedResponse<BidResponse>> getMySponsorBids(
+      {int page = 1, int limit = 20}) async {
+    return await bidApi.getMySponsorBids({'page': page, 'limit': limit});
+  }
+
+  @override
+  Future<PaginatedResponse<BidResponse>> getCreatorBids(String creatorId,
+      {int page = 1, int limit = 20}) async {
+    return await bidApi
+        .getCreatorBids(creatorId, {'page': page, 'limit': limit});
+  }
+
+  @override
+  Future<CreatorBidProfile> getCreatorBidProfile(String creatorId) async {
+    final response = await bidApi.getCreatorBidProfile(creatorId);
+    if (response.isSuccess) {
+      return response.data!;
+    }
+    throw Exception(response.message);
+  }
+
+  @override
+  Future<CreatorBidProfile> updateCreatorBidProfile(
+      String creatorId, UpdateCreatorProfileRequest request) async {
+    final response = await bidApi.updateCreatorBidProfile(creatorId, request);
+    if (response.isSuccess) {
+      return response.data!;
+    }
+    throw Exception(response.message);
+  }
+}

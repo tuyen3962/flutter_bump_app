@@ -12,7 +12,7 @@ class SignInCubit extends BaseCubit<SignInState> {
   Future<void> signInWithGoogle() async {
     try {
       emit(state.copyWith(isLoading: true, errorMessage: null));
-
+      showLoading();
       final result = await authService.signInWithGoogle();
       if (result) {
         emit(state.copyWith(
@@ -23,6 +23,7 @@ class SignInCubit extends BaseCubit<SignInState> {
       } else {
         emit(state.copyWith(isLoading: false, errorMessage: 'Đã xảy ra lỗi'));
       }
+      dismissLoading();
     } catch (e) {
       emit(state.copyWith(isLoading: false));
     }

@@ -1,0 +1,18 @@
+enum TransactionType {
+  DEPOSIT,
+  WITHDRAWAL,
+  BID_PLACED,
+  BID_REFUND,
+  BID_WIN,
+  CAMPAIGN_PAYMENT,
+  NONE
+}
+
+enum TransactionStatus {
+  PENDING,
+  PROCESSING,
+  COMPLETED,
+  FAILED,
+  CANCELLED,
+  NONE
+}

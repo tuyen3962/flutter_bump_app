@@ -16,3 +16,17 @@ class GoogleMobileLoginRequest {
 
   Map<String, dynamic> toJson() => _$GoogleMobileLoginRequestToJson(this);
 }
+
+@JsonSerializable()
+class PrivyGoogleLoginRequest {
+  final String token;
+  @JsonKey(name: 'device_info')
+  final DeviceModel device;
+
+  PrivyGoogleLoginRequest({required this.token, required this.device});
+
+  factory PrivyGoogleLoginRequest.fromJson(Map<String, dynamic> json) =>
+      _$PrivyGoogleLoginRequestFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PrivyGoogleLoginRequestToJson(this);
+}

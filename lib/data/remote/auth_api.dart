@@ -46,6 +46,10 @@ abstract class AuthApi {
   Future<BaseResponse<GoogleCallbackToken>> googleMobileLogin(
       @Body() GoogleMobileLoginRequest request);
 
+  @POST('/api/auth/privy/verify')
+  Future<BaseResponse<GoogleCallbackToken>> privyVerify(
+      @Body() PrivyGoogleLoginRequest request);
+
   // @GET('/api/auth/google/url')
   // Future<Map<String, dynamic>> getGoogleAuthUrl();
 }

@@ -1,11 +1,8 @@
 import 'package:flutter_bump_app/config/service/provider/dio_provider.dart';
-import 'package:flutter_bump_app/data/remote/auth_api.dart';
-import 'package:flutter_bump_app/data/remote/highlight_api.dart';
 import 'package:flutter_bump_app/data/remote/upload_ds.dart';
-import 'package:flutter_bump_app/data/remote/user_api.dart';
-import 'package:flutter_bump_app/data/remote/video_api.dart';
-import 'package:flutter_bump_app/data/remote/youtube_api.dart';
 import 'package:injectable/injectable.dart';
+
+import 'api.dart';
 
 @module
 abstract class RemoteService {
@@ -26,4 +23,17 @@ abstract class RemoteService {
 
   @lazySingleton
   UploadDS uploadDS(DioProvider provider) => UploadDS(provider.dio);
+
+  @lazySingleton
+  BidApi bidApi(DioProvider provider) => BidApi(provider.dio);
+
+  @lazySingleton
+  WalletApi walletApi(DioProvider provider) => WalletApi(provider.dio);
+
+  @lazySingleton
+  ChatApi chatApi(DioProvider provider) => ChatApi(provider.dio);
+
+  @lazySingleton
+  NotificationApi notificationApi(DioProvider provider) =>
+      NotificationApi(provider.dio);
 }

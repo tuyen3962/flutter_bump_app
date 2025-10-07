@@ -39,3 +39,27 @@ class GoogleCallbackToken {
 
   Map<String, dynamic> toJson() => _$GoogleCallbackTokenToJson(this);
 }
+
+@JsonSerializable()
+class PrivyCallbackToken {
+  final String token;
+  final int expiresIn;
+  final String tokenType;
+  final String userId;
+  // final Map<String, dynamic> claims;
+  // final String warning;
+
+  PrivyCallbackToken({
+    required this.token,
+    required this.expiresIn,
+    required this.tokenType,
+    required this.userId,
+    // required this.claims,
+    // required this.warning,
+  });
+
+  factory PrivyCallbackToken.fromJson(Map<String, dynamic> json) =>
+      _$PrivyCallbackTokenFromJson(json);
+
+  Map<String, dynamic> toJson() => _$PrivyCallbackTokenToJson(this);
+}

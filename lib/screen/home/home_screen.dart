@@ -233,28 +233,28 @@ class HomeScreenState
             ),
             child: Row(
               children: [
-                if (state.selectedBrand != null) ...[
-                  CircleAvatar(
-                    radius: 12,
-                    backgroundImage: NetworkImage(state.selectedBrand!.logo),
-                  ),
-                  SizedBox(width: 12.w),
-                  Text(
-                    state.selectedBrand!.name,
-                    style: AppStyle.regular16(color: appTheme.green2DColor),
-                  ),
-                ] else
-                  Text(
-                    'Choose a brand to integrate',
-                    style: AppStyle.regular16(
-                      color: appTheme.green600.withSafeOpacity(0.6),
-                    ),
-                  ),
-                const Spacer(),
-                Icon(
-                  Icons.keyboard_arrow_down,
-                  color: appTheme.green2DColor,
-                ),
+                // if (state.selectedBrand != null) ...[
+                //   CircleAvatar(
+                //     radius: 12,
+                //     backgroundImage: NetworkImage(state.selectedBrand!.logo),
+                //   ),
+                //   SizedBox(width: 12.w),
+                //   Text(
+                //     state.selectedBrand!.name,
+                //     style: AppStyle.regular16(color: appTheme.green2DColor),
+                //   ),
+                // ] else
+                //   Text(
+                //     'Choose a brand to integrate',
+                //     style: AppStyle.regular16(
+                //       color: appTheme.green600.withSafeOpacity(0.6),
+                //     ),
+                //   ),
+                // const Spacer(),
+                // Icon(
+                //   Icons.keyboard_arrow_down,
+                //   color: appTheme.green2DColor,
+                // ),
               ],
             ),
           ),
@@ -413,13 +413,13 @@ class HomeScreenState
 
   // Helper methods for brand theming
   LinearGradient _getHeaderGradient(HomeState state) {
-    if (state.selectedBrand != null) {
-      return LinearGradient(
-        colors: state.selectedBrand!.theme.primaryColors
-            .map((color) => color.withSafeOpacity(0.9))
-            .toList(),
-      );
-    }
+    // if (state.selectedBrand != null) {
+    //   return LinearGradient(
+    //     colors: state.selectedBrand!.theme.primaryColors
+    //         .map((color) => color.withSafeOpacity(0.9))
+    //         .toList(),
+    //   );
+    // }
     return LinearGradient(
       colors: [
         appTheme.green600.withSafeOpacity(0.9),
@@ -438,21 +438,21 @@ class HomeScreenState
       );
     }
 
-    if (state.selectedBrand != null) {
-      return LinearGradient(
-        colors: state.selectedBrand!.theme.primaryColors,
-      );
-    }
+    // if (state.selectedBrand != null) {
+    //   return LinearGradient(
+    //     colors: state.selectedBrand!.theme.primaryColors,
+    //   );
+    // }
     return LinearGradient(
       colors: [appTheme.green4AColor, appTheme.green69Color],
     );
   }
 
   Color _getBrandShadowColor(HomeState state) {
-    if (state.selectedBrand != null) {
-      return state.selectedBrand!.theme.primaryColors.first
-          .withSafeOpacity(0.25);
-    }
+    // if (state.selectedBrand != null) {
+    //   return state.selectedBrand!.theme.primaryColors.first
+    //       .withSafeOpacity(0.25);
+    // }
     return appTheme.green81Color.withSafeOpacity(0.25);
   }
 
@@ -567,17 +567,17 @@ class HomeScreenState
                           ),
                           child: Row(
                             children: [
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundImage: NetworkImage(brand.logo),
-                              ),
-                              SizedBox(width: 16.w),
-                              Text(
-                                brand.name,
-                                style: AppStyle.medium16(
-                                  color: appTheme.green2DColor,
-                                ),
-                              ),
+                              // CircleAvatar(
+                              //   radius: 20,
+                              //   backgroundImage: NetworkImage(brand.logo),
+                              // ),
+                              // SizedBox(width: 16.w),
+                              // Text(
+                              //   brand.name,
+                              //   style: AppStyle.medium16(
+                              //     color: appTheme.green2DColor,
+                              //   ),
+                              // ),1
                             ],
                           ),
                         ),

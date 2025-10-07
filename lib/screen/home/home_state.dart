@@ -1,5 +1,5 @@
 import 'package:flutter_bump_app/base/widget/cubit/base_state.dart';
-import 'package:flutter_bump_app/models/brand_model.dart';
+import 'package:flutter_bump_app/data/model/brand_model.dart';
 
 class HomeState extends BaseState {
   final List<BrandModel> availableBrands;

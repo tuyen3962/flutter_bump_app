@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Source Base</string>
+	<string>Daplab</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -22,6 +22,11 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>http</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -32,6 +37,15 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.834324141628-189n7114rua1glpd87v5bbe1ulho5lmq</string>
+			</array>
+		</dict>
+		<dict>
+		 	<key>CFBundleURLName</key>
+        	<string>privy-auth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>daplab</string>
+				<string>privy</string>
 			</array>
 		</dict>
 	</array>

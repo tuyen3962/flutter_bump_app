@@ -3,4 +3,5 @@ import 'package:flutter_bump_app/data/repository/ibase_repository.dart';
 
 abstract class IAuthRepository extends IBaseRepository {
   Future<bool> googleMobileLogin(GoogleMobileLoginRequest request);
+  Future<bool> privyVerify(PrivyGoogleLoginRequest request);
 }
