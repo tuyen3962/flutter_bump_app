@@ -30,7 +30,7 @@ class SponsorHubPage
 
   @override
   SponsorHubCubit createCubit() {
-    return SponsorHubCubit(locator.get(), locator.get());
+    return SponsorHubCubit(locator.get(), locator.get(), locator.get());
   }
 
   @override
@@ -157,9 +157,12 @@ class SponsorHubScreenState extends BaseBlocNoAppBarPageState<SponsorHubScreen,
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Text(
-                '${state.walletBalance.toStringAsFixed(1)} SOL',
-                style: AppStyle.bold14(color: const Color(0xFF0F172A)),
+              child: ValueListenableBuilder(
+                valueListenable: cubit.privyWalletService.solanaBalance,
+                builder: (context, value, __) => Text(
+                  '${value.toStringAsFixed(1)} SOL',
+                  style: AppStyle.bold14(color: const Color(0xFF0F172A)),
+                ),
               ),
             ),
           ),

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bump_app/base/widget/base_page.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_bloc_provider.dart';
+import 'package:flutter_bump_app/config/service/app_service.dart';
+import 'package:flutter_bump_app/config/service/privy_wallet_service.dart';
 import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
 import 'package:flutter_bump_app/extension.dart';
 import 'package:flutter_bump_app/extension/color_extension.dart';
@@ -144,9 +146,12 @@ class WalletScreenState
             style: AppStyle.regular16(color: Colors.white70),
           ),
           SizedBox(height: 12.h),
-          Text(
-            '${state.balance.toStringAsFixed(4)} SOL',
-            style: AppStyle.bold32(color: appTheme.whiteText),
+          ValueListenableBuilder(
+            valueListenable: locator.get<PrivyWalletService>().solanaBalance,
+            builder: (context, value, __) => Text(
+              '${value.toStringAsFixed(4)} SOL',
+              style: AppStyle.bold32(color: appTheme.whiteText),
+            ),
           ),
           SizedBox(height: 8.h),
           Text(

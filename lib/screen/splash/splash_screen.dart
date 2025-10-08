@@ -26,6 +26,7 @@ class SplashPage extends BaseBlocProvider<SplashState, SplashCubit> {
       accountService: locator.get(),
       localStorage: locator.get(),
       accountRepository: locator.get(),
+      privyWalletService: locator.get(),
     );
   }
 }

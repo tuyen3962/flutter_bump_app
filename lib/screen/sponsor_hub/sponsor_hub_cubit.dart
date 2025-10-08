@@ -1,5 +1,6 @@
 import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
+import 'package:flutter_bump_app/config/service/privy_wallet_service.dart';
 import 'package:flutter_bump_app/data/repository/bid/ibid_repository.dart';
 
 import 'sponsor_hub_state.dart';
@@ -7,8 +8,10 @@ import 'sponsor_hub_state.dart';
 class SponsorHubCubit extends BaseCubit<SponsorHubState> {
   final IBidRepository bidRepository;
   final AccountService accountService;
+  final PrivyWalletService privyWalletService;
 
-  SponsorHubCubit(this.bidRepository, this.accountService)
+  SponsorHubCubit(
+      this.bidRepository, this.accountService, this.privyWalletService)
       : super(
           const SponsorHubState(
             creators: [

@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_bump_app/config/constant/app_config.dart';
 import 'package:injectable/injectable.dart';
 import 'package:privy_flutter/privy_flutter.dart';
+import 'package:solana/solana.dart';
 
 @injectable
 class PrivyWalletService {
@@ -10,6 +12,8 @@ class PrivyWalletService {
 
   // PrivyUser? _user;
   PrivyUser? get user => _privy.currentAuthState.user;
+
+  final ValueNotifier<double> solanaBalance = ValueNotifier(0);
 
   @postConstruct
   void init() {
@@ -42,5 +46,15 @@ class PrivyWalletService {
 
   Future<void> logout() async {
     await _privy.logout();
+  }
+
+  Future<void> refreshMyWalletBalance() async {
+    final result = await _privy.getUser();
+    if (result?.embeddedSolanaWallets.isNotEmpty == true) {
+      final client = RpcClient('https://api.devnet.solana.com');
+      final lamports = await client
+          .getBalance(result?.embeddedSolanaWallets.first.address ?? '');
+      solanaBalance.value = lamports.value / 1e9;
+    }
   }
 }
