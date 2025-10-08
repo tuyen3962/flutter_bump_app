@@ -28,6 +28,7 @@ class PrivyWalletService {
       final success = result as Success<PrivyUser>;
       final privyUser = success.value;
       final accessToken = await privyUser.getAccessToken();
+      await privyUser.createSolanaWallet();
       // privyUser.
       if (accessToken is Success) {
         return (accessToken as Success<String>).value;

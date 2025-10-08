@@ -53,8 +53,11 @@ class AuthService {
       final result = await privyWalletService.loginWithGoogle();
       if (result.isNotEmpty) {
         final isSuccess = await authRepository.privyVerify(
-            PrivyGoogleLoginRequest(
-                token: result, device: await DeviceInfoUtil.getDeviceInfo()));
+          PrivyGoogleLoginRequest(
+            token: result,
+            device: await DeviceInfoUtil.getDeviceInfo(),
+          ),
+        );
         if (isSuccess) {
           final userInfo = await accountRepository.getUserProfile();
           accountService.setAccount(userInfo);
