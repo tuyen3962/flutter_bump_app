@@ -1,13 +1,14 @@
 import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
-import 'package:flutter_bump_app/config/service/app_service.dart';
+import 'package:flutter_bump_app/data/repository/bid/ibid_repository.dart';
 
 import 'sponsor_hub_state.dart';
 
 class SponsorHubCubit extends BaseCubit<SponsorHubState> {
-  late final AccountService accountService = locator.get();
+  final IBidRepository bidRepository;
+  final AccountService accountService;
 
-  SponsorHubCubit()
+  SponsorHubCubit(this.bidRepository, this.accountService)
       : super(
           const SponsorHubState(
             creators: [

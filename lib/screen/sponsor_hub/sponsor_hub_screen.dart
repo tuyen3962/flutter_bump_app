@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bump_app/base/widget/base_page.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_bloc_provider.dart';
+import 'package:flutter_bump_app/config/service/app_service.dart';
 import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
 import 'package:flutter_bump_app/extension.dart';
 import 'package:flutter_bump_app/extension/color_extension.dart';
@@ -14,6 +15,8 @@ import 'package:flutter_bump_app/screen/launch_sponsorship/launch_sponsorship_pa
 import 'package:flutter_bump_app/screen/sponsor_hub/sponsor_hub_cubit.dart';
 
 import 'sponsor_hub_state.dart';
+import 'tab/discover/discover_tab_cubit.dart';
+import 'tab/sponsorship/sponsorship_tab_cubit.dart';
 
 @RoutePage()
 class SponsorHubPage
@@ -27,7 +30,22 @@ class SponsorHubPage
 
   @override
   SponsorHubCubit createCubit() {
-    return SponsorHubCubit();
+    return SponsorHubCubit(locator.get(), locator.get());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<SponsorHubCubit>(create: (context) => createCubit()),
+        BlocProvider<DiscoverTabCubit>(
+            create: (context) =>
+                DiscoverTabCubit(bidRepository: locator.get())),
+        BlocProvider<SponsorshipTabCubit>(
+            create: (context) => SponsorshipTabCubit()),
+      ],
+      child: buildPage(),
+    );
   }
 }
 
@@ -40,7 +58,7 @@ class SponsorHubScreen extends StatefulWidget {
 
 class SponsorHubScreenState extends BaseBlocNoAppBarPageState<SponsorHubScreen,
     SponsorHubState, SponsorHubCubit> {
-  final TextEditingController _searchController = TextEditingController();
+  // final TextEditingController _searchController = TextEditingController();
   String _selectedFilter = 'all';
 
   String? _activeBidCreator;
@@ -51,7 +69,7 @@ class SponsorHubScreenState extends BaseBlocNoAppBarPageState<SponsorHubScreen,
 
   @override
   void dispose() {
-    _searchController.dispose();
+    // _searchController.dispose();
     super.dispose();
   }
 
@@ -305,8 +323,8 @@ class SponsorHubScreenState extends BaseBlocNoAppBarPageState<SponsorHubScreen,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Search Bar
-          _buildSearchBar(),
-          SizedBox(height: 16.h),
+          // _buildSearchBar(),
+          // SizedBox(height: 16.h),
 
           // Available Channels Title
           Text(
@@ -557,7 +575,7 @@ class SponsorHubScreenState extends BaseBlocNoAppBarPageState<SponsorHubScreen,
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
-        controller: _searchController,
+        // controller: _searchController,
         scrollPadding: EdgeInsets.zero,
         style: AppStyle.regular14(color: Colors.white70),
         cursorColor: appTheme.appColor,

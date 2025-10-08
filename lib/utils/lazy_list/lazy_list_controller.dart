@@ -1,18 +1,19 @@
 import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bump_app/config/constant/app_constant.dart';
+import 'package:flutter_bump_app/data/remote/response/base_response.dart';
 
 class LazyListController<T> {
-  final Future<List<T>> Function(int page) onLoad;
+  final Future<PaginatedResponse<T>> Function(int page) onLoad;
   final int limit;
-  final int lineItemCount;
+  // final int lineItemCount;
 
   LazyListController({
     required this.onLoad,
     this.limit = LIMIT,
     int? page,
     List<T>? items,
-    this.lineItemCount = 1,
+    // this.lineItemCount = 1,
   }) {
     data.value = items ?? [];
     isOutOfRange = data.value.length < limit;
@@ -69,8 +70,9 @@ class LazyListController<T> {
     isLoading.value = true;
 
     var models = await onLoad(page);
-    data.value = models;
-    isOutOfRange = models.length < limit;
+    data.value = models.data;
+    total.value = models.pagination.totalItems;
+    isOutOfRange = models.data.length < limit;
     isLoading.value = false;
     isLoadMoreNotifier.value = false;
     canLoadMoreNotifier.value = !isOutOfRange;
@@ -79,7 +81,7 @@ class LazyListController<T> {
   Future<List<T>> onLoadPage(int page, int limit) async {
     final result = await onLoad(page);
     var models = result;
-    return models;
+    return models.data;
   }
 
   Future<void> onLoadMore() async {
@@ -88,8 +90,8 @@ class LazyListController<T> {
       page += 1;
       final result = await onLoad(page);
       var models = result;
-      isOutOfRange = models.length < limit;
-      data.value = [...data.value, ...models];
+      isOutOfRange = models.data.length < limit;
+      data.value = [...data.value, ...models.data];
       isLoadMore = false;
       isLoadMoreNotifier.value = false;
       canLoadMoreNotifier.value = !isOutOfRange;

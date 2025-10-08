@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bump_app/base/stream/base_stream_controller.dart';
+import 'package:flutter_bump_app/data/remote/response/base_response.dart';
 import 'package:flutter_bump_app/utils/lazy_list/lazy_list_controller.dart';
 import 'package:flutter_bump_app/utils/logger_helper.dart';
 import 'package:flutter_bump_app/utils/my_permission_handler.dart';
@@ -63,7 +64,15 @@ class PhotoGalleryService {
 
             final result = await _convertListAssetEntity(medias);
             addMediaToAlbum(result);
-            return result;
+            return PaginatedResponse(
+                data: result,
+                pagination: PaginationMeta(
+                    totalPages: 1,
+                    totalItems: result.length,
+                    canNext: false,
+                    canPrev: false,
+                    currentPage: page,
+                    limit: _LIMIT_IMAGE));
           });
 
   OnMediumsUpdate? onMediumsUpdate;

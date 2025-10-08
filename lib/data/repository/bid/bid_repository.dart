@@ -1,4 +1,5 @@
 import 'package:flutter_bump_app/data/model/bid_model.dart';
+import 'package:flutter_bump_app/data/model/creator_model.dart';
 import 'package:flutter_bump_app/data/remote/bid/bid_api.dart';
 import 'package:flutter_bump_app/data/remote/bid/bid_request.dart';
 import 'package:flutter_bump_app/data/remote/bid/bid_response.dart';
@@ -25,6 +26,18 @@ class BidRepository extends IBidRepository {
   Future<PaginatedResponse<BidModel>> getBids(
       {int page = 1, int limit = 20}) async {
     return await bidApi.getBids();
+  }
+
+  @override
+  Future<PaginatedResponse<CreatorModel>> getAllCreatorBids(
+      {int page = 1, int limit = 20}) async {
+    try {
+      final result =
+          await bidApi.getAllBids(GetAllBidsRequest(page: page, limit: limit));
+      return result;
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 
   @override

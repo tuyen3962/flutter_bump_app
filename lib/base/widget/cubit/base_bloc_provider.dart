@@ -54,6 +54,8 @@ abstract class BaseBlocViewState<S extends StatefulWidget, P extends BaseState,
     T extends BaseCubit<P>> extends State<S> with WidgetsBindingObserver {
   bool get handleInitState => true;
 
+  T get cubit => context.read<T>();
+
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);

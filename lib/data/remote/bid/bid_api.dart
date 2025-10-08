@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bump_app/data/model/bid_model.dart';
+import 'package:flutter_bump_app/data/model/creator_model.dart';
 import 'package:flutter_bump_app/data/remote/bid/bid_request.dart';
 import 'package:flutter_bump_app/data/remote/bid/bid_response.dart';
 import 'package:flutter_bump_app/data/remote/response/base_response.dart';
@@ -16,8 +17,9 @@ abstract class BidApi {
   Future<BaseResponse<PlaceBidResponse>> placeBid(
       @Body() PlaceBidRequest request);
 
-  @GET('/api/bids/all')
-  Future<PaginatedResponse<BidModel>> getAllBids();
+  @GET('/api/bids/discover/all')
+  Future<PaginatedResponse<CreatorModel>> getAllBids(
+      @Queries() GetAllBidsRequest request);
 
   @GET('/api/bids')
   Future<PaginatedResponse<BidModel>> getBids();

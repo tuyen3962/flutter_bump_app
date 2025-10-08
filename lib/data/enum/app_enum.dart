@@ -17,4 +17,13 @@ enum TransactionStatus {
   NONE
 }
 
-enum BidStatus { ACTIVE, OUTBID, WON, LOST, REFUNDED, EXPIRED, CANCELLED }
+enum BidStatus {
+  ACTIVE,
+  OUTBID,
+  WON,
+  LOST,
+  REFUNDED,
+  EXPIRED,
+  CANCELLED,
+  NO_BID
+}
