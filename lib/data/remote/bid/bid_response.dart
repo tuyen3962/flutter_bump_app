@@ -1,41 +1,7 @@
+import 'package:flutter_bump_app/data/enum/app_enum.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'bid_response.g.dart';
-
-@JsonSerializable()
-class BidResponse {
-  final String id;
-  final String creatorId;
-  final String sponsorId;
-  final double amount;
-  final String status;
-  final bool isHighestBid;
-  final String? expiresAt;
-  final String? walletTxId;
-  final String? refundTxId;
-  final Map<String, dynamic>? metadata;
-  final String createdAt;
-  final String updatedAt;
-
-  BidResponse({
-    required this.id,
-    required this.creatorId,
-    required this.sponsorId,
-    required this.amount,
-    required this.status,
-    required this.isHighestBid,
-    this.expiresAt,
-    this.walletTxId,
-    this.refundTxId,
-    this.metadata,
-    required this.createdAt,
-    required this.updatedAt,
-  });
-
-  factory BidResponse.fromJson(Map<String, dynamic> json) =>
-      _$BidResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$BidResponseToJson(this);
-}
 
 @JsonSerializable()
 class PlaceBidResponse {
@@ -43,10 +9,9 @@ class PlaceBidResponse {
   final String creatorId;
   final String sponsorId;
   final double amount;
-  final String status;
+  final BidStatus status;
   final bool isHighestBid;
   final String createdAt;
-  final String updatedAt;
   final String? walletTxId;
   final String? refundTxId;
   final String? message;
@@ -61,7 +26,6 @@ class PlaceBidResponse {
     required this.status,
     required this.isHighestBid,
     required this.createdAt,
-    required this.updatedAt,
     this.walletTxId,
     this.refundTxId,
     this.message,

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bump_app/screen/campaign_details/campaign_details_parameter.dart';
 import 'package:flutter_bump_app/screen/campaign_details/campaign_details_screen.dart';
 import 'package:flutter_bump_app/screen/create_highlight/create_highlight_screen.dart';
-import 'package:flutter_bump_app/screen/dashboard/dashboard_screen.dart';
 import 'package:flutter_bump_app/screen/discover_detail/discover_detail_parameter.dart';
 import 'package:flutter_bump_app/screen/discover_detail/discover_detail_screen.dart';
 import 'package:flutter_bump_app/screen/home/home_screen.dart';

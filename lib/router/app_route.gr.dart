@@ -31,12 +31,6 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const CreateHighlightPage(),
       );
     },
-    DashboardRoute.name: (routeData) {
-      return AutoRoutePage<dynamic>(
-        routeData: routeData,
-        child: const DashboardPage(),
-      );
-    },
     DiscoverDetailRoute.name: (routeData) {
       final args = routeData.argsAs<DiscoverDetailRouteArgs>();
       return AutoRoutePage<dynamic>(
@@ -150,20 +144,6 @@ class CreateHighlightRoute extends PageRouteInfo<void> {
         );
 
   static const String name = 'CreateHighlightRoute';
-
-  static const PageInfo<void> page = PageInfo<void>(name);
-}
-
-/// generated route for
-/// [DashboardPage]
-class DashboardRoute extends PageRouteInfo<void> {
-  const DashboardRoute({List<PageRouteInfo>? children})
-      : super(
-          DashboardRoute.name,
-          initialChildren: children,
-        );
-
-  static const String name = 'DashboardRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

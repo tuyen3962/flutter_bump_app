@@ -1,6 +1,9 @@
+import 'package:flutter_bump_app/data/enum/app_enum.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'bid_request.g.dart';
+
+enum GetBidSortBy { amount, createdAt, updatedAt }
 
 @JsonSerializable()
 class PlaceBidRequest {
@@ -26,4 +29,20 @@ class UpdateCreatorProfileRequest {
   factory UpdateCreatorProfileRequest.fromJson(Map<String, dynamic> json) =>
       _$UpdateCreatorProfileRequestFromJson(json);
   Map<String, dynamic> toJson() => _$UpdateCreatorProfileRequestToJson(this);
+}
+
+@JsonSerializable()
+class GetAllBidsRequest {
+  final int? page;
+  final int? limit;
+  final String? query;
+  final GetBidSortBy? sortBy;
+  final BidStatus? status;
+
+  GetAllBidsRequest(
+      {this.page, this.limit, this.query, this.sortBy, this.status});
+
+  factory GetAllBidsRequest.fromJson(Map<String, dynamic> json) =>
+      _$GetAllBidsRequestFromJson(json);
+  Map<String, dynamic> toJson() => _$GetAllBidsRequestToJson(this);
 }

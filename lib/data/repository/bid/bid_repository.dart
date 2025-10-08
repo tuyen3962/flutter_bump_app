@@ -1,3 +1,4 @@
+import 'package:flutter_bump_app/data/model/bid_model.dart';
 import 'package:flutter_bump_app/data/remote/bid/bid_api.dart';
 import 'package:flutter_bump_app/data/remote/bid/bid_request.dart';
 import 'package:flutter_bump_app/data/remote/bid/bid_response.dart';
@@ -21,13 +22,13 @@ class BidRepository extends IBidRepository {
   }
 
   @override
-  Future<PaginatedResponse<BidResponse>> getBids(
+  Future<PaginatedResponse<BidModel>> getBids(
       {int page = 1, int limit = 20}) async {
     return await bidApi.getBids();
   }
 
   @override
-  Future<BidResponse> getBidDetail(String bidId) async {
+  Future<BidModel> getBidDetail(String bidId) async {
     final response = await bidApi.getBidDetail(bidId);
     if (response.isSuccess) {
       return response.data!;
@@ -45,7 +46,7 @@ class BidRepository extends IBidRepository {
   }
 
   @override
-  Future<BidResponse> acceptBid(String bidId) async {
+  Future<BidModel> acceptBid(String bidId) async {
     final response = await bidApi.acceptBid(bidId);
     if (response.isSuccess) {
       return response.data!;
@@ -54,7 +55,7 @@ class BidRepository extends IBidRepository {
   }
 
   @override
-  Future<BidResponse> rejectBid(String bidId) async {
+  Future<BidModel> rejectBid(String bidId) async {
     final response = await bidApi.rejectBid(bidId);
     if (response.isSuccess) {
       return response.data!;
@@ -63,13 +64,13 @@ class BidRepository extends IBidRepository {
   }
 
   @override
-  Future<PaginatedResponse<BidResponse>> getMySponsorBids(
+  Future<PaginatedResponse<BidModel>> getMySponsorBids(
       {int page = 1, int limit = 20}) async {
     return await bidApi.getMySponsorBids({'page': page, 'limit': limit});
   }
 
   @override
-  Future<PaginatedResponse<BidResponse>> getCreatorBids(String creatorId,
+  Future<PaginatedResponse<BidModel>> getCreatorBids(String creatorId,
       {int page = 1, int limit = 20}) async {
     return await bidApi
         .getCreatorBids(creatorId, {'page': page, 'limit': limit});

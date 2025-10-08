@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_bump_app/data/model/bid_model.dart';
 import 'package:flutter_bump_app/data/remote/bid/bid_request.dart';
 import 'package:flutter_bump_app/data/remote/bid/bid_response.dart';
 import 'package:flutter_bump_app/data/remote/response/base_response.dart';
@@ -15,11 +16,14 @@ abstract class BidApi {
   Future<BaseResponse<PlaceBidResponse>> placeBid(
       @Body() PlaceBidRequest request);
 
+  @GET('/api/bids/all')
+  Future<PaginatedResponse<BidModel>> getAllBids();
+
   @GET('/api/bids')
-  Future<PaginatedResponse<BidResponse>> getBids();
+  Future<PaginatedResponse<BidModel>> getBids();
 
   @GET('/api/bids/{bidId}')
-  Future<BaseResponse<BidResponse>> getBidDetail(@Path('bidId') String bidId);
+  Future<BaseResponse<BidModel>> getBidDetail(@Path('bidId') String bidId);
 
   @POST('/api/bids/{bidId}/cancel')
   Future<BaseResponse<CancelBidResponse>> cancelBid(
@@ -27,20 +31,20 @@ abstract class BidApi {
 
   // Accept a bid (creator action)
   @POST('/api/bids/{bidId}/accept')
-  Future<BaseResponse<BidResponse>> acceptBid(@Path('bidId') String bidId);
+  Future<BaseResponse<BidModel>> acceptBid(@Path('bidId') String bidId);
 
   // Reject a bid (creator action)
   @POST('/api/bids/{bidId}/reject')
-  Future<BaseResponse<BidResponse>> rejectBid(@Path('bidId') String bidId);
+  Future<BaseResponse<BidModel>> rejectBid(@Path('bidId') String bidId);
 
   // List my bids as sponsor
   @GET('/api/sponsors/me/bids')
-  Future<PaginatedResponse<BidResponse>> getMySponsorBids(
+  Future<PaginatedResponse<BidModel>> getMySponsorBids(
       @Queries() Map<String, dynamic>? queries);
 
   // List bids received by a creator
   @GET('/api/creators/{creatorId}/bids')
-  Future<PaginatedResponse<BidResponse>> getCreatorBids(
+  Future<PaginatedResponse<BidModel>> getCreatorBids(
     @Path('creatorId') String creatorId,
     @Queries() Map<String, dynamic>? queries,
   );

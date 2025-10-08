@@ -16,3 +16,5 @@ enum TransactionStatus {
   CANCELLED,
   NONE
 }
+
+enum BidStatus { ACTIVE, OUTBID, WON, LOST, REFUNDED, EXPIRED, CANCELLED }
