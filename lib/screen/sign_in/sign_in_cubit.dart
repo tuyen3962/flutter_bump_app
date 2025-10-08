@@ -14,6 +14,7 @@ class SignInCubit extends BaseCubit<SignInState> {
       emit(state.copyWith(isLoading: true, errorMessage: null));
       showLoading();
       final result = await authService.signInWithGoogle();
+      
       if (result) {
         emit(state.copyWith(
           isLoading: false,
