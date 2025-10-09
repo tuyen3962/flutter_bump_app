@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter_bump_app/base/widget/cubit/base_state.dart';
+import 'package:flutter_bump_app/data/model/campagin.dart';
 
 class LaunchSponsorshipState extends BaseState {
   final int currentStep;
@@ -10,6 +13,9 @@ class LaunchSponsorshipState extends BaseState {
   final String discord;
   final List<String> selectedRequirements;
   final List<Map<String, dynamic>> availableRequirements;
+  final File? logo;
+  final File? banner;
+  final CampaignModel? campaign;
 
   const LaunchSponsorshipState({
     super.isLoading = false,
@@ -22,11 +28,14 @@ class LaunchSponsorshipState extends BaseState {
     this.discord = '',
     this.selectedRequirements = const [],
     this.availableRequirements = const [],
+    this.logo,
+    this.banner,
+    this.campaign,
   });
 
   bool get canProceed {
     if (currentStep == 1) {
-      return channelName.isNotEmpty && channelDesc.isNotEmpty;
+      return channelName.isNotEmpty && channelDesc.isNotEmpty && logo != null;
     } else if (currentStep == 2) {
       return selectedRequirements.isNotEmpty;
     }
@@ -43,6 +52,10 @@ class LaunchSponsorshipState extends BaseState {
     String? discord,
     List<String>? selectedRequirements,
     List<Map<String, dynamic>>? availableRequirements,
+    File? logo,
+    File? banner,
+    bool? isLoading,
+    CampaignModel? campaign,
   }) {
     return LaunchSponsorshipState(
       currentStep: currentStep ?? this.currentStep,
@@ -55,6 +68,10 @@ class LaunchSponsorshipState extends BaseState {
       selectedRequirements: selectedRequirements ?? this.selectedRequirements,
       availableRequirements:
           availableRequirements ?? this.availableRequirements,
+      logo: logo ?? this.logo,
+      banner: banner ?? this.banner,
+      isLoading: isLoading ?? this.isLoading,
+      campaign: campaign ?? this.campaign,
     );
   }
 
@@ -70,5 +87,8 @@ class LaunchSponsorshipState extends BaseState {
         discord,
         selectedRequirements,
         availableRequirements,
+        logo,
+        banner,
+        campaign,
       ];
 }

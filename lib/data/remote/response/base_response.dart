@@ -59,14 +59,34 @@ class PaginationMeta {
 /// Base paginated response for list APIs
 @JsonSerializable(genericArgumentFactories: true)
 class PaginatedResponse<T> {
+  @JsonKey(name: 'data')
   final List<T> data;
   @JsonKey(name: 'paginate')
-  final PaginationMeta pagination;
+  final PaginationMeta? pagination;
 
   PaginatedResponse({
     required this.data,
-    required this.pagination,
+    this.pagination,
   });
+
+  static PaginatedResponse<T> parseJson<T>(
+      dynamic json, T Function(Object? json) fromJsonT) {
+    if (json['data'] is List) {
+      return PaginatedResponse(
+        data: json['data'].map(fromJsonT).toList(),
+        pagination: json['paginate'] == null
+            ? null
+            : PaginationMeta.fromJson(json['paginate'] as Map<String, dynamic>),
+      );
+    } else {
+      return PaginatedResponse(
+        data: [fromJsonT(json['data'])],
+        pagination: json['paginate'] == null
+            ? null
+            : PaginationMeta.fromJson(json['paginate'] as Map<String, dynamic>),
+      );
+    }
+  }
 
   factory PaginatedResponse.fromJson(
     Map<String, dynamic> json,

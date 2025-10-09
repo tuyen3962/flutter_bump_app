@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bump_app/base/widget/base_page.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_bloc_provider.dart';
+import 'package:flutter_bump_app/config/service/app_service.dart';
 import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
 import 'package:flutter_bump_app/extension.dart';
 import 'package:flutter_bump_app/extension/color_extension.dart';
 import 'package:flutter_bump_app/main.dart';
 import 'package:flutter_bump_app/screen/launch_sponsorship/launch_sponsorship_cubit.dart';
 import 'package:flutter_bump_app/screen/launch_sponsorship/launch_sponsorship_parameter.dart';
+import 'package:flutter_bump_app/screen/launch_sponsorship/widget/upload_box.dart';
 
 import 'launch_sponsorship_state.dart';
 
@@ -26,7 +28,8 @@ class LaunchSponsorshipPage
 
   @override
   LaunchSponsorshipCubit createCubit() {
-    return LaunchSponsorshipCubit();
+    return LaunchSponsorshipCubit(
+        campaign: parameter.campaign, updateCampaignUsecase: locator.get());
   }
 }
 
@@ -55,6 +58,15 @@ class LaunchSponsorshipScreenState extends BaseBlocNoAppBarPageState<
   bool get isSafeArea => false;
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.parameter.fillInfo) {
+      // _channelNameController.text =
+      //     widget.parameter.campaign.creator?.name ?? '';
+    }
+  }
+
+  @override
   void dispose() {
     _channelNameController.dispose();
     _channelDescController.dispose();
@@ -68,7 +80,27 @@ class LaunchSponsorshipScreenState extends BaseBlocNoAppBarPageState<
 
   @override
   Widget buildBody(BuildContext context, LaunchSponsorshipCubit cubit) {
-    return BlocBuilder<LaunchSponsorshipCubit, LaunchSponsorshipState>(
+    return BlocConsumer<LaunchSponsorshipCubit, LaunchSponsorshipState>(
+      listener: (context, state) {
+        if (state.campaign != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '🚀 Campaign launched successfully!',
+                style: AppStyle.medium14(
+                  color: appTheme.whiteText,
+                ),
+              ),
+              backgroundColor: appTheme.green4AColor,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+          );
+          context.back();
+        }
+      },
       builder: (context, state) {
         return Container(
           width: double.infinity,
@@ -245,11 +277,13 @@ class LaunchSponsorshipScreenState extends BaseBlocNoAppBarPageState<
             Row(
               children: [
                 Expanded(
-                  child: _buildUploadBox('Logo', true),
+                  // child: _buildUploadBox('Logo', true, UploadBannerType.logo),
+                  child: UploadBox(type: UploadBannerType.logo),
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
-                  child: _buildUploadBox('Banner', false),
+                  child: UploadBox(type: UploadBannerType.banner),
+                  // _buildUploadBox('Banner', false, UploadBannerType.banner),
                 ),
               ],
             ),
@@ -436,7 +470,8 @@ class LaunchSponsorshipScreenState extends BaseBlocNoAppBarPageState<
             ],
           ),
           SizedBox(height: 12.h),
-          _buildOverviewRow('Creator', widget.parameter.creator['name'] ?? ''),
+          _buildOverviewRow(
+              'Creator', widget.parameter.campaign.creator?.name ?? ''),
           SizedBox(height: 8.h),
           _buildOverviewRow(
             'Duration',
@@ -445,7 +480,7 @@ class LaunchSponsorshipScreenState extends BaseBlocNoAppBarPageState<
           SizedBox(height: 8.h),
           _buildOverviewRow(
             'Total Cost',
-            '${widget.parameter.creator['winningBid']?.toStringAsFixed(1) ?? '0.0'} SOL',
+            '${widget.parameter.campaign.budget?.toStringAsFixed(1) ?? '0.0'} SOL',
             isHighlight: true,
           ),
         ],
@@ -557,57 +592,6 @@ class LaunchSponsorshipScreenState extends BaseBlocNoAppBarPageState<
     );
   }
 
-  Widget _buildUploadBox(String label, bool isRequired) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              label,
-              style: AppStyle.medium12(color: appTheme.whiteText),
-            ),
-            if (isRequired)
-              Text(
-                ' *',
-                style: AppStyle.medium12(color: Colors.red),
-              ),
-          ],
-        ),
-        SizedBox(height: 8.h),
-        Container(
-          height: 100.h,
-          decoration: BoxDecoration(
-            color: const Color(0xFF374151),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: Colors.white.withSafeOpacity(0.2),
-              width: 1,
-              style: BorderStyle.solid,
-            ),
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.cloud_upload,
-                  color: appTheme.green4AColor,
-                  size: 24.w,
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  'Click to upload',
-                  style: AppStyle.regular10(color: Colors.white60),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildBottomNavigation(
       LaunchSponsorshipState state, LaunchSponsorshipCubit cubit) {
     return Container(
@@ -663,23 +647,7 @@ class LaunchSponsorshipScreenState extends BaseBlocNoAppBarPageState<
                         if (state.currentStep < 2) {
                           cubit.nextStep();
                         } else {
-                          // Launch campaign
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '🚀 Campaign launched successfully!',
-                                style: AppStyle.medium14(
-                                  color: appTheme.whiteText,
-                                ),
-                              ),
-                              backgroundColor: appTheme.green4AColor,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                          );
-                          context.back();
+                          cubit.launchCampaign();
                         }
                       }
                     : null,

@@ -16,6 +16,7 @@ import '../../data/remote/api.dart' as _i692;
 import '../../data/remote/auth_api.dart' as _i227;
 import '../../data/remote/bid/bid_api.dart' as _i150;
 import '../../data/remote/brand_api.dart' as _i107;
+import '../../data/remote/campaign/campaign_api.dart' as _i239;
 import '../../data/remote/chat/chat_api.dart' as _i819;
 import '../../data/remote/highlight_api.dart' as _i217;
 import '../../data/remote/notification/notification_api.dart' as _i143;
@@ -32,6 +33,8 @@ import '../../data/repository/bid/bid_repository.dart' as _i958;
 import '../../data/repository/bid/ibid_repository.dart' as _i174;
 import '../../data/repository/brand/brand_repository.dart' as _i386;
 import '../../data/repository/brand/ibrand_repository.dart' as _i781;
+import '../../data/repository/campaign/campaign_repository.dart' as _i652;
+import '../../data/repository/campaign/icampaign_repository.dart' as _i919;
 import '../../data/repository/chat/chat_repository.dart' as _i233;
 import '../../data/repository/chat/ichat_repository.dart' as _i841;
 import '../../data/repository/highlight/hightlight_repository.dart' as _i631;
@@ -46,9 +49,12 @@ import '../../data/repository/video/ivideo_repository.dart' as _i71;
 import '../../data/repository/video/video_repository.dart' as _i944;
 import '../../data/repository/wallet/iwallet_repository.dart' as _i998;
 import '../../data/repository/wallet/wallet_repository.dart' as _i885;
+import '../../data/usecase/update_campaign_usecase.dart' as _i386;
+import '../../data/usecase/upload_image_usecase.dart' as _i484;
 import '../../data/usecase/upload_video_with_batch_usecase.dart' as _i722;
 import 'account_service.dart' as _i997;
 import 'auth_service.dart' as _i184;
+import 'campaign_listener.dart' as _i395;
 import 'language_service.dart' as _i313;
 import 'photo_gallery_service.dart' as _i364;
 import 'privy_wallet_service.dart' as _i796;
@@ -73,6 +79,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i364.PhotoGalleryService(),
       dispose: (i) => i.dispose(),
     );
+    gh.singleton<_i395.CampaignListener>(() => _i395.CampaignListener());
     gh.lazySingleton<_i7.DioProvider>(() => _i7.DioProvider());
     await gh.singletonAsync<_i845.LocalStorage>(
       () {
@@ -83,8 +90,6 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i997.AccountService>(
         () => _i997.AccountService(storageService: gh<_i845.LocalStorage>()));
-    gh.factory<_i781.IBrandRepository>(
-        () => _i386.BrandRepository(gh<_i107.BrandApi>()));
     gh.singleton<_i313.LanguageService>(
         () => _i313.LanguageService(localStorage: gh<_i845.LocalStorage>()));
     gh.lazySingleton<_i692.AuthApi>(
@@ -107,6 +112,10 @@ extension GetItInjectableX on _i174.GetIt {
         () => remoteService.chatApi(gh<_i7.DioProvider>()));
     gh.lazySingleton<_i692.NotificationApi>(
         () => remoteService.notificationApi(gh<_i7.DioProvider>()));
+    gh.lazySingleton<_i692.BrandApi>(
+        () => remoteService.brandApi(gh<_i7.DioProvider>()));
+    gh.lazySingleton<_i692.CampaignApi>(
+        () => remoteService.campaignApi(gh<_i7.DioProvider>()));
     gh.factory<_i998.IWalletRepository>(
         () => _i885.WalletRepository(gh<_i869.WalletApi>()));
     gh.factory<_i649.IAuthRepository>(() => _i214.AuthRepository(
@@ -119,8 +128,12 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i631.HighlightRepository(gh<_i217.HighlightApi>()));
     gh.factory<_i174.IBidRepository>(
         () => _i958.BidRepository(gh<_i150.BidApi>()));
+    gh.factory<_i781.IBrandRepository>(
+        () => _i386.BrandRepository(gh<_i107.BrandApi>()));
     gh.factory<_i630.IAccountRepository>(
         () => _i710.AccountRepository(gh<_i925.UserApi>()));
+    gh.factory<_i919.ICampaignRepository>(
+        () => _i652.CampaignRepository(gh<_i239.CampaignApi>()));
     gh.factory<_i841.IChatRepository>(
         () => _i233.ChatRepository(gh<_i819.ChatApi>()));
     gh.factory<_i705.INotificationRepository>(
@@ -147,6 +160,14 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i722.UploadVideoWithBatchUseCase(
               gh<_i71.IVideoRepository>(),
               gh<_i134.IUploadRepository>(),
+            ));
+    gh.lazySingleton<_i484.UploadImageUsecase>(
+        () => _i484.UploadImageUsecase(gh<_i134.IUploadRepository>()));
+    gh.lazySingleton<_i386.UpdateCampaignUsecase>(
+        () => _i386.UpdateCampaignUsecase(
+              gh<_i919.ICampaignRepository>(),
+              gh<_i484.UploadImageUsecase>(),
+              gh<_i395.CampaignListener>(),
             ));
     return this;
   }

@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bump_app/base/widget/base_page.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_bloc_provider.dart';
+import 'package:flutter_bump_app/config/service/app_service.dart';
 import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
+import 'package:flutter_bump_app/data/enum/app_enum.dart';
 import 'package:flutter_bump_app/extension.dart';
 import 'package:flutter_bump_app/extension/color_extension.dart';
 import 'package:flutter_bump_app/main.dart';
+import 'package:flutter_bump_app/router/app_route.dart';
 import 'package:flutter_bump_app/screen/campaign_details/campaign_details_cubit.dart';
 import 'package:flutter_bump_app/screen/campaign_details/campaign_details_parameter.dart';
+import 'package:flutter_bump_app/screen/launch_sponsorship/launch_sponsorship_parameter.dart';
+import 'package:flutter_bump_app/widget/image/cache_image.dart';
 
 import 'campaign_details_state.dart';
 
@@ -26,7 +31,10 @@ class CampaignDetailsPage
 
   @override
   CampaignDetailsCubit createCubit() {
-    return CampaignDetailsCubit(parameter: parameter);
+    return CampaignDetailsCubit(
+      parameter: parameter,
+      campaignRepository: locator.get(),
+    );
   }
 }
 
@@ -64,7 +72,7 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
           child: SafeArea(
             child: Column(
               children: [
-                _buildHeader(),
+                _buildHeader(state),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: padding(all: 16.w),
@@ -90,7 +98,7 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(CampaignDetailsState state) {
     return Container(
       padding: padding(horizontal: 16.w, vertical: 16.h),
       decoration: BoxDecoration(
@@ -124,6 +132,17 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
             'Campaign Details',
             style: AppStyle.bold20(color: appTheme.whiteText),
           ),
+          const Spacer(),
+          GestureDetector(
+              onTap: () {
+                if (state.campaign != null) {
+                  context.pushRoute(LaunchSponsorshipRoute(
+                    parameter: LaunchSponsorshipParameter(
+                        campaign: state.campaign!, fillInfo: true),
+                  ));
+                }
+              },
+              child: Icon(Icons.edit, color: appTheme.whiteText, size: 20.w)),
         ],
       ),
     );
@@ -158,20 +177,22 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
             ],
           ),
           SizedBox(height: 16.h),
-          _buildInfoRow('Creator', state.creatorName, showIcons: true),
+          _buildInfoRow('Creator', state.campaign?.creator?.name ?? '',
+              showIcons: true),
           SizedBox(height: 12.h),
           _buildInfoRow(
             'Status',
-            state.status,
+            state.campaign?.status?.name ?? '',
             statusBadge: true,
-            showEdit: state.status == 'in_progress',
+            // showEdit: state.campaign?.status == CampaignStatus.IN_PROGRESS,
           ),
           SizedBox(height: 12.h),
-          _buildInfoRow('Duration', state.duration),
+          _buildInfoRow('Duration',
+              '${state.campaign?.startDate} → ${state.campaign?.endDate}'),
           SizedBox(height: 12.h),
           _buildInfoRow(
             'Budget Spent',
-            '${state.budget.toStringAsFixed(1)} SOL',
+            '${state.campaign?.budget?.toStringAsFixed(1)} SOL',
             valueColor: appTheme.green4AColor,
           ),
         ],
@@ -220,25 +241,29 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
                   ),
                 ),
               ),
-              if (showEdit) ...[
-                SizedBox(width: 8.w),
-                GestureDetector(
-                  onTap: () {
-                    // TODO: Edit campaign
-                  },
-                  child: Container(
-                    padding: padding(horizontal: 6.w, vertical: 2.h),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF374151),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      'Edit',
-                      style: AppStyle.regular10(color: appTheme.whiteText),
-                    ),
-                  ),
-                ),
-              ],
+              // if (showEdit) ...[
+              //   SizedBox(width: 8.w),
+              //   GestureDetector(
+              //     onTap: () {
+              //       context.pushRoute(LaunchSponsorshipRoute(
+              //         parameter: LaunchSponsorshipParameter(
+              //           campaign: state.campaign,
+              //         ),
+              //       ));
+              //     },
+              //     child: Container(
+              //       padding: padding(horizontal: 6.w, vertical: 2.h),
+              //       decoration: BoxDecoration(
+              //         color: const Color(0xFF374151),
+              //         borderRadius: BorderRadius.circular(4),
+              //       ),
+              //       child: Text(
+              //         'Edit',
+              //         style: AppStyle.regular10(color: appTheme.whiteText),
+              //       ),
+              //     ),
+              //   ),
+              // ],
             ],
           )
         else
@@ -292,16 +317,20 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
           ),
           SizedBox(height: 16.h),
           // Brand Assets
-          Row(
-            children: [
-              Expanded(
-                child: _buildAssetBox('Logo', '🏢'),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: _buildAssetBox('Banner', null),
-              ),
-            ],
+          IntrinsicHeight(
+            child: Row(
+              children: [
+                Expanded(
+                  child:
+                      _buildAssetBox('Logo', '🏢', state.campaign?.logo ?? ''),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: _buildAssetBox(
+                      'Banner', null, state.campaign?.banner ?? ''),
+                ),
+              ],
+            ),
           ),
           SizedBox(height: 16.h),
           // Social Links
@@ -310,7 +339,7 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
             style: AppStyle.medium12(color: Colors.white60),
           ),
           SizedBox(height: 8.h),
-          ...state.socialLinks.entries.map((entry) {
+          ...(state.campaign?.socialLinks ?? []).map((socialLink) {
             return Container(
               margin: padding(bottom: 8.h),
               padding: padding(all: 8.w),
@@ -321,21 +350,23 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
               child: Row(
                 children: [
                   Icon(
-                    _getSocialIcon(entry.key),
-                    color: _getSocialColor(entry.key),
+                    _getSocialIcon(socialLink.type ?? SocialLinkType.WEBSITE),
+                    color: _getSocialColor(
+                        socialLink.type ?? SocialLinkType.WEBSITE),
                     size: 14.w,
                   ),
                   SizedBox(width: 8.w),
                   Text(
-                    '${entry.key.capitalize()}:',
+                    '${socialLink.type?.name.capitalize()}:',
                     style: AppStyle.medium12(color: appTheme.whiteText),
                   ),
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Text(
-                      entry.value,
+                      socialLink.value ?? '',
                       style: AppStyle.regular12(
-                        color: _getSocialColor(entry.key),
+                        color: _getSocialColor(
+                            socialLink.type ?? SocialLinkType.WEBSITE),
                       ),
                     ),
                   ),
@@ -348,7 +379,7 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
     );
   }
 
-  Widget _buildAssetBox(String label, String? emoji) {
+  Widget _buildAssetBox(String label, String? emoji, String imageUrl) {
     return Container(
       padding: padding(all: 12.w),
       decoration: BoxDecoration(
@@ -361,31 +392,41 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
         color: appTheme.green4AColor.withSafeOpacity(0.05),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (emoji != null)
-            Container(
-              width: 32.w,
+          // if (imageUrl.isNotEmpty)
+          CacheImage(
+              imageUrl: imageUrl,
+              size: 32.w,
               height: 32.h,
-              decoration: BoxDecoration(
-                color: appTheme.green4AColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Text(emoji, style: const TextStyle(fontSize: 16)),
-              ),
-            )
-          else
-            Container(
-              width: double.infinity,
-              height: 24.h,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [appTheme.green4AColor, appTheme.green69Color],
-                ),
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-          SizedBox(height: 4.h),
+              width: 32.w,
+              boxFit: BoxFit.cover,
+              defaultImage: emoji != null
+                  ? Container(
+                      width: 32.w,
+                      height: 32.h,
+                      decoration: BoxDecoration(
+                        color: appTheme.green4AColor,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Center(
+                        child:
+                            Text(emoji, style: const TextStyle(fontSize: 16)),
+                      ),
+                    )
+                  : Container(
+                      width: double.infinity,
+                      height: 24.h,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            appTheme.green4AColor,
+                            appTheme.green69Color
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    )),
           Text(
             label,
             style: AppStyle.medium10(color: appTheme.whiteText),
@@ -481,11 +522,11 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
             ],
           ),
           SizedBox(height: 16.h),
-          ...state.videos.asMap().entries.map((entry) {
-            final index = entry.key;
-            final video = entry.value;
-            return _buildVideoCard(video, index);
-          }).toList(),
+          // ...(state.campaign?.highlightVideos ?? []).asMap().entries.map((entry) {
+          //   final index = entry.key;
+          //   final video = entry.value;
+          //   return _buildVideoCard(video, index);
+          // }).toList(),
         ],
       ),
     );
@@ -739,30 +780,30 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
     );
   }
 
-  IconData _getSocialIcon(String platform) {
-    switch (platform.toLowerCase()) {
-      case 'website':
+  IconData _getSocialIcon(SocialLinkType platform) {
+    switch (platform) {
+      case SocialLinkType.WEBSITE:
         return Icons.language;
-      case 'twitter':
+      case SocialLinkType.TWITTER:
         return Icons.tag;
-      case 'telegram':
+      case SocialLinkType.TELEGRAM:
         return Icons.send;
-      case 'discord':
+      case SocialLinkType.DISCORD:
         return Icons.chat;
       default:
         return Icons.link;
     }
   }
 
-  Color _getSocialColor(String platform) {
-    switch (platform.toLowerCase()) {
-      case 'website':
+  Color _getSocialColor(SocialLinkType platform) {
+    switch (platform) {
+      case SocialLinkType.WEBSITE:
         return appTheme.green4AColor;
-      case 'twitter':
+      case SocialLinkType.TWITTER:
         return const Color(0xFF1DA1F2);
-      case 'telegram':
+      case SocialLinkType.TELEGRAM:
         return const Color(0xFF0088CC);
-      case 'discord':
+      case SocialLinkType.DISCORD:
         return const Color(0xFF5865F2);
       default:
         return appTheme.green4AColor;
