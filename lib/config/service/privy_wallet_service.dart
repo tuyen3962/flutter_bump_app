@@ -4,13 +4,12 @@ import 'package:injectable/injectable.dart';
 import 'package:privy_flutter/privy_flutter.dart';
 import 'package:solana/solana.dart';
 
-@injectable
+@singleton
 class PrivyWalletService {
   late final Privy _privy;
 
   PrivyWalletService();
 
-  // PrivyUser? _user;
   PrivyUser? get user => _privy.currentAuthState.user;
 
   final ValueNotifier<double> solanaBalance = ValueNotifier(0);
@@ -56,5 +55,6 @@ class PrivyWalletService {
           .getBalance(result?.embeddedSolanaWallets.first.address ?? '');
       solanaBalance.value = lamports.value / 1e9;
     }
+    print('solanaBalance: ${solanaBalance.value}');
   }
 }

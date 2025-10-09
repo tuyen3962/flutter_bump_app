@@ -67,7 +67,7 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final remoteService = _$RemoteService();
-    gh.factory<_i796.PrivyWalletService>(
+    gh.singleton<_i796.PrivyWalletService>(
         () => _i796.PrivyWalletService()..init());
     gh.singleton<_i364.PhotoGalleryService>(
       () => _i364.PhotoGalleryService(),
