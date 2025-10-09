@@ -26,6 +26,7 @@ class HomePage extends BaseBlocProvider<HomeState, HomeCubit> {
     return HomeCubit(
       profileServide: locator.get(),
       accountService: locator.get(),
+      privyWalletService: locator.get(),
     );
   }
 }

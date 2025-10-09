@@ -17,6 +17,7 @@ import 'discover_tab_state.dart';
 class DiscoverTabCubit extends BaseCubit<DiscoverTabState> {
   final IBidRepository bidRepository;
   final PrivyWalletService privyWalletService;
+  // final
 
   DiscoverTabCubit({
     required this.bidRepository,
@@ -129,8 +130,9 @@ class DiscoverTabCubit extends BaseCubit<DiscoverTabState> {
     emit(state.copyWith(bidAmount: amount));
   }
 
-  void startCountdownTimer(String creatorId) {
-    emit(state.copyWith(countdowns: 15, creatorId: creatorId));
+  void startCountdownTimer(double amount, String creatorId) {
+    emit(state.copyWith(
+        countdowns: 15, creatorId: creatorId, bidAmount: amount));
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (state.countdowns > 0) {
         emit(state.copyWith(countdowns: state.countdowns - 1));
@@ -141,14 +143,29 @@ class DiscoverTabCubit extends BaseCubit<DiscoverTabState> {
     });
   }
 
+  void setBiddingCreatorId(String creatorId) {
+    emit(state.copyWith(biddingCreatorId: creatorId));
+  }
+
+  void cancelBid() {
+    emit(state.copyWith(biddingCreatorId: '', bidAmount: 0));
+  }
+
   void _placeBid(String creatorId) async {
     try {
       showLoading();
       final resposne = await bidRepository.placeBid(
-        PlaceBidRequest(creatorId: creatorId, amount: state.bidAmount),
+        PlaceBidRequest(
+            creatorId: creatorId,
+            amount: state.bidAmount,
+            walletId: 'DERQCiFYMqRbGrpHa689zKdmrEr88WFEHjDNcrXWZSNL'),
       );
 
       if (resposne.creatorId.isNotEmpty) {
+        allBidsListCtrl.removeWhere((e) => e.id == creatorId);
+        biddingBidsListCtrl.removeWhere((e) => e.id == creatorId);
+        noBidListCtrl.removeWhere((e) => e.id == creatorId);
+        myBidListCtrl.removeWhere((e) => e.id == creatorId);
         ScaffoldMessenger.of(navigatorKey.currentContext!).showSnackBar(
           SnackBar(
             content: Text(

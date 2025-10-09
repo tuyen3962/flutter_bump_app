@@ -1,5 +1,6 @@
 import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
+import 'package:flutter_bump_app/config/service/privy_wallet_service.dart';
 import 'package:flutter_bump_app/config/service/profile_servide.dart';
 import 'package:flutter_bump_app/data/model/brand_model.dart';
 
@@ -8,12 +9,15 @@ import 'home_state.dart';
 class HomeCubit extends BaseCubit<HomeState> {
   final ProfileServide profileServide;
   final AccountService accountService;
+  final PrivyWalletService privyWalletService;
 
   HomeCubit({
     required this.profileServide,
     required this.accountService,
+    required this.privyWalletService,
   }) : super(const HomeState()) {
     profileServide.fetchProfile();
+    privyWalletService.refreshMyWalletBalance();
   }
 
   void selectBrand(BrandModel brand) {

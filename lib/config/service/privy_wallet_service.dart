@@ -72,11 +72,9 @@ class PrivyWalletService {
   }
 
   Future<void> refreshMyWalletBalance() async {
-    final result = await _privy.getUser();
-    if (result?.embeddedSolanaWallets.isNotEmpty == true) {
+    if (walletAddress.isNotEmpty) {
       final client = RpcClient('https://api.devnet.solana.com');
-      final lamports = await client
-          .getBalance(result?.embeddedSolanaWallets.first.address ?? '');
+      final lamports = await client.getBalance(walletAddress);
       final sol = lamports.value / 1e9;
       final usd = await walletRepository.getUSDTWithSolana(sol);
       solanaBalance.value = WalletModel(balanceSol: sol, balanceUSD: usd);

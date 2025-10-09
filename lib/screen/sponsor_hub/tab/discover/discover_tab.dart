@@ -14,6 +14,7 @@ import 'package:flutter_bump_app/widget/image/cache_image.dart';
 
 import 'discover_tab_cubit.dart';
 import 'discover_tab_state.dart';
+import 'widget/inline_bid_form.dart';
 
 class DiscoverTab extends StatefulWidget {
   const DiscoverTab({super.key});
@@ -580,8 +581,15 @@ class _DiscoverTabState
                       // ),
                     ],
                   )
-                else if (creator?.isAvailable == true)
-                  _buildInlineBidForm(creator: creator)
+                else if (creator != null &&
+                    creator.isAvailable == true &&
+                    creator.id == state.biddingCreatorId)
+                  InlineBidForm(
+                    creator: creator,
+                    cancelBid: cubit.cancelBid,
+                    confirmBid: (minBid) =>
+                        cubit.startCountdownTimer(minBid, creator.id!),
+                  )
                 else
                   _buildPlaceBidButton(creator: creator),
               ],
@@ -608,213 +616,216 @@ class _DiscoverTabState
     );
   }
 
-  final TextEditingController bidController = TextEditingController();
-  Widget _buildInlineBidForm({CreatorModel? creator}) {
-    final minimumRequired = (creator?.minBid ?? 0);
+  // final TextEditingController bidController = TextEditingController();
 
-    return BlocBuilder<DiscoverTabCubit, DiscoverTabState>(
-        builder: (context, state) {
-      return Container(
-        padding: padding(all: 12.w),
-        decoration: BoxDecoration(
-          color: const Color(0xFF374151).withSafeOpacity(0.3),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Min: ${creator?.minBid?.toStringAsFixed(1)} SOL',
-                  style: AppStyle.regular12(color: Colors.white60),
-                ),
-                Text(
-                  // 'Balance: ${state.walletBalance.toStringAsFixed(2)} SOL',
-                  '',
-                  style: AppStyle.regular12(color: Colors.white60),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.h),
-            Container(
-              decoration: BoxDecoration(
-                color: const Color(0xFF374151),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: TextField(
-                controller: bidController,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                style: AppStyle.bold16(color: appTheme.whiteText),
-                textAlign: TextAlign.center,
-                onChanged: (value) {
-                  cubit.updateBidAmount(double.tryParse(value) ?? 0);
-                },
-                decoration: InputDecoration(
-                  hintText: minimumRequired.toStringAsFixed(1),
-                  hintStyle: AppStyle.regular14(color: Colors.white38),
-                  suffixText: 'SOL',
-                  suffixStyle: AppStyle.medium12(color: Colors.white60),
-                  border: InputBorder.none,
-                  contentPadding: padding(all: 12.w),
-                ),
-              ),
-            ),
-            SizedBox(height: 12.h),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildQuickBidButton('+0.1', () {
-                    const newBid = 1.0;
-                    bidController.text = newBid.toStringAsFixed(1);
-                    cubit.updateBidAmount(newBid);
-                  }),
-                ),
-                SizedBox(width: 8.w),
-                Expanded(
-                  child: _buildQuickBidButton('+20%', () {
-                    const newBid = 2.0;
-                    bidController.text = newBid.toStringAsFixed(1);
-                    cubit.updateBidAmount(newBid);
-                  }),
-                ),
-                SizedBox(width: 8.w),
-                Expanded(
-                  child: _buildQuickBidButton('+50%', () {
-                    const newBid = 5.0;
-                    bidController.text = newBid.toStringAsFixed(1);
-                    cubit.updateBidAmount(newBid);
-                  }),
-                ),
-              ],
-            ),
-            SizedBox(height: 12.h),
-            Row(
-              children: [
-                Expanded(
-                  child: ValueListenableBuilder(
-                      valueListenable: cubit.privyWalletService.solanaBalance,
-                      builder: (context, value, __) {
-                        return SizedBox(
-                          height: 40.h,
-                          child: ElevatedButton(
-                            onPressed: state.bidAmount >= minimumRequired &&
-                                    state.bidAmount <= value
-                                ? () {
-                                    cubit.startCountdownTimer(creator!.id!);
-                                  }
-                                : null,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: appTheme.transparentColor,
-                              disabledBackgroundColor: Colors.grey.shade800,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: Ink(
-                              decoration: BoxDecoration(
-                                gradient: state.bidAmount >= minimumRequired &&
-                                        state.bidAmount < value
-                                    ? LinearGradient(
-                                        colors: [
-                                          appTheme.green4AColor,
-                                          appTheme.green69Color,
-                                        ],
-                                      )
-                                    : null,
-                                color: state.bidAmount >= minimumRequired &&
-                                        state.bidAmount < value
-                                    ? null
-                                    : Colors.grey.shade800,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Container(
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.attach_money,
-                                      color:
-                                          state.bidAmount >= minimumRequired &&
-                                                  state.bidAmount <= value
-                                              ? const Color(0xFF0F172A)
-                                              : Colors.white38,
-                                      size: 16.w,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    Text(
-                                      'Confirm Bid',
-                                      style: AppStyle.bold12(
-                                        color: state.bidAmount >=
-                                                    minimumRequired &&
-                                                state.bidAmount <= value
-                                            ? const Color(0xFF0F172A)
-                                            : Colors.white38,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                ),
-                SizedBox(width: 8.w),
-                SizedBox(
-                  height: 40.h,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      cubit.updateBidAmount(0);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF374151),
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: padding(horizontal: 16.w),
-                    ),
-                    child: Text(
-                      'Cancel',
-                      style: AppStyle.medium12(color: appTheme.whiteText),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    });
-  }
+  // Widget _buildInlineBidForm({CreatorModel? creator}) {
+  //   final minimumRequired = (creator?.minBid ?? 0);
 
-  Widget _buildQuickBidButton(String label, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: padding(vertical: 6.h),
-        decoration: BoxDecoration(
-          color: const Color(0xFF374151),
-          borderRadius: BorderRadius.circular(6),
-          border: Border.all(
-            color: Colors.white.withSafeOpacity(0.1),
-            width: 1,
-          ),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: AppStyle.medium10(color: appTheme.whiteText),
-          ),
-        ),
-      ),
-    );
-  }
+  //   return BlocBuilder<DiscoverTabCubit, DiscoverTabState>(
+  //       builder: (context, state) {
+  //     return Container(
+  //       padding: padding(all: 12.w),
+  //       decoration: BoxDecoration(
+  //         color: const Color(0xFF374151).withSafeOpacity(0.3),
+  //         borderRadius: BorderRadius.circular(8),
+  //       ),
+  //       child: Column(
+  //         children: [
+  //           Row(
+  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //             children: [
+  //               Text(
+  //                 'Min: ${creator?.minBid?.toStringAsFixed(1)} SOL',
+  //                 style: AppStyle.regular12(color: Colors.white60),
+  //               ),
+  //               Text(
+  //                 // 'Balance: ${state.walletBalance.toStringAsFixed(2)} SOL',
+  //                 '',
+  //                 style: AppStyle.regular12(color: Colors.white60),
+  //               ),
+  //             ],
+  //           ),
+  //           SizedBox(height: 12.h),
+  //           Container(
+  //             decoration: BoxDecoration(
+  //               color: const Color(0xFF374151),
+  //               borderRadius: BorderRadius.circular(8),
+  //             ),
+  //             child: TextField(
+  //               controller: bidController,
+  //               keyboardType:
+  //                   const TextInputType.numberWithOptions(decimal: true),
+  //               style: AppStyle.bold16(color: appTheme.whiteText),
+  //               textAlign: TextAlign.center,
+  //               onChanged: (value) {
+  //                 cubit.updateBidAmount(double.tryParse(value) ?? 0);
+  //               },
+  //               decoration: InputDecoration(
+  //                 hintText: minimumRequired.toStringAsFixed(1),
+  //                 hintStyle: AppStyle.regular14(color: Colors.white38),
+  //                 suffixText: 'SOL',
+  //                 suffixStyle: AppStyle.medium12(color: Colors.white60),
+  //                 border: InputBorder.none,
+  //                 contentPadding: padding(all: 12.w),
+  //               ),
+  //             ),
+  //           ),
+  //           SizedBox(height: 12.h),
+  //           Row(
+  //             children: [
+  //               Expanded(
+  //                 child: _buildQuickBidButton('+0.1', () {
+  //                   const newBid = 1.0;
+  //                   bidController.text = newBid.toStringAsFixed(1);
+  //                   cubit.updateBidAmount(newBid);
+  //                 }),
+  //               ),
+  //               SizedBox(width: 8.w),
+  //               Expanded(
+  //                 child: _buildQuickBidButton('+20%', () {
+  //                   const newBid = 2.0;
+  //                   bidController.text = newBid.toStringAsFixed(1);
+  //                   cubit.updateBidAmount(newBid);
+  //                 }),
+  //               ),
+  //               SizedBox(width: 8.w),
+  //               Expanded(
+  //                 child: _buildQuickBidButton('+50%', () {
+  //                   const newBid = 5.0;
+  //                   bidController.text = newBid.toStringAsFixed(1);
+  //                   cubit.updateBidAmount(newBid);
+  //                 }),
+  //               ),
+  //             ],
+  //           ),
+  //           SizedBox(height: 12.h),
+  //           Row(
+  //             children: [
+  //               Expanded(
+  //                 child: ValueListenableBuilder(
+  //                     valueListenable: cubit.privyWalletService.solanaBalance,
+  //                     builder: (context, value, __) {
+  //                       return SizedBox(
+  //                         height: 40.h,
+  //                         child: ElevatedButton(
+  //                           onPressed: state.bidAmount >= minimumRequired &&
+  //                                   state.bidAmount <= value.balanceSol
+  //                               ? () {
+  //                                   cubit.startCountdownTimer(creator!.id!);
+  //                                 }
+  //                               : null,
+  //                           style: ElevatedButton.styleFrom(
+  //                             backgroundColor: appTheme.transparentColor,
+  //                             disabledBackgroundColor: Colors.grey.shade800,
+  //                             elevation: 0,
+  //                             shape: RoundedRectangleBorder(
+  //                               borderRadius: BorderRadius.circular(8),
+  //                             ),
+  //                             padding: EdgeInsets.zero,
+  //                           ),
+  //                           child: Ink(
+  //                             decoration: BoxDecoration(
+  //                               gradient: state.bidAmount >= minimumRequired &&
+  //                                       state.bidAmount < value.balanceSol
+  //                                   ? LinearGradient(
+  //                                       colors: [
+  //                                         appTheme.green4AColor,
+  //                                         appTheme.green69Color,
+  //                                       ],
+  //                                     )
+  //                                   : null,
+  //                               color: state.bidAmount >= minimumRequired &&
+  //                                       state.bidAmount < value.balanceSol
+  //                                   ? null
+  //                                   : Colors.grey.shade800,
+  //                               borderRadius: BorderRadius.circular(8),
+  //                             ),
+  //                             child: Container(
+  //                               alignment: Alignment.center,
+  //                               child: Row(
+  //                                 mainAxisAlignment: MainAxisAlignment.center,
+  //                                 children: [
+  //                                   Icon(
+  //                                     Icons.attach_money,
+  //                                     color:
+  //                                         state.bidAmount >= minimumRequired &&
+  //                                                 state.bidAmount <=
+  //                                                     value.balanceSol
+  //                                             ? const Color(0xFF0F172A)
+  //                                             : Colors.white38,
+  //                                     size: 16.w,
+  //                                   ),
+  //                                   SizedBox(width: 4.w),
+  //                                   Text(
+  //                                     'Confirm Bid',
+  //                                     style: AppStyle.bold12(
+  //                                       color: state.bidAmount >=
+  //                                                   minimumRequired &&
+  //                                               state.bidAmount <=
+  //                                                   value.balanceSol
+  //                                           ? const Color(0xFF0F172A)
+  //                                           : Colors.white38,
+  //                                     ),
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       );
+  //                     }),
+  //               ),
+  //               SizedBox(width: 8.w),
+  //               SizedBox(
+  //                 height: 40.h,
+  //                 child: ElevatedButton(
+  //                   onPressed: () {
+  //                     cubit.updateBidAmount(0);
+  //                   },
+  //                   style: ElevatedButton.styleFrom(
+  //                     backgroundColor: const Color(0xFF374151),
+  //                     elevation: 0,
+  //                     shape: RoundedRectangleBorder(
+  //                       borderRadius: BorderRadius.circular(8),
+  //                     ),
+  //                     padding: padding(horizontal: 16.w),
+  //                   ),
+  //                   child: Text(
+  //                     'Cancel',
+  //                     style: AppStyle.medium12(color: appTheme.whiteText),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     );
+  //   });
+  // }
+
+  // Widget _buildQuickBidButton(String label, VoidCallback onTap) {
+  //   return GestureDetector(
+  //     onTap: onTap,
+  //     child: Container(
+  //       padding: padding(vertical: 6.h),
+  //       decoration: BoxDecoration(
+  //         color: const Color(0xFF374151),
+  //         borderRadius: BorderRadius.circular(6),
+  //         border: Border.all(
+  //           color: Colors.white.withSafeOpacity(0.1),
+  //           width: 1,
+  //         ),
+  //       ),
+  //       child: Center(
+  //         child: Text(
+  //           label,
+  //           style: AppStyle.medium10(color: appTheme.whiteText),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildPlaceBidButton({CreatorModel? creator}) {
     return SizedBox(
@@ -822,6 +833,7 @@ class _DiscoverTabState
       height: 44.h,
       child: ElevatedButton(
         onPressed: () {
+          cubit.setBiddingCreatorId(creator?.id ?? '');
           cubit.updateBidAmount(0);
         },
         style: ElevatedButton.styleFrom(

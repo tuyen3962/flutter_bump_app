@@ -24,12 +24,15 @@ class DiscoverTabState extends BaseState {
   final int countdowns;
   // final List<BidModel> creators;
 
+  final String biddingCreatorId;
+
   const DiscoverTabState({
     this.filter = DiscoverTabFilter.all,
     super.isLoading = false,
     this.bidAmount = 0,
     this.creatorId = '',
     this.countdowns = 0,
+    this.biddingCreatorId = '',
     // this.creators = const [],
   });
 
@@ -39,6 +42,7 @@ class DiscoverTabState extends BaseState {
     double? bidAmount,
     String? creatorId,
     int? countdowns,
+    String? biddingCreatorId,
     // List<BidModel>? creators,
   }) {
     return DiscoverTabState(
@@ -47,6 +51,7 @@ class DiscoverTabState extends BaseState {
       bidAmount: bidAmount ?? this.bidAmount,
       creatorId: creatorId ?? this.creatorId,
       countdowns: countdowns ?? this.countdowns,
+      biddingCreatorId: biddingCreatorId ?? this.biddingCreatorId,
       // creators: creators ?? this.creators,
     );
   }
@@ -58,5 +63,6 @@ class DiscoverTabState extends BaseState {
         bidAmount,
         creatorId,
         countdowns,
+        biddingCreatorId,
       ];
 }

@@ -13,7 +13,7 @@ part 'bid_api.g.dart';
 abstract class BidApi {
   factory BidApi(Dio dio, {String? baseUrl}) = _BidApi;
 
-  @POST('/api/bids')
+  @POST('/api/bids/place')
   Future<BaseResponse<PlaceBidResponse>> placeBid(
       @Body() PlaceBidRequest request);
 

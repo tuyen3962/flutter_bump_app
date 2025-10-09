@@ -9,10 +9,11 @@ enum GetBidSortBy { amount, createdAt, updatedAt }
 class PlaceBidRequest {
   final String creatorId;
   final double amount;
-  final Map<String, dynamic>? metadata;
+  final String? walletId;
+  // final Map<String, dynamic>? metadata;
 
   PlaceBidRequest(
-      {required this.creatorId, required this.amount, this.metadata});
+      {required this.creatorId, required this.amount, this.walletId});
 
   factory PlaceBidRequest.fromJson(Map<String, dynamic> json) =>
       _$PlaceBidRequestFromJson(json);
