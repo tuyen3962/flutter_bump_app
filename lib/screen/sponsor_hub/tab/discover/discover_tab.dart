@@ -11,7 +11,6 @@ import 'package:flutter_bump_app/router/app_route.dart';
 import 'package:flutter_bump_app/screen/discover_detail/discover_detail_parameter.dart';
 import 'package:flutter_bump_app/utils/lazy_list/lazy_list.dart';
 import 'package:flutter_bump_app/widget/image/cache_image.dart';
-import 'package:flutter_bump_app/widget/search_custom_filed.dart';
 
 import 'discover_tab_cubit.dart';
 import 'discover_tab_state.dart';
@@ -25,8 +24,6 @@ class DiscoverTab extends StatefulWidget {
 
 class _DiscoverTabState
     extends BaseBlocViewState<DiscoverTab, DiscoverTabState, DiscoverTabCubit> {
-  double _bidAmount = 0;
-
   @override
   Widget buildView(BuildContext context, DiscoverTabCubit cubit) {
     return Padding(
@@ -35,8 +32,8 @@ class _DiscoverTabState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Search Bar
-          _buildSearchBar(),
-          SizedBox(height: 16.h),
+          // _buildSearchBar(),
+          // SizedBox(height: 16.h),
 
           // Available Channels Title
           Text(
@@ -190,39 +187,45 @@ class _DiscoverTabState
     );
   }
 
-  Widget _buildSearchBar() {
-    // return Container(
-    //   decoration: BoxDecoration(
-    //     color: const Color(0xFF1E293B),
-    //     borderRadius: BorderRadius.circular(12),
-    //   ),
-    //   child: TextField(
-    //     controller: _searchController,
-    //     scrollPadding: EdgeInsets.zero,
-    //     style: AppStyle.regular14(color: Colors.white70),
-    //     cursorColor: appTheme.appColor,
-    //     decoration: InputDecoration(
-    //       hintText: 'Search creators by niche...',
-    //       hintStyle: AppStyle.regular14(color: Colors.white38),
-    //       prefixIcon: Icon(
-    //         Icons.search,
-    //         color: Colors.white38,
-    //         size: 20.w,
-    //       ),
-    //       border: InputBorder.none,
-    //       contentPadding: padding(horizontal: 12, vertical: 12),
-    //     ),
-    //   ),
-    // );
-    return SearchCustomField(
-      onGetSearchValue: cubit.onSearchChanged,
-      
-    );
-  }
+  // Widget _buildSearchBar() {
+  //   // return Container(
+  //   //   decoration: BoxDecoration(
+  //   //     color: const Color(0xFF1E293B),
+  //   //     borderRadius: BorderRadius.circular(12),
+  //   //   ),
+  //   //   child: TextField(
+  //   //     controller: _searchController,
+  //   //     scrollPadding: EdgeInsets.zero,
+  //   //     style: AppStyle.regular14(color: Colors.white70),
+  //   //     cursorColor: appTheme.appColor,
+  //   //     decoration: InputDecoration(
+  //   //       hintText: 'Search creators by niche...',
+  //   //       hintStyle: AppStyle.regular14(color: Colors.white38),
+  //   //       prefixIcon: Icon(
+  //   //         Icons.search,
+  //   //         color: Colors.white38,
+  //   //         size: 20.w,
+  //   //       ),
+  //   //       border: InputBorder.none,
+  //   //       contentPadding: padding(horizontal: 12, vertical: 12),
+  //   //     ),
+  //   //   ),
+  //   // );
+  //   return SearchCustomField(
+  //     onGetSearchValue: cubit.onSearchChanged,
+  //   );
+  // }
 
   Widget _buildCreatorCard({CreatorModel? creator}) {
     return BlocBuilder<DiscoverTabCubit, DiscoverTabState>(
       builder: (context, state) {
+        final creatorId = creator?.id ?? '';
+        final hasActiveAuction =
+            state.creatorId == creatorId && state.countdowns > 0;
+        final countdown = hasActiveAuction ? state.countdowns : 0;
+        final userBid = state.creatorId == creatorId ? state.bidAmount : null;
+        final minBid = creator?.minBid ?? 0.0;
+
         return GestureDetector(
           onTap: () => context.pushRoute(
             DiscoverDetailRoute(
@@ -233,34 +236,135 @@ class _DiscoverTabState
             margin: padding(bottom: 16.h),
             padding: padding(horizontal: 16, top: 8, bottom: 16),
             decoration: BoxDecoration(
-              color: const Color(0xFF1E293B),
+              gradient: hasActiveAuction
+                  ? const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFF2D4A2C),
+                        Color(0xFF1E293B),
+                      ],
+                    )
+                  : null,
+              color: hasActiveAuction ? null : const Color(0xFF1E293B),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: Colors.white.withSafeOpacity(0.1),
-                width: 1.w,
+                color: hasActiveAuction
+                    ? appTheme.green4AColor.withSafeOpacity(0.6)
+                    : Colors.white.withSafeOpacity(0.1),
+                width: hasActiveAuction ? 2 : 1,
               ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Block ends banner
-                Container(
-                  width: double.infinity,
-                  margin: padding(bottom: 12.h),
-                  padding: padding(vertical: 8.h),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Colors.white.withSafeOpacity(0.1),
-                        width: 1.w,
+                if (hasActiveAuction)
+                  Container(
+                    width: double.infinity,
+                    margin: padding(bottom: 16.h),
+                    padding: padding(all: 12.h),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          appTheme.green4AColor.withSafeOpacity(0.15),
+                          appTheme.green69Color.withSafeOpacity(0.15),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: appTheme.green4AColor.withSafeOpacity(0.3),
+                        width: 1,
                       ),
                     ),
+                    child: Column(
+                      children: [
+                        // LIVE AUCTION header
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 10.w,
+                                  height: 10.h,
+                                  decoration: BoxDecoration(
+                                    color: appTheme.green4AColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                SizedBox(width: 8.w),
+                                Text(
+                                  'LIVE AUCTION',
+                                  style: AppStyle.bold14(
+                                    color: appTheme.whiteText,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              padding: padding(horizontal: 12.w, vertical: 6.h),
+                              decoration: BoxDecoration(
+                                color:
+                                    appTheme.green4AColor.withSafeOpacity(0.2),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.timer,
+                                    color: appTheme.green4AColor,
+                                    size: 18.w,
+                                  ),
+                                  SizedBox(width: 6.w),
+                                  Text(
+                                    '${(countdown ~/ 60).toString().padLeft(1, '0')}:${(countdown % 60).toString().padLeft(2, '0')}',
+                                    style: AppStyle.bold16(
+                                      color: appTheme.green4AColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12.h),
+                        // Highest bid
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Highest bid:',
+                              style: AppStyle.regular14(color: Colors.white70),
+                            ),
+                            Text(
+                              '${userBid?.toStringAsFixed(1) ?? minBid.toStringAsFixed(1)} SOL',
+                              style:
+                                  AppStyle.bold16(color: appTheme.green4AColor),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Container(
+                    width: double.infinity,
+                    margin: padding(bottom: 12.h),
+                    padding: padding(vertical: 8.h),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Colors.white.withSafeOpacity(0.1),
+                          width: 1.w,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      'Block ends in: ${'00d 00h 00m 00s'}',
+                      style: AppStyle.regular12(color: Colors.white60),
+                    ),
                   ),
-                  child: Text(
-                    'Block ends in: ${'00d 00h 00m 00s'}',
-                    style: AppStyle.regular12(color: Colors.white60),
-                  ),
-                ),
 
                 // Creator Info
                 Row(
@@ -368,23 +472,116 @@ class _DiscoverTabState
                     ],
                   ],
                 ),
-                SizedBox(height: 16.h),
                 // Stats
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildCreatorStat('${creator?.followers}K', 'Followers'),
-                    _buildCreatorStat('${creator?.totalViews}K', 'Total Views'),
-                    _buildCreatorStat(
-                        '${creator?.sponsorships}', 'Sponsorships'),
-                  ],
-                ),
+                if (hasActiveAuction) ...[
+                  SizedBox(height: 16.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      _buildCreatorStat('${creator?.followers}K', 'Followers'),
+                      _buildCreatorStat(
+                          '${creator?.totalViews}K', 'Total Views'),
+                      _buildCreatorStat(
+                          '${creator?.sponsorships}', 'Sponsorships'),
+                    ],
+                  ),
+                ],
 
                 SizedBox(height: 16.h),
 
                 // Place Bid Button
-                if (creator?.isAvailable == true)
-                  _buildInlineBidForm(state, creator: creator)
+                if (hasActiveAuction)
+                  Column(
+                    children: [
+                      // "You're the highest bidder" badge
+                      Container(
+                        width: double.infinity,
+                        padding: padding(all: 12.h),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              const Color(0xFF22C55E).withSafeOpacity(0.15),
+                              appTheme.green4AColor.withSafeOpacity(0.15),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: const Color(0xFF22C55E).withSafeOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.emoji_events,
+                              color: const Color(0xFF22C55E),
+                              size: 18.w,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              'You\'re the highest bidder!',
+                              style: AppStyle.bold14(
+                                color: const Color(0xFF22C55E),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // SizedBox(height: 12.h),
+                      // // Increase Bid button
+                      // SizedBox(
+                      //   width: double.infinity,
+                      //   child: ElevatedButton(
+                      //     onPressed: () {
+
+                      //     },
+                      //     style: ElevatedButton.styleFrom(
+                      //       backgroundColor: appTheme.transparentColor,
+                      //       elevation: 0,
+                      //       shape: RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(8),
+                      //       ),
+                      //       padding: padding(vertical: 14.h),
+                      //     ),
+                      //     child: Ink(
+                      //       decoration: BoxDecoration(
+                      //         gradient: LinearGradient(
+                      //           colors: [
+                      //             appTheme.green4AColor,
+                      //             appTheme.green69Color,
+                      //           ],
+                      //         ),
+                      //         borderRadius: BorderRadius.circular(8),
+                      //       ),
+                      //       child: Container(
+                      //         alignment: Alignment.center,
+                      //         padding: padding(vertical: 14.h),
+                      //         child: Row(
+                      //           mainAxisAlignment: MainAxisAlignment.center,
+                      //           children: [
+                      //             Icon(
+                      //               Icons.attach_money,
+                      //               color: const Color(0xFF0F172A),
+                      //               size: 18.w,
+                      //             ),
+                      //             SizedBox(width: 4.w),
+                      //             Text(
+                      //               'Increase Bid',
+                      //               style: AppStyle.bold14(
+                      //                 color: const Color(0xFF0F172A),
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                    ],
+                  )
+                else if (creator?.isAvailable == true)
+                  _buildInlineBidForm(creator: creator)
                 else
                   _buildPlaceBidButton(creator: creator),
               ],
@@ -411,208 +608,189 @@ class _DiscoverTabState
     );
   }
 
-  Widget _buildInlineBidForm(DiscoverTabState state, {CreatorModel? creator}) {
-    final TextEditingController bidController = TextEditingController();
-    final minimumRequired = (creator?.minBid ?? 0) + 0.1;
+  final TextEditingController bidController = TextEditingController();
+  Widget _buildInlineBidForm({CreatorModel? creator}) {
+    final minimumRequired = (creator?.minBid ?? 0);
 
-    return Container(
-      padding: padding(all: 12.w),
-      decoration: BoxDecoration(
-        color: const Color(0xFF374151).withSafeOpacity(0.3),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Min: ${creator?.minBid?.toStringAsFixed(1)} SOL',
-                style: AppStyle.regular12(color: Colors.white60),
-              ),
-              Text(
-                // 'Balance: ${state.walletBalance.toStringAsFixed(2)} SOL',
-                '',
-                style: AppStyle.regular12(color: Colors.white60),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF374151),
-              borderRadius: BorderRadius.circular(8),
+    return BlocBuilder<DiscoverTabCubit, DiscoverTabState>(
+        builder: (context, state) {
+      return Container(
+        padding: padding(all: 12.w),
+        decoration: BoxDecoration(
+          color: const Color(0xFF374151).withSafeOpacity(0.3),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Min: ${creator?.minBid?.toStringAsFixed(1)} SOL',
+                  style: AppStyle.regular12(color: Colors.white60),
+                ),
+                Text(
+                  // 'Balance: ${state.walletBalance.toStringAsFixed(2)} SOL',
+                  '',
+                  style: AppStyle.regular12(color: Colors.white60),
+                ),
+              ],
             ),
-            child: TextField(
-              controller: bidController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              style: AppStyle.bold16(color: appTheme.whiteText),
-              textAlign: TextAlign.center,
-              onChanged: (value) {
-                setState(() {
-                  _bidAmount = double.tryParse(value) ?? 0;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: minimumRequired.toStringAsFixed(1),
-                hintStyle: AppStyle.regular14(color: Colors.white38),
-                suffixText: 'SOL',
-                suffixStyle: AppStyle.medium12(color: Colors.white60),
-                border: InputBorder.none,
-                contentPadding: padding(all: 12.w),
+            SizedBox(height: 12.h),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF374151),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: TextField(
+                controller: bidController,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                style: AppStyle.bold16(color: appTheme.whiteText),
+                textAlign: TextAlign.center,
+                onChanged: (value) {
+                  cubit.updateBidAmount(double.tryParse(value) ?? 0);
+                },
+                decoration: InputDecoration(
+                  hintText: minimumRequired.toStringAsFixed(1),
+                  hintStyle: AppStyle.regular14(color: Colors.white38),
+                  suffixText: 'SOL',
+                  suffixStyle: AppStyle.medium12(color: Colors.white60),
+                  border: InputBorder.none,
+                  contentPadding: padding(all: 12.w),
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 12.h),
-          Row(
-            children: [
-              Expanded(
-                child: _buildQuickBidButton('+0.1', () {
-                  final newBid = minimumRequired + 0.1;
-                  bidController.text = newBid.toStringAsFixed(1);
-                  setState(() {
-                    _bidAmount = newBid;
-                  });
-                }),
-              ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: _buildQuickBidButton('+20%', () {
-                  final newBid = minimumRequired * 1.2;
-                  bidController.text = newBid.toStringAsFixed(1);
-                  setState(() {
-                    _bidAmount = newBid;
-                  });
-                }),
-              ),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: _buildQuickBidButton('+50%', () {
-                  final newBid = minimumRequired * 1.5;
-                  bidController.text = newBid.toStringAsFixed(1);
-                  setState(() {
-                    _bidAmount = newBid;
-                  });
-                }),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: 40.h,
-                  child: ElevatedButton(
-                    onPressed: _bidAmount >= minimumRequired &&
-                            _bidAmount <= state.walletBalance
-                        ? () {
-                            cubit.placeBid(creator!.id!, _bidAmount);
-                            setState(() {
-                              _bidAmount = 0;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '🎯 Bid placed! You\'re the highest bidder!',
-                                  style: AppStyle.medium14(
-                                    color: appTheme.whiteText,
-                                  ),
-                                ),
-                                backgroundColor: appTheme.green4AColor,
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+            SizedBox(height: 12.h),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildQuickBidButton('+0.1', () {
+                    const newBid = 1.0;
+                    bidController.text = newBid.toStringAsFixed(1);
+                    cubit.updateBidAmount(newBid);
+                  }),
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: _buildQuickBidButton('+20%', () {
+                    const newBid = 2.0;
+                    bidController.text = newBid.toStringAsFixed(1);
+                    cubit.updateBidAmount(newBid);
+                  }),
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: _buildQuickBidButton('+50%', () {
+                    const newBid = 5.0;
+                    bidController.text = newBid.toStringAsFixed(1);
+                    cubit.updateBidAmount(newBid);
+                  }),
+                ),
+              ],
+            ),
+            SizedBox(height: 12.h),
+            Row(
+              children: [
+                Expanded(
+                  child: ValueListenableBuilder(
+                      valueListenable: cubit.privyWalletService.solanaBalance,
+                      builder: (context, value, __) {
+                        return SizedBox(
+                          height: 40.h,
+                          child: ElevatedButton(
+                            onPressed: state.bidAmount >= minimumRequired &&
+                                    state.bidAmount <= value
+                                ? () {
+                                    cubit.startCountdownTimer(creator!.id!);
+                                  }
+                                : null,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: appTheme.transparentColor,
+                              disabledBackgroundColor: Colors.grey.shade800,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              padding: EdgeInsets.zero,
+                            ),
+                            child: Ink(
+                              decoration: BoxDecoration(
+                                gradient: state.bidAmount >= minimumRequired &&
+                                        state.bidAmount < value
+                                    ? LinearGradient(
+                                        colors: [
+                                          appTheme.green4AColor,
+                                          appTheme.green69Color,
+                                        ],
+                                      )
+                                    : null,
+                                color: state.bidAmount >= minimumRequired &&
+                                        state.bidAmount < value
+                                    ? null
+                                    : Colors.grey.shade800,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Container(
+                                alignment: Alignment.center,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.attach_money,
+                                      color:
+                                          state.bidAmount >= minimumRequired &&
+                                                  state.bidAmount <= value
+                                              ? const Color(0xFF0F172A)
+                                              : Colors.white38,
+                                      size: 16.w,
+                                    ),
+                                    SizedBox(width: 4.w),
+                                    Text(
+                                      'Confirm Bid',
+                                      style: AppStyle.bold12(
+                                        color: state.bidAmount >=
+                                                    minimumRequired &&
+                                                state.bidAmount <= value
+                                            ? const Color(0xFF0F172A)
+                                            : Colors.white38,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                            );
-                          }
-                        : null,
+                            ),
+                          ),
+                        );
+                      }),
+                ),
+                SizedBox(width: 8.w),
+                SizedBox(
+                  height: 40.h,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      cubit.updateBidAmount(0);
+                    },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: appTheme.transparentColor,
-                      disabledBackgroundColor: Colors.grey.shade800,
+                      backgroundColor: const Color(0xFF374151),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      padding: EdgeInsets.zero,
+                      padding: padding(horizontal: 16.w),
                     ),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                        gradient: _bidAmount >= minimumRequired &&
-                                _bidAmount <= state.walletBalance
-                            ? LinearGradient(
-                                colors: [
-                                  appTheme.green4AColor,
-                                  appTheme.green69Color,
-                                ],
-                              )
-                            : null,
-                        color: _bidAmount >= minimumRequired &&
-                                _bidAmount <= state.walletBalance
-                            ? null
-                            : Colors.grey.shade800,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.attach_money,
-                              color: _bidAmount >= minimumRequired &&
-                                      _bidAmount <= state.walletBalance
-                                  ? const Color(0xFF0F172A)
-                                  : Colors.white38,
-                              size: 16.w,
-                            ),
-                            SizedBox(width: 4.w),
-                            Text(
-                              'Confirm Bid',
-                              style: AppStyle.bold12(
-                                color: _bidAmount >= minimumRequired &&
-                                        _bidAmount <= state.walletBalance
-                                    ? const Color(0xFF0F172A)
-                                    : Colors.white38,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                    child: Text(
+                      'Cancel',
+                      style: AppStyle.medium12(color: appTheme.whiteText),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(width: 8.w),
-              SizedBox(
-                height: 40.h,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _bidAmount = 0;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF374151),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: padding(horizontal: 16.w),
-                  ),
-                  child: Text(
-                    'Cancel',
-                    style: AppStyle.medium12(color: appTheme.whiteText),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+              ],
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildQuickBidButton(String label, VoidCallback onTap) {
@@ -644,9 +822,7 @@ class _DiscoverTabState
       height: 44.h,
       child: ElevatedButton(
         onPressed: () {
-          setState(() {
-            _bidAmount = 0;
-          });
+          cubit.updateBidAmount(0);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: appTheme.transparentColor,

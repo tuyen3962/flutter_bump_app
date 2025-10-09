@@ -40,7 +40,10 @@ class SponsorHubPage
       providers: [
         BlocProvider<SponsorHubCubit>(create: (context) => createCubit()),
         BlocProvider<DiscoverTabCubit>(
-          create: (context) => DiscoverTabCubit(bidRepository: locator.get()),
+          create: (context) => DiscoverTabCubit(
+            bidRepository: locator.get(),
+            privyWalletService: locator.get(),
+          ),
         ),
         BlocProvider<SponsorshipTabCubit>(
             create: (context) => SponsorshipTabCubit()),

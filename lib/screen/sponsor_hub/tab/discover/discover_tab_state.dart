@@ -19,31 +19,44 @@ extension DiscoverTabFilterExtension on DiscoverTabFilter {
 
 class DiscoverTabState extends BaseState {
   final DiscoverTabFilter filter;
-  final double walletBalance;
-
+  final double bidAmount;
+  final String creatorId;
+  final int countdowns;
   // final List<BidModel> creators;
 
   const DiscoverTabState({
     this.filter = DiscoverTabFilter.all,
     super.isLoading = false,
-    this.walletBalance = 0,
+    this.bidAmount = 0,
+    this.creatorId = '',
+    this.countdowns = 0,
     // this.creators = const [],
   });
 
   DiscoverTabState copyWith({
     DiscoverTabFilter? filter,
     bool? isLoading,
-    double? walletBalance,
+    double? bidAmount,
+    String? creatorId,
+    int? countdowns,
     // List<BidModel>? creators,
   }) {
     return DiscoverTabState(
       filter: filter ?? this.filter,
       isLoading: isLoading ?? this.isLoading,
-      walletBalance: walletBalance ?? this.walletBalance,
+      bidAmount: bidAmount ?? this.bidAmount,
+      creatorId: creatorId ?? this.creatorId,
+      countdowns: countdowns ?? this.countdowns,
       // creators: creators ?? this.creators,
     );
   }
 
   @override
-  List<Object?> get props => [filter, isLoading, walletBalance];
+  List<Object?> get props => [
+        filter,
+        isLoading,
+        bidAmount,
+        creatorId,
+        countdowns,
+      ];
 }
