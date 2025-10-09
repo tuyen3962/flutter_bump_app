@@ -61,8 +61,9 @@ class LaunchSponsorshipScreenState extends BaseBlocNoAppBarPageState<
   void initState() {
     super.initState();
     if (widget.parameter.fillInfo) {
-      // _channelNameController.text =
-      //     widget.parameter.campaign.creator?.name ?? '';
+      _channelNameController.text = widget.parameter.campaign.channelName ?? '';
+      _channelDescController.text = widget.parameter.campaign.channelDesc ?? '';
+      // _websiteController.text = widget.parameter.campaign.website ?? '';
     }
   }
 
@@ -278,11 +279,15 @@ class LaunchSponsorshipScreenState extends BaseBlocNoAppBarPageState<
               children: [
                 Expanded(
                   // child: _buildUploadBox('Logo', true, UploadBannerType.logo),
-                  child: UploadBox(type: UploadBannerType.logo),
+                  child: UploadBox(
+                      type: UploadBannerType.logo,
+                      url: widget.parameter.campaign.logo ?? ''),
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
-                  child: UploadBox(type: UploadBannerType.banner),
+                  child: UploadBox(
+                      type: UploadBannerType.banner,
+                      url: widget.parameter.campaign.banner ?? ''),
                   // _buildUploadBox('Banner', false, UploadBannerType.banner),
                 ),
               ],

@@ -23,11 +23,15 @@ class LaunchSponsorshipCubit extends BaseCubit<LaunchSponsorshipState> {
   LaunchSponsorshipCubit({
     required this.campaign,
     required this.updateCampaignUsecase,
-  }) : super(const LaunchSponsorshipState(
-          availableRequirements: [
+  }) : super(LaunchSponsorshipState(
+          channelName: campaign.channelName ?? '',
+          channelDesc: campaign.channelDesc ?? '',
+          logoUrl: campaign.logo,
+          bannerUrl: campaign.banner,
+          availableRequirements: const [
             {'id': 'r1', 'label': 'Brand mention in first 5s'},
-            {'id': 'r2', 'label': 'Hashtag #SPONSOR.FUN visible'},
-            {'id': 'r3', 'label': 'Product shot minimum 3s'},
+            // {'id': 'r2', 'label': 'Hashtag #SPONSOR.FUN visible'},
+            // {'id': 'r3', 'label': 'Product shot minimum 3s'},
             {'id': 'r4', 'label': 'Call-to-action included'},
           ],
         ));
@@ -94,19 +98,24 @@ class LaunchSponsorshipCubit extends BaseCubit<LaunchSponsorshipState> {
     showLoading();
 
     try {
-      final response =
-          await updateCampaignUsecase.call(UpdateCampaignUsecaseParam(
+      final requirements = <Requirements>[];
+      for (final req in state.selectedRequirements) {
+        final requirement =
+            state.availableRequirements.firstWhere((e) => e['id'] == req);
+        requirements
+            .add(Requirements(label: requirement['label'], isMandatory: true));
+      }
+      final param = UpdateCampaignUsecaseParam(
         campaign: campaign,
         logo: state.logo,
         banner: state.banner,
         request: UpdateCampaignRequest(
           name: state.channelName,
           description: state.channelDesc,
-          requirements: state.selectedRequirements
-              .map((e) => Requirements(label: e, isMandatory: true))
-              .toList(),
+          requirements: requirements,
         ),
-      ));
+      );
+      final response = await updateCampaignUsecase.call(param);
       showSimpleToast('Campaign launched successfully');
       emit(state.copyWith(campaign: response));
     } catch (e) {

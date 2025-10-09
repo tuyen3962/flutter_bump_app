@@ -8,9 +8,9 @@ import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
 import 'package:flutter_bump_app/extension.dart';
 import 'package:flutter_bump_app/extension/color_extension.dart';
 import 'package:flutter_bump_app/main.dart';
-import 'package:flutter_bump_app/router/app_route.dart';
 import 'package:flutter_bump_app/screen/home/home_cubit.dart';
 import 'package:flutter_bump_app/screen/home/home_state.dart';
+import 'package:flutter_bump_app/screen/privy_sign/privy_sign_page.dart';
 
 @RoutePage()
 class HomePage extends BaseBlocProvider<HomeState, HomeCubit> {
@@ -215,7 +215,13 @@ class HomeScreenState
                   height: 48.h,
                   child: ElevatedButton(
                     onPressed: () {
-                      context.pushRoute(const SponsorHubRoute());
+                      // context.pushRoute(const SponsorHubRoute());
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PrivySignPage(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: appTheme.transparentColor,

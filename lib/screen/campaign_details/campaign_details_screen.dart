@@ -13,6 +13,7 @@ import 'package:flutter_bump_app/router/app_route.dart';
 import 'package:flutter_bump_app/screen/campaign_details/campaign_details_cubit.dart';
 import 'package:flutter_bump_app/screen/campaign_details/campaign_details_parameter.dart';
 import 'package:flutter_bump_app/screen/launch_sponsorship/launch_sponsorship_parameter.dart';
+import 'package:flutter_bump_app/utils/extension/enum_ext.dart';
 import 'package:flutter_bump_app/utils/extension/int_ext.dart';
 import 'package:flutter_bump_app/widget/image/cache_image.dart';
 
@@ -180,7 +181,7 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
           _buildInfoRow('Creator', state.campaign?.creator?.name ?? '',
               showIcons: true),
           SizedBox(height: 12.h),
-          _buildInfoRow('Status', state.campaign?.status?.name ?? '',
+          _buildInfoRow('Status', state.campaign?.status?.text ?? '',
               statusBadge: true),
           SizedBox(height: 12.h),
           _buildInfoRow('Duration',
@@ -201,7 +202,7 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
     String value, {
     bool showIcons = false,
     bool statusBadge = false,
-    bool showEdit = false,
+    // bool showEdit = false,
     Color? valueColor,
   }) {
     return Row(
@@ -394,7 +395,7 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
                       )
                     : Container(
                         width: double.infinity,
-                        height: 24.h,
+                        height: 100.h,
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [

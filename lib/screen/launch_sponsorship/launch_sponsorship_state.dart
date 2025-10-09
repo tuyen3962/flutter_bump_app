@@ -16,6 +16,8 @@ class LaunchSponsorshipState extends BaseState {
   final File? logo;
   final File? banner;
   final CampaignModel? campaign;
+  final String? logoUrl;
+  final String? bannerUrl;
 
   const LaunchSponsorshipState({
     super.isLoading = false,
@@ -31,11 +33,15 @@ class LaunchSponsorshipState extends BaseState {
     this.logo,
     this.banner,
     this.campaign,
+    this.logoUrl,
+    this.bannerUrl,
   });
 
   bool get canProceed {
     if (currentStep == 1) {
-      return channelName.isNotEmpty && channelDesc.isNotEmpty && logo != null;
+      return channelName.isNotEmpty &&
+          channelDesc.isNotEmpty &&
+          (logo != null || (logoUrl ?? '').isNotEmpty);
     } else if (currentStep == 2) {
       return selectedRequirements.isNotEmpty;
     }
@@ -56,6 +62,8 @@ class LaunchSponsorshipState extends BaseState {
     File? banner,
     bool? isLoading,
     CampaignModel? campaign,
+    String? logoUrl,
+    String? bannerUrl,
   }) {
     return LaunchSponsorshipState(
       currentStep: currentStep ?? this.currentStep,
@@ -72,6 +80,8 @@ class LaunchSponsorshipState extends BaseState {
       banner: banner ?? this.banner,
       isLoading: isLoading ?? this.isLoading,
       campaign: campaign ?? this.campaign,
+      logoUrl: logoUrl ?? this.logoUrl,
+      bannerUrl: bannerUrl ?? this.bannerUrl,
     );
   }
 
@@ -90,5 +100,7 @@ class LaunchSponsorshipState extends BaseState {
         logo,
         banner,
         campaign,
+        logoUrl,
+        bannerUrl,
       ];
 }

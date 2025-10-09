@@ -8,12 +8,14 @@ import 'package:flutter_bump_app/screen/launch_sponsorship/launch_sponsorship_cu
 import 'package:flutter_bump_app/screen/launch_sponsorship/launch_sponsorship_state.dart';
 import 'package:flutter_bump_app/utils/image_picker_handler.dart';
 import 'package:flutter_bump_app/widget/extension/widget_extension.dart';
+import 'package:flutter_bump_app/widget/image/cache_image.dart';
 import 'package:flutter_bump_app/widget/image/custom_image.dart';
 
 class UploadBox extends StatelessWidget {
-  const UploadBox({super.key, required this.type});
+  const UploadBox({super.key, required this.type, this.url = ''});
 
   final UploadBannerType type;
+  final String url;
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +43,17 @@ class UploadBox extends StatelessWidget {
               CustomImage(
                   imageFile: file,
                   width: double.infinity,
-                  height: 100.h,
+                  height: 100,
                   boxFit: BoxFit.cover,
                   radius: 8)
+            else if (url.isNotEmpty)
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: CacheImage(
+                      imageUrl: url,
+                      width: double.infinity,
+                      height: 100,
+                      boxFit: BoxFit.cover))
             else
               Container(
                 height: 100.h,
