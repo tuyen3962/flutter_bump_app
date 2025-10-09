@@ -18,7 +18,19 @@ abstract class BidApi {
       @Body() PlaceBidRequest request);
 
   @GET('/api/bids/discover/all')
-  Future<PaginatedResponse<CreatorModel>> getAllBids(
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getAllBids(
+      @Queries() GetAllBidsRequest request);
+
+  @GET('/api/bids/discover/bidding')
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getBiddingBids(
+      @Queries() GetAllBidsRequest request);
+
+  @GET('/api/bids/discover/no-bids')
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getNoBidsBids(
+      @Queries() GetAllBidsRequest request);
+
+  @GET('/api/bids/my-bids')
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getMyBids(
       @Queries() GetAllBidsRequest request);
 
   @GET('/api/bids')

@@ -31,7 +31,7 @@ class UpdateCreatorProfileRequest {
   Map<String, dynamic> toJson() => _$UpdateCreatorProfileRequestToJson(this);
 }
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class GetAllBidsRequest {
   final int? page;
   final int? limit;

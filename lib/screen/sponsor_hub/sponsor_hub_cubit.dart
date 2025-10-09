@@ -106,4 +106,12 @@ class SponsorHubCubit extends BaseCubit<SponsorHubState> {
   void selectSponsorshipFilter(String filter) {
     emit(state.copyWith(sponsorshipFilter: filter));
   }
+
+  void getPrivyBalance() async {
+    try {
+      final balance = await privyWalletService.getPrivyBalance();
+    } catch (e) {
+      print('getPrivyBalance error: $e');
+    }
+  }
 }

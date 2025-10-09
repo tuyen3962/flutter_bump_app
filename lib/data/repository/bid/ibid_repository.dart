@@ -9,7 +9,16 @@ abstract class IBidRepository extends IBaseRepository {
   Future<PlaceBidResponse> placeBid(PlaceBidRequest request);
 
   Future<PaginatedResponse<BidModel>> getBids({int page = 1, int limit = 20});
-  Future<PaginatedResponse<CreatorModel>> getAllCreatorBids(
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getAllBids(
+      {int page = 1, int limit = 20});
+
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getBiddingBids(
+      {int page = 1, int limit = 20});
+
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getNoBidsBids(
+      {int page = 1, int limit = 20});
+
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getMyBids(
       {int page = 1, int limit = 20});
 
   Future<BidModel> getBidDetail(String bidId);

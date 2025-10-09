@@ -13,6 +13,7 @@ import 'package:flutter_bump_app/screen/campaign_details/campaign_details_parame
 import 'package:flutter_bump_app/screen/discover_detail/discover_detail_parameter.dart';
 import 'package:flutter_bump_app/screen/launch_sponsorship/launch_sponsorship_parameter.dart';
 import 'package:flutter_bump_app/screen/sponsor_hub/sponsor_hub_cubit.dart';
+import 'package:flutter_bump_app/screen/sponsor_hub/tab/discover/discover_tab.dart';
 
 import 'sponsor_hub_state.dart';
 import 'tab/discover/discover_tab_cubit.dart';
@@ -39,8 +40,8 @@ class SponsorHubPage
       providers: [
         BlocProvider<SponsorHubCubit>(create: (context) => createCubit()),
         BlocProvider<DiscoverTabCubit>(
-            create: (context) =>
-                DiscoverTabCubit(bidRepository: locator.get())),
+          create: (context) => DiscoverTabCubit(bidRepository: locator.get()),
+        ),
         BlocProvider<SponsorshipTabCubit>(
             create: (context) => SponsorshipTabCubit()),
       ],
@@ -98,7 +99,7 @@ class SponsorHubScreenState extends BaseBlocNoAppBarPageState<SponsorHubScreen,
                 _buildTabBar(state, cubit),
                 Expanded(
                   child: state.selectedTab == SelectedTab.discover
-                      ? _buildDiscoverTab(state, cubit)
+                      ? const DiscoverTab()
                       : _buildSponsorshipsTab(state, cubit),
                 ),
               ],
@@ -567,32 +568,6 @@ class SponsorHubScreenState extends BaseBlocNoAppBarPageState<SponsorHubScreen,
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: TextField(
-        // controller: _searchController,
-        scrollPadding: EdgeInsets.zero,
-        style: AppStyle.regular14(color: Colors.white70),
-        cursorColor: appTheme.appColor,
-        decoration: InputDecoration(
-          hintText: 'Search creators by niche...',
-          hintStyle: AppStyle.regular14(color: Colors.white38),
-          prefixIcon: Icon(
-            Icons.search,
-            color: Colors.white38,
-            size: 20.w,
-          ),
-          border: InputBorder.none,
-          contentPadding: padding(horizontal: 12, vertical: 12),
-        ),
       ),
     );
   }

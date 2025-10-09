@@ -18,9 +18,11 @@ class PrivyWalletService {
   @postConstruct
   void init() {
     _privy = Privy.init(
-        config: PrivyConfig(
-            appId: AppConfig.privyAppId,
-            appClientId: AppConfig.privyAppClientId));
+      config: PrivyConfig(
+        appId: AppConfig.privyAppId,
+        appClientId: AppConfig.privyAppClientId,
+      ),
+    );
   }
 
   Future<String> loginWithGoogle() async {
