@@ -28,6 +28,13 @@ class CampaignModel {
   int? comments;
   List<SocialLink>? socialLinks;
 
+  List<CampaignRequirements>? campaignRequirements;
+
+  @JsonKey(name: 'name')
+  String? channelName;
+  @JsonKey(name: 'description')
+  String? channelDesc;
+
   List<SocialLinkType> get socialLinkTypes =>
       socialLinks?.map((e) => e.type ?? SocialLinkType.WEBSITE).toList() ?? [];
 
@@ -49,6 +56,8 @@ class CampaignModel {
       this.budget,
       this.startDate,
       this.endDate,
+      this.channelName,
+      this.channelDesc,
       // this.metadata,
       this.createdAt,
       this.logo,
@@ -57,7 +66,8 @@ class CampaignModel {
       this.likes,
       this.shares,
       this.comments,
-      this.socialLinks});
+      this.socialLinks,
+      this.campaignRequirements});
 
   factory CampaignModel.fromJson(Map<String, dynamic> json) =>
       _$CampaignModelFromJson(json);
@@ -145,4 +155,20 @@ class SocialLink {
   factory SocialLink.fromJson(Map<String, dynamic> json) =>
       _$SocialLinkFromJson(json);
   Map<String, dynamic> toJson() => _$SocialLinkToJson(this);
+}
+
+@JsonSerializable()
+class CampaignRequirements {
+  String? id;
+  String? campaignId;
+  String? label;
+  bool? isMandatory;
+  double? reward;
+
+  CampaignRequirements(
+      {this.id, this.campaignId, this.label, this.isMandatory, this.reward});
+
+  factory CampaignRequirements.fromJson(Map<String, dynamic> json) =>
+      _$CampaignRequirementsFromJson(json);
+  Map<String, dynamic> toJson() => _$CampaignRequirementsToJson(this);
 }

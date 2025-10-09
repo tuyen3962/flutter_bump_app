@@ -49,6 +49,7 @@ import '../../data/repository/video/ivideo_repository.dart' as _i71;
 import '../../data/repository/video/video_repository.dart' as _i944;
 import '../../data/repository/wallet/iwallet_repository.dart' as _i998;
 import '../../data/repository/wallet/wallet_repository.dart' as _i885;
+import '../../data/usecase/logout_usecase.dart' as _i3;
 import '../../data/usecase/update_campaign_usecase.dart' as _i386;
 import '../../data/usecase/upload_image_usecase.dart' as _i484;
 import '../../data/usecase/upload_video_with_batch_usecase.dart' as _i722;
@@ -73,8 +74,6 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final remoteService = _$RemoteService();
-    gh.singleton<_i796.PrivyWalletService>(
-        () => _i796.PrivyWalletService()..init());
     gh.singleton<_i364.PhotoGalleryService>(
       () => _i364.PhotoGalleryService(),
       dispose: (i) => i.dispose(),
@@ -128,10 +127,12 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i631.HighlightRepository(gh<_i217.HighlightApi>()));
     gh.factory<_i174.IBidRepository>(
         () => _i958.BidRepository(gh<_i150.BidApi>()));
+    gh.factory<_i630.IAccountRepository>(() => _i710.AccountRepository(
+          gh<_i925.UserApi>(),
+          gh<_i227.AuthApi>(),
+        ));
     gh.factory<_i781.IBrandRepository>(
         () => _i386.BrandRepository(gh<_i107.BrandApi>()));
-    gh.factory<_i630.IAccountRepository>(
-        () => _i710.AccountRepository(gh<_i925.UserApi>()));
     gh.factory<_i919.ICampaignRepository>(
         () => _i652.CampaignRepository(gh<_i239.CampaignApi>()));
     gh.factory<_i841.IChatRepository>(
@@ -140,6 +141,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i748.NotificationRepository(gh<_i143.NotificationApi>()));
     gh.factory<_i134.IUploadRepository>(
         () => _i655.UploadRepository(gh<_i818.UploadDS>())..init());
+    gh.singleton<_i796.PrivyWalletService>(
+        () => _i796.PrivyWalletService(gh<_i998.IWalletRepository>())..init());
     gh.singleton<_i709.ProfileServide>(() => _i709.ProfileServide(
           accountService: gh<_i997.AccountService>(),
           accountRepository: gh<_i630.IAccountRepository>(),
@@ -161,6 +164,12 @@ extension GetItInjectableX on _i174.GetIt {
               gh<_i71.IVideoRepository>(),
               gh<_i134.IUploadRepository>(),
             ));
+    gh.lazySingleton<_i3.LogoutUsecase>(() => _i3.LogoutUsecase(
+          gh<_i630.IAccountRepository>(),
+          gh<_i845.LocalStorage>(),
+          gh<_i997.AccountService>(),
+          gh<_i796.PrivyWalletService>(),
+        ));
     gh.lazySingleton<_i484.UploadImageUsecase>(
         () => _i484.UploadImageUsecase(gh<_i134.IUploadRepository>()));
     gh.lazySingleton<_i386.UpdateCampaignUsecase>(

@@ -13,6 +13,7 @@ import 'package:flutter_bump_app/router/app_route.dart';
 import 'package:flutter_bump_app/screen/campaign_details/campaign_details_cubit.dart';
 import 'package:flutter_bump_app/screen/campaign_details/campaign_details_parameter.dart';
 import 'package:flutter_bump_app/screen/launch_sponsorship/launch_sponsorship_parameter.dart';
+import 'package:flutter_bump_app/utils/extension/int_ext.dart';
 import 'package:flutter_bump_app/widget/image/cache_image.dart';
 
 import 'campaign_details_state.dart';
@@ -137,9 +138,8 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
               onTap: () {
                 if (state.campaign != null) {
                   context.pushRoute(LaunchSponsorshipRoute(
-                    parameter: LaunchSponsorshipParameter(
-                        campaign: state.campaign!, fillInfo: true),
-                  ));
+                      parameter: LaunchSponsorshipParameter(
+                          campaign: state.campaign!, fillInfo: true)));
                 }
               },
               child: Icon(Icons.edit, color: appTheme.whiteText, size: 20.w)),
@@ -180,12 +180,8 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
           _buildInfoRow('Creator', state.campaign?.creator?.name ?? '',
               showIcons: true),
           SizedBox(height: 12.h),
-          _buildInfoRow(
-            'Status',
-            state.campaign?.status?.name ?? '',
-            statusBadge: true,
-            // showEdit: state.campaign?.status == CampaignStatus.IN_PROGRESS,
-          ),
+          _buildInfoRow('Status', state.campaign?.status?.name ?? '',
+              statusBadge: true),
           SizedBox(height: 12.h),
           _buildInfoRow('Duration',
               '${state.campaign?.startDate} → ${state.campaign?.endDate}'),
@@ -241,29 +237,6 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
                   ),
                 ),
               ),
-              // if (showEdit) ...[
-              //   SizedBox(width: 8.w),
-              //   GestureDetector(
-              //     onTap: () {
-              //       context.pushRoute(LaunchSponsorshipRoute(
-              //         parameter: LaunchSponsorshipParameter(
-              //           campaign: state.campaign,
-              //         ),
-              //       ));
-              //     },
-              //     child: Container(
-              //       padding: padding(horizontal: 6.w, vertical: 2.h),
-              //       decoration: BoxDecoration(
-              //         color: const Color(0xFF374151),
-              //         borderRadius: BorderRadius.circular(4),
-              //       ),
-              //       child: Text(
-              //         'Edit',
-              //         style: AppStyle.regular10(color: appTheme.whiteText),
-              //       ),
-              //     ),
-              //   ),
-              // ],
             ],
           )
         else
@@ -333,6 +306,11 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
             ),
           ),
           SizedBox(height: 16.h),
+          _buildInfoRow('Channel Name', state.campaign?.channelName ?? ''),
+          SizedBox(height: 12.h),
+          _buildInfoRow(
+              'Channel Description', state.campaign?.channelDesc ?? ''),
+          SizedBox(height: 16.h),
           // Social Links
           Text(
             'Social Links',
@@ -394,39 +372,40 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // if (imageUrl.isNotEmpty)
-          CacheImage(
-              imageUrl: imageUrl,
-              size: 32.w,
-              height: 32.h,
-              width: 32.w,
-              boxFit: BoxFit.cover,
-              defaultImage: emoji != null
-                  ? Container(
-                      width: 32.w,
-                      height: 32.h,
-                      decoration: BoxDecoration(
-                        color: appTheme.green4AColor,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Center(
-                        child:
-                            Text(emoji, style: const TextStyle(fontSize: 16)),
-                      ),
-                    )
-                  : Container(
-                      width: double.infinity,
-                      height: 24.h,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            appTheme.green4AColor,
-                            appTheme.green69Color
-                          ],
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: CacheImage(
+                imageUrl: imageUrl,
+                height: 100.h,
+                width: double.infinity,
+                boxFit: BoxFit.contain,
+                defaultImage: emoji != null
+                    ? Container(
+                        width: 32.w,
+                        height: 32.h,
+                        decoration: BoxDecoration(
+                          color: appTheme.green4AColor,
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    )),
+                        child: Center(
+                          child:
+                              Text(emoji, style: const TextStyle(fontSize: 16)),
+                        ),
+                      )
+                    : Container(
+                        width: double.infinity,
+                        height: 24.h,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              appTheme.green4AColor,
+                              appTheme.green69Color
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      )),
+          ),
           Text(
             label,
             style: AppStyle.medium10(color: appTheme.whiteText),
@@ -465,19 +444,23 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
             ],
           ),
           SizedBox(height: 16.h),
-          _buildMetricRow('Total Views', '267K', const Color(0xFF22C55E)),
+          _buildMetricRow('Total Views', state.campaign?.views ?? 0,
+              const Color(0xFF22C55E)),
           SizedBox(height: 12.h),
-          _buildMetricRow('Likes', '12.8K', appTheme.whiteText),
+          _buildMetricRow(
+              'Likes', state.campaign?.likes ?? 0, appTheme.whiteText),
           SizedBox(height: 12.h),
-          _buildMetricRow('Shares', '3.2K', appTheme.whiteText),
+          _buildMetricRow(
+              'Shares', state.campaign?.shares ?? 0, appTheme.whiteText),
           SizedBox(height: 12.h),
-          _buildMetricRow('Comments', '892', appTheme.whiteText),
+          _buildMetricRow(
+              'Comments', state.campaign?.comments ?? 0, appTheme.whiteText),
         ],
       ),
     );
   }
 
-  Widget _buildMetricRow(String label, String value, Color valueColor) {
+  Widget _buildMetricRow(String label, int value, Color valueColor) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -486,7 +469,7 @@ class CampaignDetailsScreenState extends BaseBlocNoAppBarPageState<
           style: AppStyle.regular14(color: Colors.white60),
         ),
         Text(
-          value,
+          value.quantity,
           style: AppStyle.bold14(color: valueColor),
         ),
       ],

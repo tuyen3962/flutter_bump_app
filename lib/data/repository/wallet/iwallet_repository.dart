@@ -8,4 +8,5 @@ abstract class IWalletRepository extends IBaseRepository {
   Future<WalletDepositInstructionResponse> getWalletDepositInstructions();
   Future<WithdrawResponse> withdraw(WithdrawRequest request);
   Future<List<TransactionResponse>> getTransactions();
+  Future<double> getUSDTWithSolana(double amount);
 }

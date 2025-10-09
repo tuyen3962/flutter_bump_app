@@ -1,16 +1,17 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bump_app/base/widget/base_page.dart';
 import 'package:flutter_bump_app/base/widget/cubit/base_bloc_provider.dart';
-import 'package:flutter_bump_app/config/service/app_service.dart';
-import 'package:flutter_bump_app/config/service/privy_wallet_service.dart';
 import 'package:flutter_bump_app/config/theme/style/style_theme.dart';
 import 'package:flutter_bump_app/extension.dart';
 import 'package:flutter_bump_app/extension/color_extension.dart';
 import 'package:flutter_bump_app/main.dart';
+import 'package:flutter_bump_app/router/app_route.dart';
 import 'package:flutter_bump_app/screen/wallet/wallet_cubit.dart';
 import 'package:flutter_bump_app/screen/wallet/wallet_state.dart';
+import 'package:flutter_bump_app/utils/flash/toast.dart';
 
 @RoutePage()
 class WalletPage extends BaseBlocProvider<WalletState, WalletCubit> {
@@ -41,7 +42,13 @@ class WalletScreenState
 
   @override
   Widget buildBody(BuildContext context, WalletCubit cubit) {
-    return BlocBuilder<WalletCubit, WalletState>(
+    return BlocConsumer<WalletCubit, WalletState>(
+      bloc: cubit,
+      listener: (context, state) {
+        if (state.isLoggedOut) {
+          context.router.replaceAll([const SignInRoute()]);
+        }
+      },
       builder: (context, state) {
         return Container(
           width: double.infinity,
@@ -147,16 +154,19 @@ class WalletScreenState
           ),
           SizedBox(height: 12.h),
           ValueListenableBuilder(
-            valueListenable: locator.get<PrivyWalletService>().solanaBalance,
+            valueListenable: cubit.privyWalletService.solanaBalance,
             builder: (context, value, __) => Text(
-              '${value.toStringAsFixed(4)} SOL',
+              '${value.balanceSol.toStringAsFixed(4)} SOL',
               style: AppStyle.bold32(color: appTheme.whiteText),
             ),
           ),
           SizedBox(height: 8.h),
-          Text(
-            '≈ \$${state.balanceUSD.toStringAsFixed(2)} USD',
-            style: AppStyle.regular14(color: Colors.white60),
+          ValueListenableBuilder(
+            valueListenable: cubit.privyWalletService.solanaBalance,
+            builder: (context, value, __) => Text(
+              '≈ \$${value.balanceUSD.toStringAsFixed(2)} USD',
+              style: AppStyle.regular14(color: Colors.white60),
+            ),
           ),
           SizedBox(height: 24.h),
           Row(
@@ -166,7 +176,10 @@ class WalletScreenState
                   height: 48.h,
                   child: ElevatedButton(
                     onPressed: () {
-                      _showAddFundsDialog(cubit, state);
+                      // _showAddFundsDialog(cubit, state);
+                      Clipboard.setData(ClipboardData(
+                          text: cubit.privyWalletService.walletAddress));
+                      showSimpleToast('Wallet address copied to clipboard');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: appTheme.transparentColor,
@@ -191,16 +204,20 @@ class WalletScreenState
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            SizedBox(width: 8.w),
                             Icon(
                               Icons.add_circle_outline,
                               color: const Color(0xFF0F172A),
                               size: 20.w,
                             ),
                             SizedBox(width: 8.w),
-                            Text(
-                              'Add Funds',
-                              style: AppStyle.bold14(
-                                color: const Color(0xFF0F172A),
+                            Flexible(
+                              child: Text(
+                                'Copy Wallet Address',
+                                textAlign: TextAlign.center,
+                                style: AppStyle.bold12(
+                                  color: const Color(0xFF0F172A),
+                                ),
                               ),
                             ),
                           ],
@@ -244,6 +261,39 @@ class WalletScreenState
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              cubit.logout();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: appTheme.transparentColor,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: EdgeInsets.zero,
+            ),
+            child: Container(
+              height: 46.h,
+              alignment: Alignment.center,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    appTheme.green4AColor,
+                    appTheme.green69Color,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Text(
+                'Sign Out',
+                textAlign: TextAlign.center,
+                style: AppStyle.bold16(color: appTheme.whiteText),
+              ),
+            ),
           ),
         ],
       ),
@@ -333,113 +383,113 @@ class WalletScreenState
     );
   }
 
-  void _showAddFundsDialog(WalletCubit cubit, WalletState state) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          child: Container(
-            padding: padding(all: 24.w),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xFF1E293B),
-                  Color(0xFF0F172A),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withSafeOpacity(0.1),
-                width: 1,
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Add Funds',
-                  style: AppStyle.bold20(color: appTheme.whiteText),
-                ),
-                SizedBox(height: 24.h),
-                Text(
-                  'Quick Add',
-                  style: AppStyle.regular14(color: Colors.white60),
-                ),
-                SizedBox(height: 16.h),
-                Wrap(
-                  spacing: 12.w,
-                  runSpacing: 12.h,
-                  children: [5.0, 10.0, 20.0, 50.0].map((amount) {
-                    return GestureDetector(
-                      onTap: () {
-                        cubit.addFunds(amount);
-                        Navigator.pop(context);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '💰 Added ${amount.toStringAsFixed(1)} SOL to wallet!',
-                              style: AppStyle.medium14(
-                                color: appTheme.whiteText,
-                              ),
-                            ),
-                            backgroundColor: appTheme.green4AColor,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: padding(horizontal: 20.w, vertical: 12.h),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF374151),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.white.withSafeOpacity(0.1),
-                            width: 1,
-                          ),
-                        ),
-                        child: Text(
-                          '+${amount.toStringAsFixed(0)} SOL',
-                          style: AppStyle.bold14(color: appTheme.whiteText),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                SizedBox(height: 24.h),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 48.h,
-                        child: ElevatedButton(
-                          onPressed: () => Navigator.pop(context),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF374151),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: Text(
-                            'Cancel',
-                            style: AppStyle.bold14(color: appTheme.whiteText),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // void _showAddFundsDialog(WalletCubit cubit, WalletState state) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return Dialog(
+  //         backgroundColor: Colors.transparent,
+  //         child: Container(
+  //           padding: padding(all: 24.w),
+  //           decoration: BoxDecoration(
+  //             gradient: const LinearGradient(
+  //               begin: Alignment.topCenter,
+  //               end: Alignment.bottomCenter,
+  //               colors: [
+  //                 Color(0xFF1E293B),
+  //                 Color(0xFF0F172A),
+  //               ],
+  //             ),
+  //             borderRadius: BorderRadius.circular(20),
+  //             border: Border.all(
+  //               color: Colors.white.withSafeOpacity(0.1),
+  //               width: 1,
+  //             ),
+  //           ),
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: [
+  //               Text(
+  //                 'Add Funds',
+  //                 style: AppStyle.bold20(color: appTheme.whiteText),
+  //               ),
+  //               SizedBox(height: 24.h),
+  //               Text(
+  //                 'Quick Add',
+  //                 style: AppStyle.regular14(color: Colors.white60),
+  //               ),
+  //               SizedBox(height: 16.h),
+  //               Wrap(
+  //                 spacing: 12.w,
+  //                 runSpacing: 12.h,
+  //                 children: [5.0, 10.0, 20.0, 50.0].map((amount) {
+  //                   return GestureDetector(
+  //                     onTap: () {
+  //                       cubit.addFunds(amount);
+  //                       Navigator.pop(context);
+  //                       ScaffoldMessenger.of(context).showSnackBar(
+  //                         SnackBar(
+  //                           content: Text(
+  //                             '💰 Added ${amount.toStringAsFixed(1)} SOL to wallet!',
+  //                             style: AppStyle.medium14(
+  //                               color: appTheme.whiteText,
+  //                             ),
+  //                           ),
+  //                           backgroundColor: appTheme.green4AColor,
+  //                           behavior: SnackBarBehavior.floating,
+  //                           shape: RoundedRectangleBorder(
+  //                             borderRadius: BorderRadius.circular(8),
+  //                           ),
+  //                         ),
+  //                       );
+  //                     },
+  //                     child: Container(
+  //                       padding: padding(horizontal: 20.w, vertical: 12.h),
+  //                       decoration: BoxDecoration(
+  //                         color: const Color(0xFF374151),
+  //                         borderRadius: BorderRadius.circular(12),
+  //                         border: Border.all(
+  //                           color: Colors.white.withSafeOpacity(0.1),
+  //                           width: 1,
+  //                         ),
+  //                       ),
+  //                       child: Text(
+  //                         '+${amount.toStringAsFixed(0)} SOL',
+  //                         style: AppStyle.bold14(color: appTheme.whiteText),
+  //                       ),
+  //                     ),
+  //                   );
+  //                 }).toList(),
+  //               ),
+  //               SizedBox(height: 24.h),
+  //               Row(
+  //                 children: [
+  //                   Expanded(
+  //                     child: SizedBox(
+  //                       height: 48.h,
+  //                       child: ElevatedButton(
+  //                         onPressed: () => Navigator.pop(context),
+  //                         style: ElevatedButton.styleFrom(
+  //                           backgroundColor: const Color(0xFF374151),
+  //                           elevation: 0,
+  //                           shape: RoundedRectangleBorder(
+  //                             borderRadius: BorderRadius.circular(12),
+  //                           ),
+  //                         ),
+  //                         child: Text(
+  //                           'Cancel',
+  //                           style: AppStyle.bold14(color: appTheme.whiteText),
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }
