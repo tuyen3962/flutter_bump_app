@@ -20,6 +20,20 @@ extension IntExtension on int? {
     }
     return 'under_distance'.tr(args: [' $this']);
   }
+
+  String get quantity {
+    if (this == null) {
+      return '0';
+    }
+    final count = this ?? 0;
+    if (count < 1000) {
+      return '$this';
+    }
+    if (count < 1000000) {
+      return '${(count / 1000).toStringAsFixed(2)}K';
+    }
+    return '${(count / 1000000).toStringAsFixed(2)}M';
+  }
 }
 
 extension DoubleExtension on double? {

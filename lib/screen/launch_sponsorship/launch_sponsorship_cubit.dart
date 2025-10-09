@@ -1,14 +1,29 @@
+import 'dart:io';
+
 import 'package:flutter_bump_app/base/widget/cubit/base_cubit.dart';
 import 'package:flutter_bump_app/config/service/account_service.dart';
 import 'package:flutter_bump_app/config/service/app_service.dart';
+import 'package:flutter_bump_app/data/model/campagin.dart';
+import 'package:flutter_bump_app/data/remote/campaign/campaign_request.dart';
+import 'package:flutter_bump_app/data/repository/campaign/icampaign_repository.dart';
+import 'package:flutter_bump_app/data/usecase/update_campaign_usecase.dart';
+import 'package:flutter_bump_app/utils/flash/toast.dart';
+import 'package:flutter_bump_app/utils/loading.dart';
 
 import 'launch_sponsorship_state.dart';
 
+enum UploadBannerType { logo, banner }
+
 class LaunchSponsorshipCubit extends BaseCubit<LaunchSponsorshipState> {
   late final AccountService accountService = locator.get();
+  final ICampaignRepository campaignRepository = locator.get();
+  final CampaignModel campaign;
+  final UpdateCampaignUsecase updateCampaignUsecase;
 
-  LaunchSponsorshipCubit()
-      : super(const LaunchSponsorshipState(
+  LaunchSponsorshipCubit({
+    required this.campaign,
+    required this.updateCampaignUsecase,
+  }) : super(const LaunchSponsorshipState(
           availableRequirements: [
             {'id': 'r1', 'label': 'Brand mention in first 5s'},
             {'id': 'r2', 'label': 'Hashtag #SPONSOR.FUN visible'},
@@ -57,6 +72,14 @@ class LaunchSponsorshipCubit extends BaseCubit<LaunchSponsorshipState> {
     emit(state.copyWith(discord: value));
   }
 
+  void updateUploadBanner(File value, UploadBannerType type) {
+    if (type == UploadBannerType.logo) {
+      emit(state.copyWith(logo: value));
+    } else {
+      emit(state.copyWith(banner: value));
+    }
+  }
+
   void toggleRequirement(String reqId) {
     final newRequirements = List<String>.from(state.selectedRequirements);
     if (newRequirements.contains(reqId)) {
@@ -65,5 +88,31 @@ class LaunchSponsorshipCubit extends BaseCubit<LaunchSponsorshipState> {
       newRequirements.add(reqId);
     }
     emit(state.copyWith(selectedRequirements: newRequirements));
+  }
+
+  void launchCampaign() async {
+    showLoading();
+
+    try {
+      final response =
+          await updateCampaignUsecase.call(UpdateCampaignUsecaseParam(
+        campaign: campaign,
+        logo: state.logo,
+        banner: state.banner,
+        request: UpdateCampaignRequest(
+          name: state.channelName,
+          description: state.channelDesc,
+          requirements: state.selectedRequirements
+              .map((e) => Requirements(label: e, isMandatory: true))
+              .toList(),
+        ),
+      ));
+      showSimpleToast('Campaign launched successfully');
+      emit(state.copyWith(campaign: response));
+    } catch (e) {
+      // emit(state.copyWith(isLoading: false));
+      showSimpleToast('Error launching campaign');
+    }
+    dismissLoading();
   }
 }

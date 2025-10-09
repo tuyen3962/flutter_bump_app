@@ -36,4 +36,10 @@ abstract class RemoteService {
   @lazySingleton
   NotificationApi notificationApi(DioProvider provider) =>
       NotificationApi(provider.dio);
+
+  @lazySingleton
+  BrandApi brandApi(DioProvider provider) => BrandApi(provider.dio);
+
+  @lazySingleton
+  CampaignApi campaignApi(DioProvider provider) => CampaignApi(provider.dio);
 }

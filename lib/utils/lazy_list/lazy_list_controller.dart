@@ -71,7 +71,7 @@ class LazyListController<T> {
 
     var models = await onLoad(page);
     data.value = models.data;
-    total.value = models.pagination.totalItems;
+    total.value = models.pagination?.totalItems ?? 0;
     isOutOfRange = models.data.length < limit;
     isLoading.value = false;
     isLoadMoreNotifier.value = false;

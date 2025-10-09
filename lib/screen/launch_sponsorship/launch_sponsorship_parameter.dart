@@ -1,5 +1,8 @@
-class LaunchSponsorshipParameter {
-  final Map<String, dynamic> creator;
+import 'package:flutter_bump_app/data/model/campagin.dart';
 
-  LaunchSponsorshipParameter({required this.creator});
+class LaunchSponsorshipParameter {
+  final CampaignModel campaign;
+  final bool fillInfo;
+
+  LaunchSponsorshipParameter({required this.campaign, this.fillInfo = false});
 }

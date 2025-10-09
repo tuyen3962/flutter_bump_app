@@ -36,60 +36,47 @@ class LazyListViewSkeleton<T> extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: controller.isLoading,
       builder: (context, loading, child) => ValueListenableBuilder<List<T>>(
-        valueListenable: controller.data,
-        builder: (context, items, child) =>
-            NotificationListener<ScrollNotification>(
-                onNotification: (notification) {
-                  if (notification is ScrollEndNotification &&
-                      notification.metrics.extentAfter == 0) {
-                    if (controller.isLoadMore || controller.isOutOfRange) {
-                      return false;
-                    }
-                    controller.onLoadMore();
-                  }
-                  return false;
-                },
-                child: Skeletonizer(
-                  enabled: loading,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      topView?.call(items) ?? const SizedBox(),
-                      loading || items.isNotEmpty
-                          ? lineItemCount > 1
-                              ? ListVerticalItem<T>(
-                                  lineItemCount: lineItemCount,
-                                  viewPadding:
-                                      viewPadding ?? padding(vertical: 12),
-                                  isShrinkWrap: shrinkWrap,
-                                  paddingBetweenLine: 12,
-                                  paddingBetweenItem: 8,
-                                  physics: physics ??
-                                      const AlwaysScrollableScrollPhysics(),
-                                  items: items,
-                                  isLoading: loading,
-                                  skeletonView: skeletonView(),
-                                  itemBuilder: (index, item) => loading
-                                      ? skeletonView()
-                                      : itemBuilder(index, item),
-                                )
-                              : ListView.separated(
-                                  controller: scrollController,
-                                  shrinkWrap: shrinkWrap,
-                                  padding: viewPadding ?? padding(),
-                                  physics: physics ??
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemBuilder: (context, index) => loading
-                                      ? skeletonView()
-                                      : itemBuilder(index, items[index]),
-                                  separatorBuilder: (context, index) =>
-                                      divider ?? const SizedBox(),
-                                  itemCount: loading ? 3 : items.length)
-                          : const SizedBox(),
-                    ],
-                  ),
-                )),
-      ),
+          valueListenable: controller.data,
+          builder: (context, items, child) => Skeletonizer(
+                enabled: loading,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    topView?.call(items) ?? const SizedBox(),
+                    loading || items.isNotEmpty
+                        ? lineItemCount > 1
+                            ? ListVerticalItem<T>(
+                                lineItemCount: lineItemCount,
+                                viewPadding:
+                                    viewPadding ?? padding(vertical: 12),
+                                isShrinkWrap: shrinkWrap,
+                                paddingBetweenLine: 12,
+                                paddingBetweenItem: 8,
+                                physics: physics ??
+                                    const AlwaysScrollableScrollPhysics(),
+                                items: items,
+                                isLoading: loading,
+                                skeletonView: skeletonView(),
+                                itemBuilder: (index, item) => loading
+                                    ? skeletonView()
+                                    : itemBuilder(index, item),
+                              )
+                            : ListView.separated(
+                                controller: scrollController,
+                                shrinkWrap: shrinkWrap,
+                                padding: viewPadding ?? padding(),
+                                physics: physics ??
+                                    const AlwaysScrollableScrollPhysics(),
+                                itemBuilder: (context, index) => loading
+                                    ? skeletonView()
+                                    : itemBuilder(index, items[index]),
+                                separatorBuilder: (context, index) =>
+                                    divider ?? const SizedBox(),
+                                itemCount: loading ? 3 : items.length)
+                        : const SizedBox(),
+                  ],
+                ),
+              )),
     );
   }
 }

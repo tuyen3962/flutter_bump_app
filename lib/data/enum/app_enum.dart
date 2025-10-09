@@ -27,3 +27,11 @@ enum BidStatus {
   CANCELLED,
   NO_BID
 }
+
+enum CampaignStatus { PENDING, IN_PROGRESS, COMPLETED, CANCELLED, DRAFT }
+
+enum CreatorRole { CREATOR, BRAND, ADMIN }
+
+enum Gender { MALE, FEMALE, OTHER }
+
+enum SocialLinkType { WEBSITE, TWITTER, TELEGRAM, DISCORD, YOUTUBE, TIKTOK }
