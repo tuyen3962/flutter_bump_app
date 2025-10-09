@@ -12,7 +12,7 @@ class WalletCubit extends BaseCubit<WalletState> {
           const WalletState(
             transactions: [
               {
-                'title': '@cryptoqueen_',
+                'title': '@cryptoqueen_', 
                 'time': '2h ago',
                 'amount': -2.5,
                 'type': 'spend',

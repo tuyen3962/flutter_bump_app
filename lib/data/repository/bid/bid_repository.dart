@@ -29,11 +29,47 @@ class BidRepository extends IBidRepository {
   }
 
   @override
-  Future<PaginatedResponse<CreatorModel>> getAllCreatorBids(
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getAllBids(
       {int page = 1, int limit = 20}) async {
     try {
       final result =
           await bidApi.getAllBids(GetAllBidsRequest(page: page, limit: limit));
+      return result;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getBiddingBids(
+      {int page = 1, int limit = 20}) async {
+    try {
+      final result =
+          await bidApi.getBiddingBids(GetAllBidsRequest(page: page, limit: limit));
+      return result;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getNoBidsBids(
+      {int page = 1, int limit = 20}) async {
+    try {
+      final result =
+          await bidApi.getNoBidsBids(GetAllBidsRequest(page: page, limit: limit));
+      return result;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  @override
+  Future<BaseResponse<PaginatedResponse<CreatorModel>>> getMyBids(
+      {int page = 1, int limit = 20}) async {
+    try {
+      final result =
+          await bidApi.getMyBids(GetAllBidsRequest(page: page, limit: limit));
       return result;
     } catch (e) {
       throw Exception(e);

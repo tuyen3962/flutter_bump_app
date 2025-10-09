@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_bump_app/data/local/local_storage.dart';
+import 'package:flutter_bump_app/utils/logger_helper.dart';
 
 class DefaultInterceptor extends Interceptor {
   final Dio _dio;
@@ -14,6 +15,7 @@ class DefaultInterceptor extends Interceptor {
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     final token = await _localStorage.accessToken();
+    loggerHelper.log("AccessToken: $token");
     // final tokenType = _localStorage.getValueString(keyTokenType);
     if (token != null) {
       options.headers.putIfAbsent("Cookie", () => "accessToken=$token");
